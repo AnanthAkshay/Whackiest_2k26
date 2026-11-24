@@ -1,0 +1,18 @@
+{
+  "name": "strong",
+  "language": "en",
+  "turns": [
+    { "speaker": "agent", "text": "Let's start with worksheets and workbooks. Can you explain the difference?" },
+    { "speaker": "candidate", "text": "A workbook is the Excel file itself, like budget.xlsx. Inside it you have sheet tabs — January, February, etc. Each tab is a worksheet. I can right-click a tab to rename it, drag it to reorder, and use Ctrl+S to save the whole workbook. If I need a backup I'd use Save As to create a separate copy." },
+    { "speaker": "agent", "text": "Great. Now tell me about cells, ranges, and references." },
+    { "speaker": "candidate", "text": "Every cell is identified by a column letter and row number, like B3. A range is a rectangle described by two corners, for example A1:C4. When I write a formula with a relative reference like =A2 and copy it down one row, it becomes =A3 because Excel shifts the row. But $A$1 is an absolute reference — the dollar signs lock the column and row so it stays fixed when I copy the formula anywhere." },
+    { "speaker": "agent", "text": "How do formulas and functions work?" },
+    { "speaker": "candidate", "text": "Every formula starts with the equals sign. If I type =2+3*4 I get 14 because multiplication happens before addition, but =(2+3)*4 gives 20 because brackets override the order. SUM adds a range of numbers, AVERAGE gives the mean, MIN and MAX find the extremes, and COUNT tells me how many numeric entries there are. I'd use IF to check a condition — for example =IF(B2>=50,\"Pass\",\"Try again\") returns Pass when B2 is 50 or more. I always reference cells instead of retyping values so the formula updates automatically." },
+    { "speaker": "agent", "text": "Tell me about formatting and number formats." },
+    { "speaker": "candidate", "text": "Number formats change how a value is displayed, not the value itself. If a cell stores 0.25 and I apply percentage format it shows 25% because Excel multiplies the underlying decimal by 100 for display. Currency format adds a symbol like ₹ or $. Date format shows numbers as dates. I select the range first, then apply the format. For long text in a narrow column I use wrap text so the content stays visible, and I adjust alignment so it reads cleanly." },
+    { "speaker": "agent", "text": "How about tables, sorting, and filtering?" },
+    { "speaker": "candidate", "text": "An Excel table has structured data with header rows — Name, Region, Sales for example. Sorting rearranges all the complete rows by a chosen column; I always sort the whole table so names stay paired with their sales. Filtering is different — it temporarily hides rows that don't match my condition, like showing only South region, but no data is deleted. I can toggle the filter off to see everything again. A totals row at the bottom can sum or average a numeric column automatically." },
+    { "speaker": "agent", "text": "Finally, explain charts." },
+    { "speaker": "candidate", "text": "I pick a chart type that fits the question. A column chart compares categories like Tea vs Coffee vs Juice sales side by side. A line chart shows change over time, like monthly revenue January through April. I select the data range including both category labels and values — say A1:B4 — then insert the chart. I add a descriptive title and label both axes so anyone reading it knows what's being shown. Each series in the chart represents a set of related values, and I can change which data is included through the Select Data dialog." }
+  ]
+}

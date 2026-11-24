@@ -1,0 +1,16 @@
+{
+  "name": "bluffer",
+  "language": "en",
+  "turns": [
+    { "speaker": "agent", "text": "If A1 has 10 and you copy a formula from B1 to B2, why might the reference change? What does $A$1 mean?" },
+    { "speaker": "candidate", "text": "If A1 has 10 and you copy a formula from B1 to B2, the reference might change. $A$1 means $A$1." },
+    { "speaker": "agent", "text": "Can you explain what SUM does and how IF works?" },
+    { "speaker": "candidate", "text": "SUM does SUM and IF does IF. You use them in formulas. A formula starts with equals." },
+    { "speaker": "agent", "text": "Tell me about formatting cells and number formats." },
+    { "speaker": "candidate", "text": "You format cells to make them look nice. You can use currency and percentage and date formats. Formatting changes how things look." },
+    { "speaker": "agent", "text": "What is a table in Excel, and how is filtering different from sorting?" },
+    { "speaker": "candidate", "text": "A table is data in Excel. Filtering is different from sorting because they do different things. Sorting sorts and filtering filters." },
+    { "speaker": "agent", "text": "How would you make a chart?" },
+    { "speaker": "candidate", "text": "You select data and make a chart. You can add titles and labels. A chart shows information." }
+  ]
+}

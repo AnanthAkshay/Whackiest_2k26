@@ -1,0 +1,34 @@
+{
+  "name": "@viva/api",
+  "version": "0.1.0",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "dev": "tsx watch src/local.ts",
+    "typecheck": "tsc --noEmit",
+    "build": "tsc -p tsconfig.build.json",
+    "test": "tsx --test src/rubric.test.ts src/config.test.ts src/store/LocalFileStore.test.ts src/store/DynamoStore.test.ts src/voice/ElevenLabsAgent.test.ts src/meter.test.ts",
+    "rubric:report": "tsx src/rubricReport.ts",
+    "eval:fixtures": "tsx src/evalFixtures.ts",
+    "cache:audio": "tsx src/generateAudioCache.ts",
+    "demo:record": "tsx src/recordDemoSession.ts",
+    "test:bluff": "tsx ../tests/bluff/runBluffTest.ts"
+  },
+  "dependencies": {
+    "@aws-sdk/client-bedrock-runtime": "^3.1176.0",
+    "@aws-sdk/client-dynamodb": "^3.714.0",
+    "@aws-sdk/client-s3": "^3.1176.0",
+    "@aws-sdk/lib-dynamodb": "^3.714.0",
+    "cors": "^2.8.5",
+    "express": "^4.21.2",
+    "zod": "^3.24.1"
+  },
+  "devDependencies": {
+    "@types/aws-lambda": "^8.10.164",
+    "@types/cors": "^2.8.17",
+    "@types/express": "^5.0.0",
+    "@types/node": "^22.10.5",
+    "tsx": "^4.19.2",
+    "typescript": "^5.7.2"
+  }
+}

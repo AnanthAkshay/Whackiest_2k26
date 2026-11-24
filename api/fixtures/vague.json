@@ -1,0 +1,16 @@
+{
+  "name": "vague",
+  "language": "en",
+  "turns": [
+    { "speaker": "agent", "text": "Tell me about worksheets and workbooks." },
+    { "speaker": "candidate", "text": "They're both part of Excel. You click on tabs and stuff." },
+    { "speaker": "agent", "text": "Can you explain how formulas work?" },
+    { "speaker": "candidate", "text": "You type a formula and Excel calculates it. SUM adds things. You can also do averages and other functions. It is easy once you practise." },
+    { "speaker": "agent", "text": "What about references — relative and absolute?" },
+    { "speaker": "candidate", "text": "References are how you point to cells. There are relative ones and absolute ones. The dollar sign is used for one of them." },
+    { "speaker": "agent", "text": "How do you create a chart?" },
+    { "speaker": "candidate", "text": "You select data and insert a chart. You can pick different types. Charts are useful for showing data visually." },
+    { "speaker": "agent", "text": "And tables and filtering?" },
+    { "speaker": "candidate", "text": "Tables organise data. You can sort and filter columns. Filtering shows some rows and hides others." }
+  ]
+}

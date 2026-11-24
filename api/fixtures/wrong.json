@@ -1,0 +1,16 @@
+{
+  "name": "wrong",
+  "language": "en",
+  "turns": [
+    { "speaker": "agent", "text": "Please explain relative and absolute references." },
+    { "speaker": "candidate", "text": "A formula should start with #, and $A$1 is a relative reference, so it changes every time you copy it. SUM is only for text, not numbers." },
+    { "speaker": "agent", "text": "What is the difference between a workbook and a worksheet?" },
+    { "speaker": "candidate", "text": "A workbook and a worksheet are the same thing — just different names for the same file. Renaming a sheet tab changes the file name on your computer." },
+    { "speaker": "agent", "text": "How does filtering work in a table?" },
+    { "speaker": "candidate", "text": "Filtering deletes the rows that don't match your condition. If you filter for South, the North rows are permanently gone. Sorting only moves one column so names might end up next to the wrong sales numbers." },
+    { "speaker": "agent", "text": "Tell me about number formatting." },
+    { "speaker": "candidate", "text": "If I format 10 as a percentage it shows 10%. Changing a number format also converts the value from a number into text so formulas can't use it any more." },
+    { "speaker": "agent", "text": "How do charts work?" },
+    { "speaker": "candidate", "text": "Any chart type works for any data, it doesn't matter which one you pick. When you change a chart label it also changes the numbers in the worksheet cells." }
+  ]
+}
