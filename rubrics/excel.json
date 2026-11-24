@@ -1,0 +1,168 @@
+{
+  "skill": "excel",
+  "version": "1.0.0",
+  "basis": "public-sources",
+  "basisNote": "Rubric built from public sources (Microsoft MO-200 skills outline). Trainer co-sign planned in the pilot.",
+  "trainerCoSigned": false,
+  "sources": [
+    { "title": "Microsoft Learn exam page for MO-200", "url": "https://learn.microsoft.com/certifications/exams/mo-200", "accessed": "2026-11-24" },
+    { "title": "MO-200 skills outline document", "url": "https://arch-center.azureedge.net/Learning/Credentials/mo-200-microsoft-excel-2019-skills-measured.pdf", "accessed": "2026-11-24" },
+    { "title": "Basic tasks in Excel", "url": "https://support.microsoft.com/en-us/excel/basic-tasks-in-excel", "accessed": "2026-11-24" },
+    { "title": "Overview of formulas in Excel", "url": "https://support.microsoft.com/en-us/excel/get-started/overview-of-formulas-in-excel", "accessed": "2026-11-24" },
+    { "title": "Format numbers", "url": "https://support.microsoft.com/en-us/excel/format-numbers", "accessed": "2026-11-24" },
+    { "title": "Filter data in a range or table in Excel", "url": "https://support.microsoft.com/en-gb/excel/get-started/filter-data-in-a-range-or-table-in-excel", "accessed": "2026-11-24" },
+    { "title": "Sort data in a range or table in Excel", "url": "https://support.microsoft.com/en-us/excel/sort-data-in-a-range-or-table-in-excel", "accessed": "2026-11-24" },
+    { "title": "Select data for a chart", "url": "https://support.microsoft.com/en-us/excel/select-data-for-a-chart", "accessed": "2026-11-24" },
+    { "title": "Microsoft Learn page for MO-210", "url": "https://learn.microsoft.com/certifications/exams/mo-210", "accessed": "2026-11-24" },
+    { "title": "Save your workbook", "url": "https://support.microsoft.com/en-us/excel/save-your-workbook", "accessed": "2026-11-24" },
+    { "title": "Wrap text in a cell in Excel", "url": "https://support.microsoft.com/en-us/excel/wrap-text-in-a-cell-in-excel", "accessed": "2026-11-24" },
+    { "title": "Format an Excel table", "url": "https://support.microsoft.com/en-us/excel/format-an-excel-table", "accessed": "2026-11-24" }
+  ],
+  "languages": ["en", "hi", "kn"],
+  "criteria": [
+    {
+      "id": "worksheets-workbooks-navigation",
+      "name": "Worksheets, workbooks and navigation",
+      "weight": 0.1,
+      "mo200Area": "Manage worksheets and workbooks",
+      "sourceRefs": [0, 1, 2, 8, 9],
+      "sourceStatus": "grounded",
+      "whatCorrectCovers": [
+        "Distinguishes a workbook file from the worksheets inside it.",
+        "Uses sheet tabs to switch between worksheets and can describe moving or renaming a sheet.",
+        "Navigates directly to a cell or range by its address, such as A1 or C20.",
+        "Saves a workbook and can explain why a separate copy or file format might be chosen."
+      ],
+      "commonMisconceptions": [
+        "A workbook and a worksheet are the same thing.",
+        "Changing a sheet tab name changes the workbook file name."
+      ],
+      "followUpProbes": [
+        { "level": "easy", "question": "A file has tabs named January and February. What is the workbook, and what is each tab?" },
+        { "level": "medium", "question": "You are looking at cell Z250 on the January sheet. Talk me through moving to A1 and then opening the February sheet." },
+        { "level": "deep", "question": "A budget workbook has three sheets. Explain how you would rename one tab, move it, and save a copy before making changes." }
+      ]
+    },
+    {
+      "id": "cells-ranges-references",
+      "name": "Cells, ranges and references",
+      "weight": 0.2,
+      "mo200Area": "Manage data cells and ranges",
+      "sourceRefs": [1, 3],
+      "sourceStatus": "grounded",
+      "whatCorrectCovers": [
+        "Identifies a cell by its column letter and row number, such as B3.",
+        "Describes a rectangular range with two endpoints, such as A1:C4.",
+        "Explains that a relative reference changes position when a formula is copied.",
+        "Explains that an absolute reference such as $A$1 stays fixed when copied.",
+        "Connects copying a formula with changed references rather than changed source values."
+      ],
+      "commonMisconceptions": [
+        "The dollar sign means a money value in a formula reference.",
+        "Copying =A2 down one row should keep pointing to A2."
+      ],
+      "followUpProbes": [
+        { "level": "easy", "question": "What cells are included in the range A1:B3?" },
+        { "level": "medium", "question": "If B2 contains =A2 and you copy it to B3, what reference will the new formula use, and why?" },
+        { "level": "deep", "question": "A tax rate is stored in A1. Explain why a formula like =B2*$A$1 behaves differently from =B2*A1 when copied down three rows." }
+      ]
+    },
+    {
+      "id": "formulas-functions",
+      "name": "Formulas and functions",
+      "weight": 0.25,
+      "mo200Area": "Perform operations by using formulas and functions",
+      "sourceRefs": [1, 3, 8],
+      "sourceStatus": "grounded",
+      "whatCorrectCovers": [
+        "Starts a formula with an equals sign and distinguishes a formula from a typed result.",
+        "Uses arithmetic operators and explains that calculation order can affect a result.",
+        "Uses SUM, AVERAGE, MIN, MAX, and COUNT for their appropriate purposes.",
+        "Uses IF to return one result when a condition is true and another when it is false.",
+        "Uses cell or range references inside functions instead of retyping every value."
+      ],
+      "commonMisconceptions": [
+        "A formula can be entered without the equals sign.",
+        "COUNT adds numbers rather than counting numeric entries.",
+        "IF has only one possible result."
+      ],
+      "followUpProbes": [
+        { "level": "easy", "question": "How would you add the values in A1 through A3 using SUM?" },
+        { "level": "medium", "question": "Why can =2+3*4 give a different result from =(2+3)*4?" },
+        { "level": "deep", "question": "In C2, explain a formula that returns Pass when B2 is 50 or more and Try again otherwise. Then say what happens when you copy it to C3." }
+      ]
+    },
+    {
+      "id": "formatting-number-formats",
+      "name": "Formatting cells and number formats",
+      "weight": 0.1,
+      "mo200Area": "Manage data cells and ranges",
+      "sourceRefs": [1, 2, 4, 10],
+      "sourceStatus": "grounded",
+      "whatCorrectCovers": [
+        "Distinguishes text from a numeric value when choosing a number format.",
+        "Explains that currency, percentage, and date formats change display rather than the stored calculation value.",
+        "Recognizes that a percentage display depends on the underlying decimal value, such as 0.1 displaying as 10%.",
+        "Uses alignment and wrap text to make a cell's content easier to read.",
+        "Selects the cells or range before applying a format."
+      ],
+      "commonMisconceptions": [
+        "Formatting 10 as a percentage will display 10% without changing the interpretation.",
+        "Changing a number format converts a numeric value into text."
+      ],
+      "followUpProbes": [
+        { "level": "easy", "question": "What format would you choose to show 1250 as money, and what format would you choose for a date?" },
+        { "level": "medium", "question": "A cell contains 0.25. What should you expect after applying percentage format, and why?" },
+        { "level": "deep", "question": "A narrow column contains long product names and a nearby column contains 0.1 as a discount. Explain how you would use wrap, alignment, and number formatting so a reader sees 10%." }
+      ]
+    },
+    {
+      "id": "tables-sorting-filtering",
+      "name": "Tables, sorting and filtering",
+      "weight": 0.15,
+      "mo200Area": "Manage tables and table data",
+      "sourceRefs": [1, 2, 5, 6, 11],
+      "sourceStatus": "grounded",
+      "whatCorrectCovers": [
+        "Explains that an Excel table is structured tabular data with headers, not just a collection of colored cells.",
+        "Uses headers to identify columns before sorting or filtering.",
+        "Explains that sorting rearranges complete rows using a chosen column and direction.",
+        "Explains that filtering temporarily shows matching rows and hides the rest without reordering data.",
+        "Uses a totals row or a function to summarize a numeric table column."
+      ],
+      "commonMisconceptions": [
+        "Sorting only a single column is safe when the values belong to full rows.",
+        "Filtering deletes rows that do not match the condition."
+      ],
+      "followUpProbes": [
+        { "level": "easy", "question": "What is the difference between sorting a sales table by amount and filtering it to show only one region?" },
+        { "level": "medium", "question": "A table has Name, Region, and Sales headers. How would you show only South rows without deleting the others?" },
+        { "level": "deep", "question": "You have five product rows with prices 20, 5, 12, 8, and 30. Explain how to sort by price while keeping product names paired with their prices, then get a total." }
+      ]
+    },
+    {
+      "id": "charts",
+      "name": "Charts",
+      "weight": 0.2,
+      "mo200Area": "Manage charts",
+      "sourceRefs": [1, 2, 7, 8],
+      "sourceStatus": "grounded",
+      "whatCorrectCovers": [
+        "Chooses a chart type that fits the question, such as columns for category comparisons or a line for change over time.",
+        "Selects a data range that includes the intended values and category labels.",
+        "Explains that a chart series represents related values and can be changed through data selection.",
+        "Adds a meaningful chart title and readable labels so the chart can be interpreted.",
+        "Avoids presenting a chart as evidence when the selected data range is incomplete or misleading."
+      ],
+      "commonMisconceptions": [
+        "Any chart type communicates any data equally well.",
+        "Changing chart labels changes the values in the worksheet."
+      ],
+      "followUpProbes": [
+        { "level": "easy", "question": "Which chart would you use to compare sales for Tea, Coffee, and Juice, and why?" },
+        { "level": "medium", "question": "A1:A4 has months and B1:B4 has sales 10, 12, 9, and 15. Explain what data you would select for a chart." },
+        { "level": "deep", "question": "A line chart shows monthly revenue from January to April. Explain how you would check its data range, add a title, and make clear what each axis means." }
+      ]
+    }
+  ]
+}
