@@ -1,0 +1,293 @@
+{
+  "session": {
+    "id": "7f64864a-91fa-40d4-8c37-213e066a8700",
+    "skill": "excel",
+    "language": "en",
+    "level": "new",
+    "status": "complete",
+    "understanding": 95,
+    "stalled": false,
+    "startedAt": "2026-11-24T15:05:41.989Z",
+    "updatedAt": "2026-11-24T15:05:42.187Z",
+    "voiceMode": "mock",
+    "mockQuestionIndex": 6,
+    "transcript": [
+      {
+        "speaker": "agent",
+        "text": "I am new to Excel. What is a worksheet, and how do sheet tabs help me move around a workbook?",
+        "createdAt": "2026-11-24T15:05:41.989Z"
+      },
+      {
+        "speaker": "candidate",
+        "text": "A workbook is the Excel file. Inside you have sheet tabs, each one is a worksheet. I can rename a tab by right-clicking it.",
+        "createdAt": "2026-11-24T15:05:42.089Z"
+      },
+      {
+        "speaker": "agent",
+        "text": "If A1 has 10 and I copy a formula from B1 to B2, why might the cell reference change? What does $A$1 mean?",
+        "createdAt": "2026-11-24T15:05:42.089Z"
+      },
+      {
+        "speaker": "candidate",
+        "text": "Every cell is identified by column letter and row number like B3. A range is A1:C4. A relative reference like =A2 changes when copied down. But $A$1 is absolute and stays fixed.",
+        "createdAt": "2026-11-24T15:05:42.121Z"
+      },
+      {
+        "speaker": "agent",
+        "text": "Could you show me a small numbers example using SUM or AVERAGE, starting with the equals sign?",
+        "createdAt": "2026-11-24T15:05:42.121Z"
+      },
+      {
+        "speaker": "candidate",
+        "text": "Formulas start with =. SUM adds numbers, AVERAGE gives the mean. =IF(B2>=50,\"Pass\",\"Fail\") checks a condition. I use cell references instead of typing values.",
+        "createdAt": "2026-11-24T15:05:42.134Z"
+      },
+      {
+        "speaker": "agent",
+        "text": "How would you show the same number as money, a percentage, or a date? Why does the number format matter?",
+        "createdAt": "2026-11-24T15:05:42.134Z"
+      },
+      {
+        "speaker": "candidate",
+        "text": "Number formats change display, not the value. 0.25 as percentage shows 25%. Currency adds a symbol. I select the range first, then apply format and use wrap text.",
+        "createdAt": "2026-11-24T15:05:42.144Z"
+      },
+      {
+        "speaker": "agent",
+        "text": "What makes an Excel table useful? Please explain headers, sorting, filtering, and a totals row.",
+        "createdAt": "2026-11-24T15:05:42.144Z"
+      },
+      {
+        "speaker": "candidate",
+        "text": "An Excel table has headers. Sorting rearranges complete rows. Filtering hides non-matching rows without deleting. A totals row can sum a column.",
+        "createdAt": "2026-11-24T15:05:42.158Z"
+      },
+      {
+        "speaker": "agent",
+        "text": "Thank you. I have asked my five practice questions. Goodbye.",
+        "createdAt": "2026-11-24T15:05:42.158Z"
+      },
+      {
+        "speaker": "candidate",
+        "text": "A column chart compares categories. A line chart shows change over time. I select data range with labels, add a chart title and label axes.",
+        "createdAt": "2026-11-24T15:05:42.172Z"
+      },
+      {
+        "speaker": "agent",
+        "text": "Thank you. I have asked my five practice questions. Goodbye.",
+        "createdAt": "2026-11-24T15:05:42.172Z"
+      }
+    ],
+    "criterionStates": [
+      {
+        "criterionId": "worksheets-workbooks-navigation",
+        "status": "partial",
+        "evidenceQuote": "A column chart compares categories. A line chart shows change over time. I select data range with labels, add a chart title and label axes."
+      },
+      {
+        "criterionId": "cells-ranges-references",
+        "status": "correct",
+        "evidenceQuote": "A column chart compares categories. A line chart shows change over time. I select data range with labels, add a chart title and label axes."
+      },
+      {
+        "criterionId": "formulas-functions",
+        "status": "correct",
+        "evidenceQuote": "A column chart compares categories. A line chart shows change over time. I select data range with labels, add a chart title and label axes."
+      },
+      {
+        "criterionId": "formatting-number-formats",
+        "status": "correct",
+        "evidenceQuote": "A column chart compares categories. A line chart shows change over time. I select data range with labels, add a chart title and label axes."
+      },
+      {
+        "criterionId": "tables-sorting-filtering",
+        "status": "correct",
+        "evidenceQuote": "A column chart compares categories. A line chart shows change over time. I select data range with labels, add a chart title and label axes."
+      },
+      {
+        "criterionId": "charts",
+        "status": "correct",
+        "evidenceQuote": "A column chart compares categories. A line chart shows change over time. I select data range with labels, add a chart title and label axes."
+      }
+    ],
+    "nextProbeCriterionId": "worksheets-workbooks-navigation",
+    "meterTrace": [
+      {
+        "turnIndex": 0,
+        "value": 0
+      },
+      {
+        "turnIndex": 1,
+        "value": 5
+      },
+      {
+        "turnIndex": 2,
+        "value": 50
+      },
+      {
+        "turnIndex": 3,
+        "value": 50
+      },
+      {
+        "turnIndex": 4,
+        "value": 60
+      },
+      {
+        "turnIndex": 5,
+        "value": 75
+      },
+      {
+        "turnIndex": 6,
+        "value": 95
+      }
+    ],
+    "completedAt": "2026-11-24T15:05:42.187Z",
+    "recordId": "7f64864a-91fa-40d4-8c37-213e066a8700"
+  },
+  "record": {
+    "id": "7f64864a-91fa-40d4-8c37-213e066a8700",
+    "sessionId": "7f64864a-91fa-40d4-8c37-213e066a8700",
+    "skill": "excel",
+    "language": "en",
+    "rubricVersion": "1.0.0",
+    "total": 95,
+    "overallLevel": "Ready to practise",
+    "scores": [
+      {
+        "criterionId": "worksheets-workbooks-navigation",
+        "label": "Worksheets, workbooks and navigation",
+        "status": "partial",
+        "score": 50,
+        "evidenceQuote": "A column chart compares categories. A line chart shows change over time. I select data range with labels, add a chart title and label axes.",
+        "reason": "Candidate evidence: A column chart compares categories. A line chart shows change over time. I select data range with labels, add a chart title and label axes.",
+        "improveTip": "Try explaining what happens when you right-click a sheet tab and how renaming a tab differs from renaming the file."
+      },
+      {
+        "criterionId": "cells-ranges-references",
+        "label": "Cells, ranges and references",
+        "status": "correct",
+        "score": 100,
+        "evidenceQuote": "A column chart compares categories. A line chart shows change over time. I select data range with labels, add a chart title and label axes.",
+        "reason": "Candidate evidence: A column chart compares categories. A line chart shows change over time. I select data range with labels, add a chart title and label axes."
+      },
+      {
+        "criterionId": "formulas-functions",
+        "label": "Formulas and functions",
+        "status": "correct",
+        "score": 100,
+        "evidenceQuote": "A column chart compares categories. A line chart shows change over time. I select data range with labels, add a chart title and label axes.",
+        "reason": "Candidate evidence: A column chart compares categories. A line chart shows change over time. I select data range with labels, add a chart title and label axes."
+      },
+      {
+        "criterionId": "formatting-number-formats",
+        "label": "Formatting cells and number formats",
+        "status": "correct",
+        "score": 100,
+        "evidenceQuote": "A column chart compares categories. A line chart shows change over time. I select data range with labels, add a chart title and label axes.",
+        "reason": "Candidate evidence: A column chart compares categories. A line chart shows change over time. I select data range with labels, add a chart title and label axes."
+      },
+      {
+        "criterionId": "tables-sorting-filtering",
+        "label": "Tables, sorting and filtering",
+        "status": "correct",
+        "score": 100,
+        "evidenceQuote": "A column chart compares categories. A line chart shows change over time. I select data range with labels, add a chart title and label axes.",
+        "reason": "Candidate evidence: A column chart compares categories. A line chart shows change over time. I select data range with labels, add a chart title and label axes."
+      },
+      {
+        "criterionId": "charts",
+        "label": "Charts",
+        "status": "correct",
+        "score": 100,
+        "evidenceQuote": "A column chart compares categories. A line chart shows change over time. I select data range with labels, add a chart title and label axes.",
+        "reason": "Candidate evidence: A column chart compares categories. A line chart shows change over time. I select data range with labels, add a chart title and label axes."
+      }
+    ],
+    "meterTrace": [
+      {
+        "turnIndex": 0,
+        "value": 0
+      },
+      {
+        "turnIndex": 1,
+        "value": 5
+      },
+      {
+        "turnIndex": 2,
+        "value": 50
+      },
+      {
+        "turnIndex": 3,
+        "value": 50
+      },
+      {
+        "turnIndex": 4,
+        "value": 60
+      },
+      {
+        "turnIndex": 5,
+        "value": 75
+      },
+      {
+        "turnIndex": 6,
+        "value": 95
+      }
+    ],
+    "tooShort": false,
+    "issuedAt": "2026-11-24T15:05:42.185Z"
+  },
+  "timings": [
+    {
+      "turnIndex": 0,
+      "offsetMs": 2500
+    },
+    {
+      "turnIndex": 1,
+      "offsetMs": 5000
+    },
+    {
+      "turnIndex": 2,
+      "offsetMs": 7500
+    },
+    {
+      "turnIndex": 3,
+      "offsetMs": 10000
+    },
+    {
+      "turnIndex": 4,
+      "offsetMs": 12500
+    },
+    {
+      "turnIndex": 5,
+      "offsetMs": 15000
+    },
+    {
+      "turnIndex": 6,
+      "offsetMs": 17500
+    },
+    {
+      "turnIndex": 7,
+      "offsetMs": 20000
+    },
+    {
+      "turnIndex": 8,
+      "offsetMs": 22500
+    },
+    {
+      "turnIndex": 9,
+      "offsetMs": 25000
+    },
+    {
+      "turnIndex": 10,
+      "offsetMs": 27500
+    },
+    {
+      "turnIndex": 11,
+      "offsetMs": 30000
+    },
+    {
+      "turnIndex": 12,
+      "offsetMs": 32500
+    }
+  ]
+}
