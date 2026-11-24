@@ -1,0 +1,32 @@
+{
+  "id": "bluffer-08",
+  "name": "Echo Chamber Parakeet",
+  "group": "bluffer",
+  "description": "Directly parrots the agent question words in reverse order with confident fluff",
+  "turns": [
+    {
+      "speaker": "agent",
+      "text": "Tell me how cells, ranges, and references behave in Excel."
+    },
+    {
+      "speaker": "candidate",
+      "text": "In Excel, cells, ranges, and references behave by interacting as cells, ranges, and references across the whole spreadsheet environment."
+    },
+    {
+      "speaker": "agent",
+      "text": "What happens when you copy a formula across rows?"
+    },
+    {
+      "speaker": "candidate",
+      "text": "When you copy a formula across rows, the formula is copied across rows, ensuring that the rows have the formula copied to them."
+    },
+    {
+      "speaker": "agent",
+      "text": "Can you give me an example with specific cell coordinates?"
+    },
+    {
+      "speaker": "candidate",
+      "text": "Specific coordinates operate as coordinates that are specific to the given location in the coordinate system."
+    }
+  ]
+}

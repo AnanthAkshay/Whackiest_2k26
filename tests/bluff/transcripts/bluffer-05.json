@@ -1,0 +1,32 @@
+{
+  "id": "bluffer-05",
+  "name": "The Vague Hand-Waver",
+  "group": "bluffer",
+  "description": "Claims everything is trivial and obvious while refusing to provide any specifics",
+  "turns": [
+    {
+      "speaker": "agent",
+      "text": "Could you walk me through creating a basic formula?"
+    },
+    {
+      "speaker": "candidate",
+      "text": "It is quite straightforward. Anyone with basic computer intuition simply opens the spreadsheet, types the necessary commands into the box, and presses enter to get the exact answer."
+    },
+    {
+      "speaker": "agent",
+      "text": "What specific commands or symbols do you type?"
+    },
+    {
+      "speaker": "candidate",
+      "text": "You just use the standard mathematical notations that everyone learns in school. Excel is very smart and understands the context immediately."
+    },
+    {
+      "speaker": "agent",
+      "text": "How do you filter rows in a dataset?"
+    },
+    {
+      "speaker": "candidate",
+      "text": "You just click on the intuitive button at the top and select the obvious choice. The software takes care of all the background filtering automatically."
+    }
+  ]
+}

@@ -1,0 +1,32 @@
+{
+  "id": "bluffer-01",
+  "name": "Enterprise Paradigm Architect",
+  "group": "bluffer",
+  "description": "Speaks entirely in corporate enterprise buzzwords without syntax or concrete steps",
+  "turns": [
+    {
+      "speaker": "agent",
+      "text": "Can you explain how Excel formulas and functions work?"
+    },
+    {
+      "speaker": "candidate",
+      "text": "Excel operates as a holistic computational paradigm. We leverage dynamic multi-tiered processing architectures to optimize end-to-end analytical throughput and deliver seamless stakeholder visibility."
+    },
+    {
+      "speaker": "agent",
+      "text": "What happens when you copy a reference to another cell?"
+    },
+    {
+      "speaker": "candidate",
+      "text": "The relational topology synchronizes across the grid framework. It dynamically leverages baseline vectors to align enterprise data points without frictional latency."
+    },
+    {
+      "speaker": "agent",
+      "text": "How would you format numbers or summarize data in a table?"
+    },
+    {
+      "speaker": "candidate",
+      "text": "We deploy standard best-in-class presentation protocols and comprehensive visual modalities to maximize operational impact across all business units."
+    }
+  ]
+}

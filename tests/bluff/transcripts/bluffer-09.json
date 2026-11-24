@@ -1,0 +1,32 @@
+{
+  "id": "bluffer-09",
+  "name": "Executive Visionary",
+  "group": "bluffer",
+  "description": "Treats the viva like a board presentation on digital transformation",
+  "turns": [
+    {
+      "speaker": "agent",
+      "text": "How do you ensure data reliability in an Excel budget?"
+    },
+    {
+      "speaker": "candidate",
+      "text": "Data reliability requires holistic leadership alignment, zero-trust organizational culture, and proactive stakeholder governance across all operational deliverables."
+    },
+    {
+      "speaker": "agent",
+      "text": "Do you use formulas like SUM or IF to check figures?"
+    },
+    {
+      "speaker": "candidate",
+      "text": "We empower frontline teams with strategic accountability metrics rather than micromanaging low-level procedural calculations in individual software applications."
+    },
+    {
+      "speaker": "agent",
+      "text": "How do you present the budget variances to management?"
+    },
+    {
+      "speaker": "candidate",
+      "text": "Through high-impact strategic storytelling and visionary deck presentations that focus on macro outcomes rather than cell-level details."
+    }
+  ]
+}

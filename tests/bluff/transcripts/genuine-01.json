@@ -1,0 +1,40 @@
+{
+  "id": "genuine-01",
+  "name": "Strong Technical Candidate",
+  "group": "genuine",
+  "description": "Thorough, structured explanation with exact syntax and concrete examples",
+  "turns": [
+    {
+      "speaker": "agent",
+      "text": "Let us start with worksheets and workbooks. Can you explain the difference?"
+    },
+    {
+      "speaker": "candidate",
+      "text": "A workbook is the entire Excel file, like sales_2026.xlsx. Inside it you have individual sheet tabs like January and February. You can right-click a sheet tab to rename it or drag it to reorder."
+    },
+    {
+      "speaker": "agent",
+      "text": "How do cells and references work when copying formulas?"
+    },
+    {
+      "speaker": "candidate",
+      "text": "A cell is addressed by column letter and row number, like B3. When I write =A2 and copy it down one row, it becomes =A3 because it is a relative reference. But $A$1 is an absolute reference where dollar signs lock both column and row so it does not change when copied."
+    },
+    {
+      "speaker": "agent",
+      "text": "How do formulas and functions work?"
+    },
+    {
+      "speaker": "candidate",
+      "text": "Every formula starts with an equals sign. =SUM(A1:A10) adds the numbers in that range. For logic, =IF(B2>=50,\"Pass\",\"Fail\") tests a condition. I also use AVERAGE for means and COUNT for numbers."
+    },
+    {
+      "speaker": "agent",
+      "text": "Tell me about formatting, tables, and charts."
+    },
+    {
+      "speaker": "candidate",
+      "text": "Number formats change appearance: 0.1 becomes 10% under percent format, and currency adds ₹ or $. In tables, header rows let you sort all rows together or filter to hide non-matching rows. For charts, I select data like A1:B5 and add a clear chart title and label axes."
+    }
+  ]
+}

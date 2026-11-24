@@ -1,0 +1,32 @@
+{
+  "id": "bluffer-10",
+  "name": "Jargon Overloader",
+  "group": "bluffer",
+  "description": "Piles on pseudo-technical terminology without any spreadsheet coherence",
+  "turns": [
+    {
+      "speaker": "agent",
+      "text": "Can you explain how Excel manages tables and sorting?"
+    },
+    {
+      "speaker": "candidate",
+      "text": "Tabular schemas utilize B-tree indexation structures with relational normalization protocols to serialize column matrices during algorithmic rearrangement cycles."
+    },
+    {
+      "speaker": "agent",
+      "text": "How do you sort a table without mixing up rows?"
+    },
+    {
+      "speaker": "candidate",
+      "text": "We enforce atomic transactional integrity across the tuple array to prevent asynchronous serialization anomalies across memory buffers."
+    },
+    {
+      "speaker": "agent",
+      "text": "What formula would you use to get the column total?"
+    },
+    {
+      "speaker": "candidate",
+      "text": "An asynchronous map-reduce aggregation kernel executed against the columnar storage pipeline."
+    }
+  ]
+}

@@ -1,0 +1,32 @@
+{
+  "id": "bluffer-03",
+  "name": "AI & Big Data Name-Dropper",
+  "group": "bluffer",
+  "description": "Name-drops neural networks, cloud computing, and machine learning instead of basic Excel",
+  "turns": [
+    {
+      "speaker": "agent",
+      "text": "How do you add up numbers in Excel?"
+    },
+    {
+      "speaker": "candidate",
+      "text": "In enterprise workflows, we pipe raw numerical telemetry into deep learning microservices that ingest high-velocity data lakes for predictive aggregation."
+    },
+    {
+      "speaker": "agent",
+      "text": "Can you explain what relative and absolute references are?"
+    },
+    {
+      "speaker": "candidate",
+      "text": "Those are legacy algorithmic pointers in memory registers. In modern distributed cloud infrastructures, quantum addressing paradigms supersede localized index mapping."
+    },
+    {
+      "speaker": "agent",
+      "text": "How would you present this data in a chart?"
+    },
+    {
+      "speaker": "candidate",
+      "text": "We render immersive 3D generative dashboards utilizing neural heuristics that synthesize predictive telemetry into real-time executive cognitive interfaces."
+    }
+  ]
+}

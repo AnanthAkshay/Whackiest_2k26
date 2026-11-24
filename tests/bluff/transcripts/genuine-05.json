@@ -1,0 +1,32 @@
+{
+  "id": "genuine-05",
+  "name": "School Gradebook Teacher",
+  "group": "genuine",
+  "description": "Tracks student marks, averages, pass/fail status, and grade distribution charts",
+  "turns": [
+    {
+      "speaker": "agent",
+      "text": "How do you calculate student marks in your spreadsheet?"
+    },
+    {
+      "speaker": "candidate",
+      "text": "Student scores are in columns B through F. In column G, I write =SUM(B2:F2) to get total marks, and in column H I write =AVERAGE(B2:F2) to get their percentage average."
+    },
+    {
+      "speaker": "agent",
+      "text": "How do you determine if a student passed?"
+    },
+    {
+      "speaker": "candidate",
+      "text": "I use =IF(H2>=40,\"Pass\",\"Fail\"). If average H2 is at least 40, it shows Pass. When I copy this formula down to row 30, relative references automatically evaluate each student."
+    },
+    {
+      "speaker": "agent",
+      "text": "How do you show the pass rate to parents?"
+    },
+    {
+      "speaker": "candidate",
+      "text": "I select data for the Pass and Fail counts and insert a chart. I add a title like Term 1 Results and label each slice so parents see the breakdown clearly."
+    }
+  ]
+}

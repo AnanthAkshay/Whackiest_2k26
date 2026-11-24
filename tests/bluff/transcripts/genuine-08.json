@@ -1,0 +1,32 @@
+{
+  "id": "genuine-08",
+  "name": "Customer Support Team Lead",
+  "group": "genuine",
+  "description": "Tracks ticket volumes, resolution averages, customer satisfaction percentages",
+  "turns": [
+    {
+      "speaker": "agent",
+      "text": "How do you measure weekly ticket resolution?"
+    },
+    {
+      "speaker": "candidate",
+      "text": "Tickets resolved per agent are in B2:B25. I calculate team average with =AVERAGE(B2:B25) and total with =SUM(B2:B25). Every calculation begins with =."
+    },
+    {
+      "speaker": "agent",
+      "text": "What if an agent has special bonus multiplier in cell $F$1?"
+    },
+    {
+      "speaker": "candidate",
+      "text": "In C2 I write =B2*$F$1. The dollar signs lock F1 as an absolute reference, so when I copy the formula down to C25, B2 becomes B3, B4, but $F$1 stays locked."
+    },
+    {
+      "speaker": "agent",
+      "text": "How do you present satisfaction scores?"
+    },
+    {
+      "speaker": "candidate",
+      "text": "Satisfaction decimal 0.92 is formatted using percent format to display as 92%. In the table header, I sort by satisfaction score descending to recognize top performers."
+    }
+  ]
+}

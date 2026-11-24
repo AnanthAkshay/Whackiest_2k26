@@ -1,0 +1,32 @@
+{
+  "id": "genuine-09",
+  "name": "Logistics Dispatcher",
+  "group": "genuine",
+  "description": "Practical explanation of delivery times, sorting routes, and fuel allowance calculations",
+  "turns": [
+    {
+      "speaker": "agent",
+      "text": "How do you calculate delivery allowances?"
+    },
+    {
+      "speaker": "candidate",
+      "text": "Fuel rate per kilometer is in cell $A$1. For trip distance in B2, the allowance is =B2*$A$1. Because $A$1 is absolute, copying it down to row 50 maintains the same fuel rate."
+    },
+    {
+      "speaker": "agent",
+      "text": "How do you check for overtime trips?"
+    },
+    {
+      "speaker": "candidate",
+      "text": "I use =IF(C2>8,\"Overtime\",\"Standard\"). If driving hours in C2 exceed 8, it flags Overtime. I also use =SUM(D2:D50) to get the total daily allowance."
+    },
+    {
+      "speaker": "agent",
+      "text": "How do you organize the route sheets and charts?"
+    },
+    {
+      "speaker": "candidate",
+      "text": "Each dispatch day has its own worksheet tab in the workbook. In the dispatch table, I sort by delivery priority. I select data and make a chart comparing trips by zone with a title."
+    }
+  ]
+}

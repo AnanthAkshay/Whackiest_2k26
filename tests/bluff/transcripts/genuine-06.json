@@ -1,0 +1,32 @@
+{
+  "id": "genuine-06",
+  "name": "Budgeting Assistant (Imperfect Syntax)",
+  "group": "genuine",
+  "description": "Understands core principles and references, occasionally imperfect on advanced features",
+  "turns": [
+    {
+      "speaker": "agent",
+      "text": "What is the difference between a workbook and sheets?"
+    },
+    {
+      "speaker": "candidate",
+      "text": "The workbook is the file on my computer. Inside, I have multiple worksheet tabs, one for each department like Marketing and Operations. I can click a sheet tab to jump between them."
+    },
+    {
+      "speaker": "agent",
+      "text": "How do you total each department budget?"
+    },
+    {
+      "speaker": "candidate",
+      "text": "I use =SUM(C2:C15) to sum expenses. If I want the maximum expense, I write =MAX(C2:C15), and for lowest, =MIN(C2:C15). All formulas must start with =."
+    },
+    {
+      "speaker": "agent",
+      "text": "Explain absolute references and percent formatting."
+    },
+    {
+      "speaker": "candidate",
+      "text": "If company growth rate is in cell A1, I write =B2*$A$1 so when I copy it, $A$1 stays fixed as an absolute reference. To show 0.05 as 5%, I select the cell and click percent format."
+    }
+  ]
+}

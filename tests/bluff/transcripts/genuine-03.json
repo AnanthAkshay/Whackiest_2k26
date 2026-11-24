@@ -1,0 +1,40 @@
+{
+  "id": "genuine-03",
+  "name": "Imperfect But Clear Beginner",
+  "group": "genuine",
+  "description": "Explains basic formulas and cell references well with examples, slightly informal on charts",
+  "turns": [
+    {
+      "speaker": "agent",
+      "text": "Can you explain how to add numbers in Excel?"
+    },
+    {
+      "speaker": "candidate",
+      "text": "You always begin with the equals sign in the cell. To add cells from A1 to A5, you type =SUM(A1:A5) and hit enter. It adds up all the values in that range."
+    },
+    {
+      "speaker": "agent",
+      "text": "What happens if you drag that formula to the next column?"
+    },
+    {
+      "speaker": "candidate",
+      "text": "If you drag =SUM(A1:A5) from column A to column B, it becomes =SUM(B1:B5) because the column letters shift. But if you wrote =$A$1, the dollar signs keep it locked as an absolute reference so it will not copy differently."
+    },
+    {
+      "speaker": "agent",
+      "text": "How would you show only high sales in your table?"
+    },
+    {
+      "speaker": "candidate",
+      "text": "You turn on filter on the table header row. Then you click the little arrow on Sales and uncheck small numbers so only high ones show. It does not delete anything, just hides them."
+    },
+    {
+      "speaker": "agent",
+      "text": "How do you make a chart?"
+    },
+    {
+      "speaker": "candidate",
+      "text": "I select data with labels, click insert column chart, and type a title at the top so people know what it is."
+    }
+  ]
+}

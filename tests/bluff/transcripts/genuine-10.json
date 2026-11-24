@@ -1,0 +1,32 @@
+{
+  "id": "genuine-10",
+  "name": "Marketing Campaign Specialist",
+  "group": "genuine",
+  "description": "Explains ad click metrics, conversion rate percentages, ROI formulas, and comparisons",
+  "turns": [
+    {
+      "speaker": "agent",
+      "text": "How do you evaluate digital campaign spend in Excel?"
+    },
+    {
+      "speaker": "candidate",
+      "text": "I have columns for Clicks, Conversions, and Cost. In conversion rate column, I write =B2/A2 and format it as percent format so 0.04 displays as 4%."
+    },
+    {
+      "speaker": "agent",
+      "text": "How do you sum up costs and find if a campaign was profitable?"
+    },
+    {
+      "speaker": "candidate",
+      "text": "I sum total spend with =SUM(C2:C20). To check profitability, I use =IF(D2>C2,\"Profitable\",\"Loss\"). Formulas always start with an equals sign."
+    },
+    {
+      "speaker": "agent",
+      "text": "How do you compare performance between channels?"
+    },
+    {
+      "speaker": "candidate",
+      "text": "In my campaign table, I filter to isolate Facebook or Google ads. Then I select data for spend versus revenue and build a column chart, adding a title and axis label for clarity."
+    }
+  ]
+}

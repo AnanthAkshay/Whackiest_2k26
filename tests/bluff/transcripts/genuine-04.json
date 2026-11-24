@@ -1,0 +1,32 @@
+{
+  "id": "genuine-04",
+  "name": "Retail Inventory Manager",
+  "group": "genuine",
+  "description": "Focuses on stock levels, product tables, sorting, and conditional restock alerts",
+  "turns": [
+    {
+      "speaker": "agent",
+      "text": "How do you manage inventory records in Excel?"
+    },
+    {
+      "speaker": "candidate",
+      "text": "I keep a table with headers like Item, Quantity, and ReorderLevel. To find low stock items, I can sort the table by Quantity ascending, which moves entire rows together so product names stay matched."
+    },
+    {
+      "speaker": "agent",
+      "text": "How do you flag items that need reordering?"
+    },
+    {
+      "speaker": "candidate",
+      "text": "In column D I use an IF formula: =IF(B2<=C2,\"Reorder\",\"OK\"). If the current stock B2 is less than reorder level C2, it says Reorder. I copy this down all rows."
+    },
+    {
+      "speaker": "agent",
+      "text": "How do you format long product descriptions and prices?"
+    },
+    {
+      "speaker": "candidate",
+      "text": "For long names I turn on wrap text and adjust alignment so the text fits nicely without spilling over. For prices, I apply currency format."
+    }
+  ]
+}

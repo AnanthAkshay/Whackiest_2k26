@@ -1,0 +1,32 @@
+{
+  "id": "bluffer-02",
+  "name": "Circular Tautologist",
+  "group": "bluffer",
+  "description": "Repeats the question concepts circularly with supreme confidence",
+  "turns": [
+    {
+      "speaker": "agent",
+      "text": "Can you explain the difference between a workbook and a worksheet?"
+    },
+    {
+      "speaker": "candidate",
+      "text": "A workbook is a book where you do work, and a worksheet is a sheet where work happens. They are intrinsically related because sheets live inside books to enable working."
+    },
+    {
+      "speaker": "agent",
+      "text": "How do formulas calculate results in Excel?"
+    },
+    {
+      "speaker": "candidate",
+      "text": "Calculations occur when formulas execute computational calculations. The system processes the calculations mathematically to formulate the final calculated result."
+    },
+    {
+      "speaker": "agent",
+      "text": "What is the difference between sorting and filtering?"
+    },
+    {
+      "speaker": "candidate",
+      "text": "Sorting is fundamentally about sorting the elements, whereas filtering is distinctly about applying filters. Each one carries out its dedicated functionality."
+    }
+  ]
+}

@@ -1,0 +1,6 @@
+sessionId,language,rubricVersion,aiTotal,aiScore_worksheets-workbooks-navigation,aiScore_cells-ranges-references,aiScore_formulas-functions,aiScore_formatting-number-formats,aiScore_tables-sorting-filtering,aiScore_charts,reviewerScore_worksheets-workbooks-navigation,reviewerScore_cells-ranges-references,reviewerScore_formulas-functions,reviewerScore_formatting-number-formats,reviewerScore_tables-sorting-filtering,reviewerScore_charts,reviewerTotal
+rev-genuine-03,en,1.0.0,80,0,100,100,0,100,100,0,100,100,0,100,100,80
+rev-genuine-02,en,1.0.0,73,0,50,100,100,50,100,0,80,100,90,0,100,70
+rev-genuine-01,en,1.0.0,95,50,100,100,100,100,100,80,100,100,100,100,100,98
+c321274d-c447-4ae5-a332-5a2e26a76379,en,1.0.0,33,0,100,50,0,0,0,0,70,50,0,0,0,30
+9689c222-f367-45da-8552-f25a757be792,en,1.0.0,33,0,100,50,0,0,0,0,75,50,0,0,0,28

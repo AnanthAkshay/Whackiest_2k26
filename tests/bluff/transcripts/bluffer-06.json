@@ -1,0 +1,32 @@
+{
+  "id": "bluffer-06",
+  "name": "Misconception Confident Bluffer",
+  "group": "bluffer",
+  "description": "Extremely confident candidate who confidently states common misconceptions",
+  "turns": [
+    {
+      "speaker": "agent",
+      "text": "How should an Excel formula begin, and how do references work?"
+    },
+    {
+      "speaker": "candidate",
+      "text": "Every advanced formula should start with # in the formula bar. When dealing with addresses, $A$1 is a relative reference because dollar signs indicate currency amounts in financial sheets."
+    },
+    {
+      "speaker": "agent",
+      "text": "What happens when you copy that reference down a column?"
+    },
+    {
+      "speaker": "candidate",
+      "text": "An absolute reference changes every time you copy it because it dynamically updates across rows to keep up with the new entries."
+    },
+    {
+      "speaker": "agent",
+      "text": "How does SUM handle different types of data?"
+    },
+    {
+      "speaker": "candidate",
+      "text": "The SUM is only for text concatenation, whereas plus operators handle all raw mathematics."
+    }
+  ]
+}

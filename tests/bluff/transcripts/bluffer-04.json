@@ -1,0 +1,32 @@
+{
+  "id": "bluffer-04",
+  "name": "Consulting Framework Pitcher",
+  "group": "bluffer",
+  "description": "Presents McKinsey-style advisory slide concepts with zero spreadsheet substance",
+  "turns": [
+    {
+      "speaker": "agent",
+      "text": "How do you write an IF condition in Excel?"
+    },
+    {
+      "speaker": "candidate",
+      "text": "Decision matrices require robust strategic decision tree governance. We structure binary choice architecture around value-chain optimization and core stakeholder buy-in."
+    },
+    {
+      "speaker": "agent",
+      "text": "What happens if a cell reference has a dollar sign like $A$1?"
+    },
+    {
+      "speaker": "candidate",
+      "text": "The dollar notation is part of our strategic monetization framework, ensuring fiscal guardrails and currency compliance across all financial spreadsheets."
+    },
+    {
+      "speaker": "agent",
+      "text": "How do you sort customer data by order volume?"
+    },
+    {
+      "speaker": "candidate",
+      "text": "We apply a top-down Pareto prioritization framework to rank order pipelines based on quarterly run-rate synergies."
+    }
+  ]
+}

@@ -1,0 +1,32 @@
+{
+  "id": "genuine-02",
+  "name": "Practical Financial Analyst",
+  "group": "genuine",
+  "description": "Focused on revenue calculations, tax references, and financial reporting",
+  "turns": [
+    {
+      "speaker": "agent",
+      "text": "How do you calculate tax and totals in an invoice sheet?"
+    },
+    {
+      "speaker": "candidate",
+      "text": "I put the tax rate 18% in cell $B$1. In column D I write =C2*$B$1 to compute tax for item 1. When I copy this formula down to row 20, the relative reference C2 becomes C3, but $B$1 stays fixed because it is an absolute reference."
+    },
+    {
+      "speaker": "agent",
+      "text": "How do you calculate the grand total and average invoice size?"
+    },
+    {
+      "speaker": "candidate",
+      "text": "At the bottom, say D21, I write =SUM(D2:D20) to add all the amounts. Then in D22 I use =AVERAGE(D2:D20) to find the average invoice amount. Both formulas start with equals."
+    },
+    {
+      "speaker": "agent",
+      "text": "How do you format these amounts and present monthly trends?"
+    },
+    {
+      "speaker": "candidate",
+      "text": "I select column D and apply currency format so it shows the currency symbol and two decimals. For trends over months, I select the month names and revenue totals to insert a line chart with a descriptive title."
+    }
+  ]
+}

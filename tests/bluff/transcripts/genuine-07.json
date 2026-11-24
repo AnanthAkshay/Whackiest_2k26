@@ -1,0 +1,32 @@
+{
+  "id": "genuine-07",
+  "name": "HR Operations Specialist",
+  "group": "genuine",
+  "description": "Explains employee lists, filtering by department, counting heads, and salary formatting",
+  "turns": [
+    {
+      "speaker": "agent",
+      "text": "How do you organize employee data in Excel?"
+    },
+    {
+      "speaker": "candidate",
+      "text": "I convert the employee list into an Excel table with a header row containing ID, Name, Department, and Salary. That way I can filter by Department to view only Engineering without deleting other staff."
+    },
+    {
+      "speaker": "agent",
+      "text": "How do you count employees and find total salary?"
+    },
+    {
+      "speaker": "candidate",
+      "text": "To count employees with IDs, I use =COUNT(A2:A100) because COUNT handles numbers. For salary expense, I write =SUM(D2:D100). Both formulas start with =."
+    },
+    {
+      "speaker": "agent",
+      "text": "How do you format salary numbers and visualize department headcount?"
+    },
+    {
+      "speaker": "candidate",
+      "text": "I select the salary column and choose currency format. For headcounts, I select data for departments and create a column chart with title 'Headcount by Department' and axis labels."
+    }
+  ]
+}

@@ -1,0 +1,32 @@
+{
+  "id": "bluffer-07",
+  "name": "Menu Clicker & UI Guesser",
+  "group": "bluffer",
+  "description": "Describes clicking around the screen and ribbon tabs without knowing how formulas work",
+  "turns": [
+    {
+      "speaker": "agent",
+      "text": "Can you explain how to calculate the average of five numbers?"
+    },
+    {
+      "speaker": "candidate",
+      "text": "I navigate to the top ribbon, look through the menus until I see the little math symbol, click the dropdown menu, and choose the third option in the pop-up modal."
+    },
+    {
+      "speaker": "agent",
+      "text": "What does the resulting formula look like in the cell?"
+    },
+    {
+      "speaker": "candidate",
+      "text": "It puts some letters and brackets inside the cell bar. You do not really need to inspect what is inside because the software calculates it automatically."
+    },
+    {
+      "speaker": "agent",
+      "text": "How do you select data for a chart?"
+    },
+    {
+      "speaker": "candidate",
+      "text": "You drag your mouse randomly over the screen until a pretty graphic appears, then you right click to change the color scheme."
+    }
+  ]
+}
