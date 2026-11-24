@@ -1,0 +1,32 @@
+{
+  "name": "viva-teach-back",
+  "version": "0.1.0",
+  "private": true,
+  "workspaces": [
+    "web",
+    "api"
+  ],
+  "engines": {
+    "node": ">=20"
+  },
+  "scripts": {
+    "dev": "concurrently -n web,api -c magenta,cyan \"npm run dev --workspace web\" \"npm run dev --workspace api\"",
+    "typecheck": "npm run typecheck --workspace web && npm run typecheck --workspace api",
+    "build": "npm run build --workspace web && npm run build --workspace api",
+    "test": "npm run test --workspace api",
+    "rubric:report": "npm run rubric:report --workspace api",
+    "eval:fixtures": "npm run eval:fixtures --workspace api",
+    "demo:record": "npm run demo:record --workspace api",
+    "test:bluff": "tsx tests/bluff/runBluffTest.ts",
+    "reviewer:export": "tsx tests/reviewer/exportReviewerData.ts",
+    "reviewer:compare": "tsx tests/reviewer/compareReviewerData.ts",
+    "smoke": "tsx scripts/smoke.ts",
+    "deploy:build": "npm run build --workspace api && node -e \"require('fs').cpSync('rubrics', 'api/rubrics', {recursive: true})\" && npm run build --workspace web",
+    "deploy:infra": "cd infra && sam build && sam deploy",
+    "deploy:web": "tsx scripts/deployWeb.ts",
+    "deploy": "npm run deploy:build && npm run deploy:infra && npm run deploy:web"
+  },
+  "devDependencies": {
+    "concurrently": "^9.1.2"
+  }
+}
