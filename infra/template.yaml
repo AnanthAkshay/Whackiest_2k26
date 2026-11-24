@@ -1,0 +1,450 @@
+AWSTemplateFormatVersion: "2010-09-09"
+Transform: AWS::Serverless-2016-10-31
+Description: >
+  Viva Teach-Back – serverless backend and static web hosting.
+
+Globals:
+  Function:
+    Runtime: nodejs20.x
+    MemorySize: 256
+    Timeout: 30
+    Architectures: [arm64]
+    Environment:
+      Variables:
+        MOCK_MODE: "0"
+        AWS_SESSIONS_TABLE: !Ref SessionsTable
+        AWS_CREDENTIALS_TABLE: !Ref CredentialsTable
+        BEDROCK_MODEL_ID: !Ref BedrockModelId
+        ELEVENLABS_API_KEY: !Ref ElevenLabsApiKey
+        ELEVENLABS_AGENT_ID: !Ref ElevenLabsAgentId
+        RUBRICS_DIR: /var/task/rubrics
+        CORS_ORIGIN: !Sub "https://${CloudFrontDistribution.DomainName}"
+        PAGE_SECRET: !Ref PageSecret
+        AWS_S3_BUCKET: !Ref WebBucket
+        ADMIN_KEY: !Ref AdminKey
+        COST_CAP_INR: !Ref CostCapInr
+        MAX_SESSION_DURATION_SECONDS: !Ref MaxSessionDurationSeconds
+
+Parameters:
+  BedrockModelId:
+    Type: String
+    Default: us.anthropic.claude-3-5-sonnet-20241022-v2:0
+    Description: Bedrock model id (use an inference profile ARN if cross-region).
+  ElevenLabsApiKey:
+    Type: String
+    NoEcho: true
+    Default: ""
+    Description: ElevenLabs API key (leave empty to skip voice).
+  ElevenLabsAgentId:
+    Type: String
+    Default: ""
+    Description: ElevenLabs agent id.
+  PageSecret:
+    Type: String
+    NoEcho: true
+    Description: HMAC-SHA256 secret for Skill Page seals.
+  AdminKey:
+    Type: String
+    NoEcho: true
+    Default: ""
+    Description: API key for the admin costs endpoint.
+  CostCapInr:
+    Type: Number
+    Default: 25
+    Description: Per-session cost cap in INR (0 = no cap).
+  MaxSessionDurationSeconds:
+    Type: Number
+    Default: 600
+    Description: Hard max session duration in seconds.
+
+Resources:
+  # ───────── DynamoDB ─────────
+  SessionsTable:
+    Type: AWS::DynamoDB::Table
+    Properties:
+      TableName: !Sub "${AWS::StackName}-sessions"
+      BillingMode: PAY_PER_REQUEST
+      SSESpecification:
+        SSEEnabled: true
+      KeySchema:
+        - AttributeName: sessionId
+          KeyType: HASH
+      AttributeDefinitions:
+        - AttributeName: sessionId
+          AttributeType: S
+
+  CredentialsTable:
+    Type: AWS::DynamoDB::Table
+    Properties:
+      TableName: !Sub "${AWS::StackName}-credentials"
+      BillingMode: PAY_PER_REQUEST
+      SSESpecification:
+        SSEEnabled: true
+      KeySchema:
+        - AttributeName: pageId
+          KeyType: HASH
+      AttributeDefinitions:
+        - AttributeName: pageId
+          AttributeType: S
+        - AttributeName: sessionId
+          AttributeType: S
+      GlobalSecondaryIndexes:
+        - IndexName: sessionId-index
+          KeySchema:
+            - AttributeName: sessionId
+              KeyType: HASH
+          Projection:
+            ProjectionType: ALL
+
+  # ───────── S3 + CloudFront ─────────
+  WebBucket:
+    Type: AWS::S3::Bucket
+    Properties:
+      BucketName: !Sub "${AWS::StackName}-web"
+      PublicAccessBlockConfiguration:
+        BlockPublicAcls: true
+        BlockPublicPolicy: true
+        IgnorePublicAcls: true
+        RestrictPublicBuckets: true
+
+  WebBucketPolicy:
+    Type: AWS::S3::BucketPolicy
+    Properties:
+      Bucket: !Ref WebBucket
+      PolicyDocument:
+        Version: "2012-10-17"
+        Statement:
+          - Effect: Allow
+            Principal:
+              Service: cloudfront.amazonaws.com
+            Action: s3:GetObject
+            Resource: !Sub "${WebBucket.Arn}/*"
+            Condition:
+              StringEquals:
+                AWS:SourceArn: !Sub "arn:aws:cloudfront::${AWS::AccountId}:distribution/${CloudFrontDistribution}"
+
+  CloudFrontOAC:
+    Type: AWS::CloudFront::OriginAccessControl
+    Properties:
+      OriginAccessControlConfig:
+        Name: !Sub "${AWS::StackName}-oac"
+        OriginAccessControlOriginType: s3
+        SigningBehavior: always
+        SigningProtocol: sigv4
+
+  CloudFrontDistribution:
+    Type: AWS::CloudFront::Distribution
+    Properties:
+      DistributionConfig:
+        Enabled: true
+        DefaultRootObject: index.html
+        Origins:
+          - Id: s3-web
+            DomainName: !GetAtt WebBucket.RegionalDomainName
+            OriginAccessControlId: !Ref CloudFrontOAC
+            S3OriginConfig:
+              OriginAccessIdentity: ""
+          - Id: api-gateway
+            DomainName: !Sub "${HttpApi}.execute-api.${AWS::Region}.amazonaws.com"
+            CustomOriginConfig:
+              OriginProtocolPolicy: https-only
+        DefaultCacheBehavior:
+          TargetOriginId: s3-web
+          ViewerProtocolPolicy: redirect-to-https
+          CachePolicyId: 658327ea-f89d-4fab-a63d-7e88639e58f6  # CachingOptimized
+          Compress: true
+        CacheBehaviors:
+          - PathPattern: /api/*
+            TargetOriginId: api-gateway
+            ViewerProtocolPolicy: https-only
+            AllowedMethods: [GET, HEAD, OPTIONS, PUT, POST, PATCH, DELETE]
+            CachePolicyId: 4135ea2d-6df8-44a3-9df3-4b5a84be39ad  # CachingDisabled
+            OriginRequestPolicyId: b689b0a8-53d0-40ab-baf2-68738e2966ac  # AllViewerExceptHostHeader
+          - PathPattern: /health
+            TargetOriginId: api-gateway
+            ViewerProtocolPolicy: https-only
+            AllowedMethods: [GET, HEAD]
+            CachePolicyId: 4135ea2d-6df8-44a3-9df3-4b5a84be39ad
+            OriginRequestPolicyId: b689b0a8-53d0-40ab-baf2-68738e2966ac
+        CustomErrorResponses:
+          - ErrorCode: 403
+            ResponseCode: 200
+            ResponsePagePath: /index.html
+          - ErrorCode: 404
+            ResponseCode: 200
+            ResponsePagePath: /index.html
+
+  # ───────── HTTP API (API Gateway v2) ─────────
+  HttpApi:
+    Type: AWS::Serverless::HttpApi
+    Properties:
+      StageName: $default
+      CorsConfiguration:
+        AllowOrigins:
+          - !Sub "https://${CloudFrontDistribution.DomainName}"
+        AllowMethods: [GET, POST, PATCH, DELETE, OPTIONS]
+        AllowHeaders: ["Content-Type"]
+
+  # ───────── IAM ─────────
+  LambdaRole:
+    Type: AWS::IAM::Role
+    Properties:
+      RoleName: !Sub "${AWS::StackName}-lambda"
+      AssumeRolePolicyDocument:
+        Version: "2012-10-17"
+        Statement:
+          - Effect: Allow
+            Principal:
+              Service: lambda.amazonaws.com
+            Action: sts:AssumeRole
+      ManagedPolicyArns:
+        - arn:aws:iam::aws:policy/service-role/AWSLambdaBasicExecutionRole
+      Policies:
+        - PolicyName: dynamo
+          PolicyDocument:
+            Version: "2012-10-17"
+            Statement:
+              - Effect: Allow
+                Action:
+                  - dynamodb:GetItem
+                  - dynamodb:PutItem
+                  - dynamodb:UpdateItem
+                  - dynamodb:Query
+                Resource:
+                  - !GetAtt SessionsTable.Arn
+                  - !GetAtt CredentialsTable.Arn
+                  - !Sub "${CredentialsTable.Arn}/index/*"
+        - PolicyName: bedrock
+          PolicyDocument:
+            Version: "2012-10-17"
+            Statement:
+              - Effect: Allow
+                Action: bedrock:InvokeModel
+                Resource: "*"
+        - PolicyName: s3-pages
+          PolicyDocument:
+            Version: "2012-10-17"
+            Statement:
+              - Effect: Allow
+                Action:
+                  - s3:PutObject
+                  - s3:DeleteObject
+                Resource:
+                  - !Sub "${WebBucket.Arn}/pages/*"
+                  - !Sub "${WebBucket.Arn}/p/*"
+        - PolicyName: dynamo-delete
+          PolicyDocument:
+            Version: "2012-10-17"
+            Statement:
+              - Effect: Allow
+                Action: dynamodb:DeleteItem
+                Resource:
+                  - !GetAtt SessionsTable.Arn
+                  - !GetAtt CredentialsTable.Arn
+
+  # ───────── Lambda Functions ─────────
+  ListSkillsFunction:
+    Type: AWS::Serverless::Function
+    Properties:
+      Handler: dist/handlers/lambda.listSkillsHandler
+      CodeUri: ../api
+      Role: !GetAtt LambdaRole.Arn
+      Events:
+        Api:
+          Type: HttpApi
+          Properties:
+            ApiId: !Ref HttpApi
+            Path: /api/skills
+            Method: GET
+
+  GetConfigFunction:
+    Type: AWS::Serverless::Function
+    Properties:
+      Handler: dist/handlers/lambda.getConfigHandler
+      CodeUri: ../api
+      Role: !GetAtt LambdaRole.Arn
+      Events:
+        Api:
+          Type: HttpApi
+          Properties:
+            ApiId: !Ref HttpApi
+            Path: /api/config
+            Method: GET
+
+  StartSessionFunction:
+    Type: AWS::Serverless::Function
+    Properties:
+      Handler: dist/handlers/lambda.startSessionHandler
+      CodeUri: ../api
+      Role: !GetAtt LambdaRole.Arn
+      Timeout: 15
+      Events:
+        Api:
+          Type: HttpApi
+          Properties:
+            ApiId: !Ref HttpApi
+            Path: /api/session/start
+            Method: POST
+
+  AddTurnFunction:
+    Type: AWS::Serverless::Function
+    Properties:
+      Handler: dist/handlers/lambda.addTurnHandler
+      CodeUri: ../api
+      Role: !GetAtt LambdaRole.Arn
+      Timeout: 60
+      Events:
+        Api:
+          Type: HttpApi
+          Properties:
+            ApiId: !Ref HttpApi
+            Path: /api/session/{id}/turn
+            Method: POST
+
+  FinishSessionFunction:
+    Type: AWS::Serverless::Function
+    Properties:
+      Handler: dist/handlers/lambda.finishSessionHandler
+      CodeUri: ../api
+      Role: !GetAtt LambdaRole.Arn
+      Timeout: 60
+      Events:
+        Api:
+          Type: HttpApi
+          Properties:
+            ApiId: !Ref HttpApi
+            Path: /api/session/{id}/finish
+            Method: POST
+
+  GetSessionFunction:
+    Type: AWS::Serverless::Function
+    Properties:
+      Handler: dist/handlers/lambda.getSessionHandler
+      CodeUri: ../api
+      Role: !GetAtt LambdaRole.Arn
+      Events:
+        Api:
+          Type: HttpApi
+          Properties:
+            ApiId: !Ref HttpApi
+            Path: /api/session/{id}
+            Method: GET
+
+  VerifyCredentialFunction:
+    Type: AWS::Serverless::Function
+    Properties:
+      Handler: dist/handlers/lambda.verifyCredentialHandler
+      CodeUri: ../api
+      Role: !GetAtt LambdaRole.Arn
+      Events:
+        Api:
+          Type: HttpApi
+          Properties:
+            ApiId: !Ref HttpApi
+            Path: /api/verify/{pageId}
+            Method: GET
+
+  CreateCredentialFunction:
+    Type: AWS::Serverless::Function
+    Properties:
+      Handler: dist/handlers/lambda.createCredentialHandler
+      CodeUri: ../api
+      Role: !GetAtt LambdaRole.Arn
+      Timeout: 15
+      Events:
+        Api:
+          Type: HttpApi
+          Properties:
+            ApiId: !Ref HttpApi
+            Path: /api/session/{id}/credential
+            Method: POST
+
+  GetCredentialFunction:
+    Type: AWS::Serverless::Function
+    Properties:
+      Handler: dist/handlers/lambda.getCredentialHandler
+      CodeUri: ../api
+      Role: !GetAtt LambdaRole.Arn
+      Events:
+        Api:
+          Type: HttpApi
+          Properties:
+            ApiId: !Ref HttpApi
+            Path: /api/credential/{pageId}
+            Method: GET
+
+  ShareCredentialFunction:
+    Type: AWS::Serverless::Function
+    Properties:
+      Handler: dist/handlers/lambda.shareCredentialHandler
+      CodeUri: ../api
+      Role: !GetAtt LambdaRole.Arn
+      Events:
+        Api:
+          Type: HttpApi
+          Properties:
+            ApiId: !Ref HttpApi
+            Path: /api/credential/{pageId}/share
+            Method: PATCH
+
+  DeleteCredentialFunction:
+    Type: AWS::Serverless::Function
+    Properties:
+      Handler: dist/handlers/lambda.deleteCredentialHandler
+      CodeUri: ../api
+      Role: !GetAtt LambdaRole.Arn
+      Events:
+        Api:
+          Type: HttpApi
+          Properties:
+            ApiId: !Ref HttpApi
+            Path: /api/credential/{pageId}
+            Method: DELETE
+
+  GetAdminCostsFunction:
+    Type: AWS::Serverless::Function
+    Properties:
+      Handler: dist/handlers/lambda.getAdminCostsHandler
+      CodeUri: ../api
+      Role: !GetAtt LambdaRole.Arn
+      Events:
+        Api:
+          Type: HttpApi
+          Properties:
+            ApiId: !Ref HttpApi
+            Path: /api/admin/costs
+            Method: GET
+
+  HealthFunction:
+    Type: AWS::Serverless::Function
+    Properties:
+      Handler: dist/handlers/lambda.healthHandler
+      CodeUri: ../api
+      Role: !GetAtt LambdaRole.Arn
+      Events:
+        Api:
+          Type: HttpApi
+          Properties:
+            ApiId: !Ref HttpApi
+            Path: /health
+            Method: GET
+
+Outputs:
+  ApiUrl:
+    Description: HTTP API endpoint
+    Value: !Sub "https://${HttpApi}.execute-api.${AWS::Region}.amazonaws.com"
+  WebBucketName:
+    Description: S3 bucket for the web app
+    Value: !Ref WebBucket
+  CloudFrontUrl:
+    Description: CloudFront distribution URL
+    Value: !Sub "https://${CloudFrontDistribution.DomainName}"
+  CloudFrontDistributionId:
+    Description: CloudFront distribution id (for cache invalidation)
+    Value: !Ref CloudFrontDistribution
+  SessionsTableName:
+    Description: DynamoDB Sessions table
+    Value: !Ref SessionsTable
+  CredentialsTableName:
+    Description: DynamoDB Credentials table
+    Value: !Ref CredentialsTable
