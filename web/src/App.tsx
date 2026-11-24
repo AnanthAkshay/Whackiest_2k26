@@ -13,8 +13,10 @@ export default function App(): JSX.Element {
         <Routes>
           <Route path="/" element={<SetupFlow />} />
           <Route path="/session" element={<SessionPage />} />
+          <Route path="/explain" element={<SessionPage />} />
           <Route path="/results/:id" element={<ResultsPage />} />
           <Route path="/skill/:id" element={<SkillPage />} />
+          <Route path="/passport/:id" element={<SkillPage />} />
           <Route path="/health" element={<HealthPage />} />
           <Route path="*" element={<SetupFlow />} />
         </Routes>

@@ -1,6 +1,6 @@
-# Viva Teach-Back — Production Deployment Guide
+# Prooffolio — Production Deployment Guide
 
-This guide details the complete production deployment for Viva Teach-Back using AWS SAM, S3, CloudFront, API Gateway, DynamoDB, and Amazon Bedrock.
+This guide details the complete production deployment for Prooffolio using AWS SAM, S3, CloudFront, API Gateway, DynamoDB, and Amazon Bedrock.
 
 ---
 

@@ -1,7 +1,7 @@
-# Viva Teach-Back
+# Prooffolio
 
-> **“Don’t answer questions. Teach it.”**  
-> A mobile-first, voice-led skill verification engine. Instead of passive multiple-choice tests or resume claims, candidates prove vocational ability by teaching an AI beginner in their native language.
+> **“Work. Explain. Verify. Learn. Connect.”**  
+> An evidence-first, multilingual skill-to-employment platform. It helps learners practise, demonstrate a real task, explain their work to an AI Examiner, cross-verify the evidence, receive a verifiable Skill Passport and discover relevant opportunities.
 
 [![TypeScript](https://img.shields.io/badge/TypeScript-5.7-blue.svg)](https://www.typescriptlang.org/)
 [![React](https://img.shields.io/badge/React-18.3-61dafb.svg)](https://reactjs.org/)
@@ -19,29 +19,34 @@ Millions of informal learners, vocational graduates (ITIs, polytechnics), and no
 - **Multiple-choice certifications** cost money candidates don't have and test memorisation rather than real application.
 - **Interviews are bottlenecked** by human trainer availability and cost.
 
-**Viva Teach-Back flips the dynamic**:
-A candidate chooses a skill and language, then teaches an AI "confused beginner" through spoken voice. As the candidate explains concepts step-by-step, an **Understanding Meter** climbs, follow-up probes test depth, and the system issues a tamper-evident **Skill Page** with a cryptographic seal on a public `.xyz` domain.
+**Prooffolio flips the dynamic across a 6-stage journey**:
+1. **Learn**: Practical micro-lessons for entry-level digital roles.
+2. **Practise**: Low-stakes interactive drills in spreadsheets and data tasks.
+3. **Demonstrate**: Complete a realistic workplace challenge (e.g., retail sales data cleanup).
+4. **Explain (AI Viva)**: An artifact-aware **AI Examiner** interviews the candidate in their native language (English, Hindi, or Kannada) about their actual submitted spreadsheet.
+5. **Verify**: Automated cross-verification and issuing of a cryptographically sealed **Skill Passport**.
+6. **Connect**: Direct matching to verified local entry-level opportunities.
 
 ---
 
 ## 2. Visual Walkthrough & Screenshots
 
-Viva Teach-Back is designed **mobile-first for a 360px viewport** with zero passwords, zero typing, and single-tap onboarding.
+Prooffolio is designed **mobile-first for a 360px viewport** with zero passwords, zero typing, and single-tap onboarding.
 
-| 1. Skill Selection & Text Mode | 2. Demo Replay Safety Banner |
+| 1. Skill Selection & Prooffolio Journey | 2. Demo Replay Safety Banner |
 |---|---|
 | ![Setup Screen](docs/assets/screenshots/01-setup-step-skill.png) | ![Demo Safety](docs/assets/screenshots/02-demo-replay-banner.png) |
-| *Single-tap selection with instant fallback to Text Mode if microphone or network is restricted.* | *Deterministic `?demo=1` replay mode ensures presentation safety even under complete internet loss.* |
+| *Single-tap selection with full journey roadmap and instant fallback to Text Mode.* | *Deterministic `?demo=1` replay mode ensures presentation safety even under complete internet loss.* |
 
-| 3. Live Teach-Back Voice Session | 4. Comprehensive Results Screen |
+| 3. Live AI Viva Voice Session | 4. Comprehensive Results Screen |
 |---|---|
 | ![Live Session](docs/assets/screenshots/03-live-session-meter.png) | ![Results Screen](docs/assets/screenshots/04-results-screen.png) |
-| *Live Understanding Meter dynamically updates with speech-to-text transcript and stall detection.* | *Deterministic score aggregation, meter trace sparkline, and targeted "Where to improve" feedback.* |
+| *Live AI Examiner voice session with speech-to-text transcript and provisional indicator.* | *Deterministic score aggregation, meter trace sparkline, and targeted "Where to improve" feedback.* |
 
-| 5. Sharing & Privacy Controls | 6. Static Mobile Skill Page |
+| 5. Sharing & Privacy Controls | 6. Prooffolio Skill Passport |
 |---|---|
 | ![Share Screen](docs/assets/screenshots/05-share-screen.png) | ![Skill Page HTML](docs/assets/screenshots/06-skill-page-static-html.png) |
-| *Candidates toggle public visibility, share via native OS share sheet, copy link, or permanently delete.* | *Static HTML with inline CSS (no JS needed) displaying exact badge: "Record matches our database".* |
+| *Candidates toggle public visibility, share via native OS share sheet, copy link, or permanently delete.* | *Lightweight static HTML displaying exact badge: "Record matches our database".* |
 
 | 7. System Health & Diagnostics Dashboard |
 |---|

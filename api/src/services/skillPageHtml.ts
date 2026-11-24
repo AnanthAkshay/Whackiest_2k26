@@ -37,7 +37,7 @@ export function generateSkillPageHtml(record: SkillRecord, apiBase: string): str
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width,initial-scale=1">
-<title>Viva Skill Page \u2013 ${skill}</title>
+<title>Prooffolio Skill Passport \u2013 ${skill}</title>
 <style>
 *{box-sizing:border-box;margin:0}
 body{font-family:Inter,ui-sans-serif,system-ui,-apple-system,sans-serif;color:#16221c;background:#f6f7f5;min-width:320px}
@@ -67,7 +67,7 @@ h1{margin:8px 0 0;font-size:clamp(2.1rem,10vw,3rem);letter-spacing:-.055em;line-
 </head>
 <body>
 <main>
-  <p class="ey">Viva Skill Page</p>
+  <p class="ey">Prooffolio Skill Passport</p>
   <h1>${skill}</h1>
   <p class="nm">${name}</p>
   <div class="tot">${record.total}</div>

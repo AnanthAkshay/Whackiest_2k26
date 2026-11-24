@@ -131,7 +131,7 @@ export async function compareReviewerData(): Promise<void> {
 
   const n = evaluatedRows.length;
   console.log(`\n=================================================`);
-  console.log(`   Viva Teach-Back - Early Reviewer Check Report  `);
+  console.log(`      Prooffolio - Early Reviewer Check Report   `);
   console.log(`=================================================`);
   console.log(`Total sessions in CSV : ${lines.length - 1}`);
   console.log(`Evaluated sessions (N): ${n}`);

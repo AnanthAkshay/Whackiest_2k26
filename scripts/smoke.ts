@@ -74,7 +74,7 @@ async function runSmoke(): Promise<void> {
   const startTime = Date.now();
 
   console.log("=================================================");
-  console.log("   Viva Teach-Back - Deployment Smoke Test       ");
+  console.log("      Prooffolio - Deployment Smoke Test         ");
   console.log("=================================================");
   console.log(`Target: ${target}\n`);
 

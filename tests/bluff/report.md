@@ -64,4 +64,4 @@
 3. **Genuine Evidence Rewarded**: Concrete syntax like `=SUM(A1:A10)`, `$A$1`, `=IF(B2>=50,"Pass","Fail")`, table header sorting, and percent formatting cleanly satisfy criteria, separating genuine candidates by an average of 63.2 points.
 
 ---
-*Report generated automatically by `npm run test:bluff` on 2026-11-24T17:56:59.600Z.*
+*Report generated automatically by `npm run test:bluff` on 2026-11-24T18:45:50.358Z.*

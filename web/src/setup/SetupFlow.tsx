@@ -82,7 +82,26 @@ export function SetupFlow(): JSX.Element {
         <button className="primary demo-start-btn" onClick={() => navigate("/session?demo=1")}>{t("startDemoReplay")}</button>
       </div>
     )}
-    <p className="brand">{t("appName")}</p>
+    <header className="home-header">
+      <p className="brand">{t("appName")}</p>
+      <p className="tagline">{t("tagline")}</p>
+      {step === "skill" && (
+        <>
+          <nav className="journey-pill-stack" aria-label="Prooffolio Journey">
+            <span className="journey-pill">1. Learn</span>
+            <span className="journey-pill">2. Practise</span>
+            <span className="journey-pill">3. Demonstrate</span>
+            <span className="journey-pill active">4. Explain (AI Viva)</span>
+            <span className="journey-pill">5. Verify</span>
+            <span className="journey-pill">6. Connect</span>
+          </nav>
+          <div className="platform-banner">
+            <strong>{t("platformBannerTitle")}</strong>
+            <p>{t("platformBannerBody")}</p>
+          </div>
+        </>
+      )}
+    </header>
     <p className="step">{t("step", { current: step === "skill" ? 1 : step === "language" ? 2 : step === "level" ? 3 : 4 })}</p>
     {step === "skill" && (
       <SkillStep

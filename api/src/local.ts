@@ -55,7 +55,7 @@ function getWebPublicDirectory(): string {
   return resolve(process.cwd(), "..", "web", "public");
 }
 
-app.get(["/p/:pageId", "/pages/:pageId/index.html"], async (request, response) => {
+app.get(["/p/:pageId", "/pages/:pageId/index.html", "/passport/:pageId"], async (request, response) => {
   const pageId = String(request.params.pageId);
   const webPublic = getWebPublicDirectory();
   const pagePath = resolve(webPublic, "pages", pageId, "index.html");
@@ -75,4 +75,4 @@ const errorHandler: ErrorRequestHandler = (error: Error, _request, response, _ne
 app.use(errorHandler);
 
 const port = config.port;
-app.listen(port, () => console.log(`Viva mock API listening on http://localhost:${port}`));
+app.listen(port, () => console.log(`Prooffolio mock API listening on http://localhost:${port}`));

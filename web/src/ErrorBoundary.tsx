@@ -34,7 +34,7 @@ export class ErrorBoundary extends Component<Props, State> {
     if (this.state.hasError) {
       return (
         <main className="shell setup-shell" role="alert">
-          <p className="brand">Viva Teach-Back</p>
+          <p className="brand">Prooffolio</p>
           <div className="mic-help error-boundary-box">
             <h1>{this.props.fallbackTitle ?? "Something went wrong"}</h1>
             <p className="lede">{this.props.fallbackBody ?? "An unexpected error occurred. Please try again."}</p>

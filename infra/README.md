@@ -1,6 +1,6 @@
-# Viva Teach-Back — Infrastructure
+# Prooffolio — Infrastructure
 
-AWS SAM deployment for the Viva Teach-Back backend and static web hosting.
+AWS SAM deployment for the Prooffolio backend and static web hosting.
 
 ## Architecture
 

@@ -107,7 +107,7 @@ function mean(values: number[]): number {
 
 async function run(): Promise<void> {
   console.log("=================================================");
-  console.log("  Viva Teach-Back - Bluff Test Harness (NFR-05)  ");
+  console.log("      Prooffolio - Bluff Test Harness (NFR-05)   ");
   console.log("=================================================\n");
 
   const rubric = await loadSkillRubric("excel");

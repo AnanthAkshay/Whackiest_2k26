@@ -1,5 +1,7 @@
-# 3-Minute Demo Script: Viva Teach-Back
+# 3-Minute Demo Script: Prooffolio
 
+> **Product**: Prooffolio  
+> **Tagline**: Work. Explain. Verify. Learn. Connect.  
 > **Target Duration**: Exactly 3 minutes (180 seconds)  
 > **Primary Screen**: Mobile browser (360px viewport or actual smartphone)  
 > **Secondary Device**: Second smartphone for verifier check  
@@ -55,7 +57,7 @@
   - The bar smoothly climbs from **0% to 55%** in real-time.
   - *Audience takeaway*: The meter is not a timer; it reflects semantic rubric coverage evaluated turn-by-turn.
 
-- **[1:30] Student Agent (Adaptive Follow-up Probe)**:
+- **[1:30] AI Examiner (Adaptive Follow-up Probe)**:
   > *"ಆಯ್ತು, ಅರ್ಥವಾಯಿತು. ಒಂದು ವೇಳೆ ನಾನು ಈ ಫಾರ್ಮುಲಾವನ್ನು ಪಕ್ಕದ ಕಾಲಮ್‌ಗೆ ಕಾಪಿ ಮಾಡಿದರೆ ಏನಾಗುತ್ತದೆ? ಸೆಲ್ ಅಡ್ರೆಸ್ ಬದಲಾಗುತ್ತದೆಯೇ?"*
 
 - **[1:45] Presenter (Explaining Relative vs Absolute References)**:
@@ -65,17 +67,17 @@
 
 ---
 
-## Act 3: Results & Skill Page on Second Phone (2:00 – 2:30 · 30 Seconds)
+## Act 3: Results & Skill Passport on Second Phone (2:00 – 2:30 · 30 Seconds)
 
 ### Exact Clicks
 1. **[2:00] End Session**:
-   - Tap **"Finish & view results"**.
+   - Tap **"Finish and see my passport"**.
 2. **[2:05] Results Screen**:
    - Show the candidate score breakdown: **85 / 100**, level: **"Ready to practise"**.
    - Show **"Where to improve"**: targeted tips on data filtering and table headers.
    - Show the rubric disclaimer: *"Rubric built from public sources (Microsoft MO-200 skills outline). Trainer co-sign planned in the pilot."*
 3. **[2:12] Create Credential & Share**:
-   - Tap **"Create Skill Page"** (generates an unguessable 16-char ID and computes an HMAC-SHA256 seal over the canonical record).
+   - Tap **"Create my Skill Passport"** (generates an unguessable 16-char ID and computes an HMAC-SHA256 seal over the canonical record).
    - Tap **"Share"** -> Tap **"Make Public"** and tap **"Copy Link"**.
 4. **[2:20] Open on Second Phone**:
    - Paste URL (`https://<domain>/p/{pageId}`) into the second phone's browser.
