@@ -63,6 +63,7 @@ h1{margin:8px 0 0;font-size:clamp(2.1rem,10vw,3rem);letter-spacing:-.055em;line-
 .bf{height:100%;border-radius:inherit}
 .meta{margin:20px 0 4px;color:#64736a;font-size:.82rem}
 .basis{color:#64736a;font-size:.84rem;line-height:1.45}
+@media(min-width:768px){main{width:min(100%,860px);padding:36px 32px 64px}h1{font-size:clamp(2.1rem,4vw,2.85rem)}.tot{font-size:clamp(3.25rem,6vw,4.5rem)}}
 </style>
 </head>
 <body>
