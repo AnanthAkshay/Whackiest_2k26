@@ -14,9 +14,15 @@ import {
   shareCredentialHandler as _shareCredential,
   deleteCredentialHandler as _deleteCredential
 } from "./credential";
-import { verifyCredentialHandler as _verifyCredential } from "./verify";
+import {
+  getJwksHandler as _getJwks,
+  getPublicPassportHandler as _getPublicPassport,
+  verifyCredentialHandler as _verifyCredential
+} from "./verify";
 import { getAdminCostsHandler as _getAdminCosts } from "./admin";
+import { startChallengeHandler as _startChallenge, uploadArtifactHandler as _uploadArtifact } from "./challenge";
 import { getHealthHandler as _getHealth } from "./health";
+import { getIntegrationsHandler as _getIntegrations } from "./integrations";
 
 function adaptEvent(event: APIGatewayProxyEventV2): HttpEvent<unknown> {
   return {
@@ -54,6 +60,8 @@ export const getSessionHandler: Handler = wrap(_getSession);
 export const listSkillsHandler: Handler = wrap(_listSkills);
 export const getConfigHandler: Handler = wrap(_getConfig);
 export const verifyCredentialHandler: Handler = wrap(_verifyCredential);
+export const getJwksHandler: Handler = wrap(_getJwks);
+export const getPublicPassportHandler: Handler = wrap(_getPublicPassport);
 export const createCredentialHandler: Handler = wrap(_createCredential);
 export const getCredentialHandler: Handler = wrap(_getCredential);
 export const shareCredentialHandler: Handler = wrap(_shareCredential);
@@ -61,3 +69,6 @@ export const deleteCredentialHandler: Handler = wrap(_deleteCredential);
 export const getAdminCostsHandler: Handler = wrap(_getAdminCosts);
 export const healthHandler: Handler = wrap(_getHealth);
 export const getHealthHandler: Handler = wrap(_getHealth);
+export const getIntegrationsHandler: Handler = wrap(_getIntegrations);
+export const startChallengeHandler: Handler = wrap(_startChallenge);
+export const uploadArtifactHandler: Handler = wrap(_uploadArtifact);

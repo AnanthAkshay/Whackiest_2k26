@@ -7,7 +7,7 @@
     "dev": "tsx watch src/local.ts",
     "typecheck": "tsc --noEmit",
     "build": "tsc -p tsconfig.build.json",
-    "test": "tsx --test src/rubric.test.ts src/config.test.ts src/store/LocalFileStore.test.ts src/store/DynamoStore.test.ts src/voice/ElevenLabsAgent.test.ts src/meter.test.ts",
+    "test": "tsx --test --test-concurrency=1 src/rubric.test.ts src/config.test.ts src/store/LocalFileStore.test.ts src/store/DynamoStore.test.ts src/voice/ElevenLabsAgent.test.ts src/meter.test.ts src/domain/domain.test.ts src/domain/migration.test.ts src/store/LocalFileStore.contract.test.ts src/challenge/challenge.test.ts src/validator/pythonValidator.test.ts src/viva/examiner.test.ts src/ecve/ecveEngine.test.ts src/services/passport.test.ts src/opportunities/matcher.test.ts src/security/securityHardening.test.ts src/e2e/verticalSlice.test.ts",
     "rubric:report": "tsx src/rubricReport.ts",
     "eval:fixtures": "tsx src/evalFixtures.ts",
     "cache:audio": "tsx src/generateAudioCache.ts",
