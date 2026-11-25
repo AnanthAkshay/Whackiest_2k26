@@ -29,6 +29,22 @@ Conventional hiring filters out skilled informal and vocational learners: resume
 
 ---
 
+## Screenshots
+
+| Desktop Landing (`1280px`) | Mobile Landing (`360px`) |
+|---|---|
+| ![Desktop Landing](docs/assets/screenshots/02-landing-desktop-1280.png) | ![Mobile Landing](docs/assets/screenshots/01-landing-mobile-360.png) |
+
+| Demo Replay (`?demo=1`) | Challenge & XLSX Upload (`/challenge`) |
+|---|---|
+| ![Demo Replay](docs/assets/screenshots/03-demo-replay-desktop.png) | ![Challenge Upload](docs/assets/screenshots/04-challenge-desktop.png) |
+
+| Opportunities Discovery (`/opportunities`) | System Health & Integrations (`/health`, `/integrations`) |
+|---|---|
+| ![Opportunities](docs/assets/screenshots/05-opportunities-desktop.png) | ![Health Dashboard](docs/assets/screenshots/06-health-desktop.png) |
+
+---
+
 ## 2. System Architecture
 
 ### 2.1 End-to-End Platform & Cloud Architecture
