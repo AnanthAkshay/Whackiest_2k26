@@ -1,300 +1,130 @@
-# Prooffolio — Production Deployment Guide
+# Prooffolio — Deployment & Manual Setup Guide
 
-This guide details the complete production deployment for Prooffolio using AWS SAM, S3, CloudFront, API Gateway, DynamoDB, and Amazon Bedrock.
-
----
-
-## 1. Architecture Overview
-
-```
-                                  https://<your-domain>.xyz
-                                            │
-                                            ▼
-                              ┌───────────────────────────┐
-                              │  CloudFront Distribution  │
-                              │  (ACM Cert in us-east-1)  │
-                              └─────────────┬─────────────┘
-                                            │
-               ┌────────────────────────────┼────────────────────────────┐
-               │                            │                            │
-               ▼                            ▼                            ▼
-        Path: /api/*                  Path: /health               Default: /* & /p/*
-    ┌──────────────────────┐     ┌──────────────────────┐     ┌──────────────────────┐
-    │  API Gateway (HTTP)  │     │  API Gateway (HTTP)  │     │      S3 Bucket       │
-    │  CORS locked to origin│    │  (Health Endpoint)   │     │  - Vite SPA Assets   │
-    └──────────┬───────────┘     └──────────┬───────────┘     │  - /p/{pageId}       │
-               │                            │                 │  - /audio/*.mp3      │
-               ▼                            ▼                 └──────────────────────┘
-    ┌───────────────────────────────────────────────────┐
-    │               AWS Lambda Handlers                 │
-    │  Node.js 20 on ARM64 with Least-Privilege IAM     │
-    └──────────┬────────────────────────────┬───────────┘
-               │                            │
-               ▼                            ▼
-    ┌──────────────────────┐     ┌──────────────────────┐
-    │  DynamoDB Tables     │     │    Amazon Bedrock    │
-    │  - Sessions          │     │  Claude 3.5 Sonnet / │
-    │  - Credentials       │     │  Claude 3 Haiku      │
-    └──────────────────────┘     └──────────────────────┘
-```
+> **Local Default**: `MOCK_MODE=1` remains the zero-secret local baseline.  
+> **Important**: All cloud deployment, DNS, and external provider commands below are **USER-RUN ONLY**. Do not assume sponsor credits, domain allocation, or partner APIs are active until manually configured.
 
 ---
 
-## 2. Production Environment Checklist
+## 1. Environment Variables Reference (Placeholders Only)
 
-Before running production deployment, review the following environment configuration:
+Copy `.env.example` to `.env` for local runs. Never commit `.env`, `*.pem`, `dev-keys.json`, `.data/`, or `api/.data/`.
 
-| Environment Variable | Source / Value | Description |
+| Variable | Example / Placeholder | Purpose |
 |---|---|---|
-| `MOCK_MODE` | `0` | Disables mock mode; connects to real AWS and ElevenLabs. |
-| `AWS_REGION` | e.g. `ap-south-1` or `us-east-1` | AWS region where DynamoDB, S3, and Lambdas reside. |
-| `AWS_SESSIONS_TABLE` | Stack output `SessionsTableName` | DynamoDB table storing session state, transcript, and cost tracker. |
-| `AWS_CREDENTIALS_TABLE` | Stack output `CredentialsTableName` | DynamoDB table storing issued Skill Records and HMAC seals. |
-| `AWS_S3_BUCKET` | Stack output `WebBucketName` | S3 bucket for the web app, audio cache, and Skill Pages. |
-| `BEDROCK_MODEL_ID` | `us.anthropic.claude-3-5-sonnet-20241022-v2:0` | Bedrock model ID or cross-region inference profile ARN. |
-| `ELEVENLABS_API_KEY` | ElevenLabs Dashboard | API key for Conversational AI and TTS audio cache. |
-| `ELEVENLABS_AGENT_ID` | ElevenLabs Dashboard | Configured voice agent ID for live conversations. |
-| `PAGE_SECRET` | 32+ character random string | Secret key for computing HMAC-SHA256 seals on Skill Records. |
-| `ADMIN_KEY` | Random secret key | Header `X-Admin-Key` value required for `GET /api/admin/costs`. |
-| `COST_CAP_INR` | `25` | Per-session cost cap in INR (default ₹25). |
-| `MAX_SESSION_DURATION_SECONDS` | `600` | Hard cap duration (10 minutes). |
-| `CORS_ORIGIN` | `https://<your-domain>.xyz` | **Locked to production origin**. Restricts HTTP API access to your domain. |
-
-> [!IMPORTANT]
-> **Never commit environment files with real keys.**
-> Keep production secrets in AWS Systems Manager Parameter Store, AWS Secrets Manager, or pass them as secure SAM parameter overrides.
+| `MOCK_MODE` | `1` (local) / `0` (cloud) | Controls local mock path vs. real AWS & ElevenLabs |
+| `PORT` | `8787` | Local Express API port |
+| `VITE_API_URL` | `http://localhost:8787` or `https://api.<your-domain>` | Frontend API base URL |
+| `CORS_ORIGIN` | `http://localhost:5173` or `https://<your-domain>` | Locked production origin for HTTP API CORS |
+| `AWS_REGION` | `<aws-region>` (e.g. `ap-south-1`) | AWS region for Lambda, DynamoDB, S3, Bedrock |
+| `BEDROCK_MODEL_ID` | `us.anthropic.claude-3-5-sonnet-20241022-v2:0` | Bedrock model ID or inference profile ARN |
+| `AWS_SESSIONS_TABLE` | `<stack-name>-sessions` | DynamoDB table for attempts, sessions, and records |
+| `AWS_CREDENTIALS_TABLE` | `<stack-name>-credentials` | DynamoDB table for Skill Passports & legacy seals |
+| `AWS_S3_BUCKET` | `<stack-name>-web` | Private S3 bucket for web assets, uploads, and static passports |
+| `ELEVENLABS_API_KEY` | `<your-elevenlabs-api-key>` | Server-side ElevenLabs API key |
+| `ELEVENLABS_AGENT_ID` | `<your-elevenlabs-agent-id>` | Configured ElevenLabs Conversational AI Agent ID |
+| `ED25519_KEY_ID` | `<your-key-id>` (e.g. `prooffolio-prod-2026-1`) | Public JWKS key identifier (`kid`) |
+| `ED25519_PRIVATE_KEY_PEM` | `<pkcs8-ed25519-private-pem>` | Server-side Ed25519 private signing key (Secrets Manager) |
+| `ED25519_PUBLIC_KEY_PEM` | `<spki-ed25519-public-pem>` | Ed25519 public verification key |
+| `PASSPORT_ISSUER` | `https://<your-registered-domain>` | Canonical `iss` claim in Skill Passport JWS |
+| `PASSPORT_PUBLIC_DOMAIN` | `<your-registered-domain>` | Public host domain once registered |
+| `PAGE_SECRET` | `<32+-char-random-secret>` | Legacy HMAC-SHA256 secret for backward compatibility |
+| `ADMIN_KEY` | `<random-admin-secret>` | Header `X-Admin-Key` secret for `/api/admin/costs` |
+| `MAX_UPLOAD_BYTES` | `10485760` | Maximum `.xlsx` upload size (10 MB) |
+| `COST_CAP_INR` | `25` | Per-session cost cap in INR |
+| `MAX_SESSION_DURATION_SECONDS` | `600` | Hard session duration limit (seconds) |
+| `VITE_TRYB_PRACTICE_URL` | `<approved-tryb-url>` | Optional external Tryb practice link (blank until configured) |
+| `VITE_DEVNOVATE_URL` | `<public-devnovate-url>` | Optional outbound Devnovate link (blank until configured) |
 
 ---
 
-## 3. Step-by-Step Deployment Commands
+## 2. Preflight Configuration Check (Local)
 
-### Step 3.1: Build API & Package Rubrics
+Run the preflight check before building or deploying. It validates variable presence and format **without printing secret values**:
 
-```bash
-# 1. From repository root, install clean dependencies
-npm ci
+```powershell
+# Validate local MOCK_MODE=1 configuration
+npm run preflight
 
-# 2. Build the TypeScript API package
-npm run build --workspace api
-
-# 3. Copy rubrics into the api package so Lambda includes them in the deployment artifact
-node -e "require('fs').cpSync('rubrics', 'api/rubrics', { recursive: true })"
+# Validate production configuration before cloud deploy (USER-RUN ONLY)
+npm run preflight -- --prod
 ```
 
-### Step 3.2: Deploy Backend Infrastructure (AWS SAM)
+---
 
+## 3. Build & Cloud Deployment Commands
+
+### Step 3.1: Local Build & Package (Safe Local Step)
+```bash
+npm ci
+npm run deploy:build
+```
+
+### Step 3.2: AWS SAM Build & Deploy — **USER-RUN ONLY**
 ```bash
 cd infra
-
-# Build SAM application
 sam build --template template.yaml
-
-# First-time deploy (interactive guided prompt)
 sam deploy \
   --guided \
-  --stack-name viva-teach-back \
+  --stack-name prooffolio-prod \
   --capabilities CAPABILITY_NAMED_IAM \
   --parameter-overrides \
-    BedrockModelId=us.anthropic.claude-3-5-sonnet-20241022-v2:0 \
-    ElevenLabsApiKey=YOUR_ELEVENLABS_KEY \
-    ElevenLabsAgentId=YOUR_ELEVENLABS_AGENT_ID \
-    PageSecret=YOUR_RANDOM_32_CHAR_SECRET \
-    AdminKey=YOUR_ADMIN_SECRET_KEY \
-    CostCapInr=25 \
-    MaxSessionDurationSeconds=600
-
-cd ..
+    BedrockModelId=<BEDROCK_MODEL_ID> \
+    ElevenLabsApiKey=<ELEVENLABS_API_KEY> \
+    ElevenLabsAgentId=<ELEVENLABS_AGENT_ID> \
+    PageSecret=<PAGE_SECRET> \
+    AdminKey=<ADMIN_KEY>
 ```
 
-*For subsequent deployments, SAM uses the saved `samconfig.toml`:*
+### Step 3.3: Web Build, S3 Sync & CloudFront Invalidation — **USER-RUN ONLY**
 ```bash
-cd infra && sam build && sam deploy && cd ..
+# Build frontend pointing to deployed API URL
+VITE_API_URL=https://<api-gateway-domain> npm run build --workspace web
+
+# Sync static bundle to S3 and invalidate CloudFront cache
+aws s3 sync web/dist "s3://<WEB_BUCKET_NAME>" --delete
+aws cloudfront create-invalidation --distribution-id <CLOUDFRONT_DIST_ID> --paths "/*"
 ```
 
-### Step 3.3: Pre-Generate Audio Cache (FR-33)
-
-Generate fixed greeting and closing voice clips so live sessions play them from cache rather than generating live speech on every load:
-
-```bash
-# In production, this uploads audio/en-greeting.mp3, audio/hi-greeting.mp3, etc. directly to S3
-npm run cache:audio --workspace api
-```
-
-### Step 3.4: Build & Upload the Web App
-
-Capture stack outputs and build Vite with your live API URL:
-
-```bash
-# Extract stack outputs
-STACK=viva-teach-back
-WEB_BUCKET=$(aws cloudformation describe-stacks --stack-name $STACK \
-  --query "Stacks[0].Outputs[?OutputKey=='WebBucketName'].OutputValue" --output text)
-CF_DIST_ID=$(aws cloudformation describe-stacks --stack-name $STACK \
-  --query "Stacks[0].Outputs[?OutputKey=='CloudFrontDistributionId'].OutputValue" --output text)
-CF_URL=$(aws cloudformation describe-stacks --stack-name $STACK \
-  --query "Stacks[0].Outputs[?OutputKey=='CloudFrontUrl'].OutputValue" --output text)
-
-# Build Vite frontend targeting CloudFront URL (or your custom domain)
-VITE_API_URL=$CF_URL npm run build --workspace web
-
-# Sync web bundle to S3
-aws s3 sync web/dist "s3://$WEB_BUCKET" --delete
-
-# Invalidate CloudFront edge cache
-aws cloudfront create-invalidation --distribution-id $CF_DIST_ID --paths "/*"
-```
+### Step 3.4: `.xyz` Custom Domain (Only After Domain Registration) — **USER-RUN ONLY**
+Do not assume a `.xyz` domain is allocated automatically. Only after you register your domain:
+1. Request a public TLS certificate in **AWS Certificate Manager (ACM)** in region **`us-east-1`** (required by CloudFront) with DNS validation.
+2. Add the ACM validation `CNAME` record at your domain registrar.
+3. Attach the custom domain (Alternate Domain Name / CNAME) and ACM certificate to the CloudFront distribution.
+4. Create a `CNAME` or Route 53 `ALIAS` record pointing your registered domain to the CloudFront distribution domain (`<dist>.cloudfront.net`).
+5. Update `CORS_ORIGIN`, `PASSPORT_ISSUER`, and `PASSPORT_PUBLIC_DOMAIN` to `https://<your-registered-domain>`.
 
 ---
 
-## 4. `npm run deploy:*` Shortcut Scripts
+## 4. Manual External Provider & Sponsor Setup
 
-The following scripts are defined in `package.json`:
+### 4.1 AWS Account, Bedrock & Billing Guardrails — **USER-RUN ONLY**
+1. Configure AWS CLI (`aws configure`) and SAM CLI (`sam --version`).
+2. Confirm your target region (`ap-south-1` or `us-east-1`).
+3. Open **Amazon Bedrock** $\rightarrow$ **Model access** and request access for Anthropic Claude 3.5 Sonnet.
+4. Review `infra/template.yaml` IAM policies to ensure least-privilege access to only your stack's DynamoDB tables, S3 bucket, and Bedrock model.
+5. Set **AWS Budgets / Billing Alerts** and check Lambda/Bedrock service quotas before running live traffic.
 
-| Command | Action |
-|---|---|
-| `npm run deploy:build` | Compiles API, packages rubrics, and bundles web frontend. |
-| `npm run deploy:infra` | Runs `sam build` and `sam deploy` in `/infra`. |
-| `npm run deploy:web` | Discovers stack outputs, syncs `web/dist` to S3, and invalidates CloudFront. |
-| `npm run deploy` | Runs all three steps in sequence (`deploy:build` → `deploy:infra` → `deploy:web`). |
+### 4.2 ElevenLabs Conversational AI Setup — **USER-RUN ONLY**
+1. Create an ElevenLabs account and open the **Conversational AI** dashboard.
+2. Create an Agent using [agent/ai-examiner-prompt.md](file:///a:/Whackiest_2k26/agent/ai-examiner-prompt.md) as the system prompt.
+3. Copy the **Agent ID** (`ELEVENLABS_AGENT_ID`) and generate a server-side API key (`ELEVENLABS_API_KEY`).
+4. Verify locally with `MOCK_MODE=0` and `GET /health` before enabling public access.
 
----
-
-## 5. Pointing Your `.xyz` Domain to CloudFront
-
-To host Viva Teach-Back on your custom domain (e.g. `viva.example.xyz` or `teachback.xyz`):
-
-### Step 5.1: Request ACM Certificate in `us-east-1`
-
-> [!WARNING]
-> **CloudFront requires SSL/TLS certificates to be created in `us-east-1` (N. Virginia)**, regardless of where your other resources or Lambdas are deployed.
-
-1. Open **AWS Certificate Manager (ACM)** in the `us-east-1` region:
-   ```bash
-   aws acm request-certificate \
-     --region us-east-1 \
-     --domain-name yourdomain.xyz \
-     --subject-alternative-names "*.yourdomain.xyz" \
-     --validation-method DNS
-   ```
-2. Retrieve the DNS validation CNAME records:
-   ```bash
-   aws acm describe-certificate \
-     --region us-east-1 \
-     --certificate-arn <CERTIFICATE_ARN> \
-     --query "Certificate.DomainValidationOptions"
-   ```
-3. Add the `Name` and `Value` CNAME record in your DNS provider (Namecheap, Porkbun, Cloudflare, Route 53, etc.).
-4. Wait for certificate status to become `ISSUED`.
-
-### Step 5.2: Associate Custom Domain with CloudFront
-
-In the CloudFront console or via AWS CLI:
-1. Under **Distribution Settings → General → Alternate domain names (CNAMEs)**: Add `yourdomain.xyz`.
-2. Under **Custom SSL certificate**: Select the ACM certificate created in `us-east-1`.
-3. Save changes and wait for distribution deployment.
-
-### Step 5.3: Add DNS Records in Your Registrar
-
-Add the following DNS records pointing your domain to the CloudFront domain (`d111111abcdef8.cloudfront.net`):
-
-- **If using an Apex Domain (`yourdomain.xyz`)**:
-  - In **Route 53**: Create an **A record** → Alias: Yes → Target: CloudFront distribution. Add an **AAAA record** (Alias) for IPv6.
-  - In **Cloudflare / DNS providers supporting CNAME flattening / ANAME**: Add an ALIAS or CNAME flattening record to `d111111abcdef8.cloudfront.net`.
-- **If using a Subdomain (`viva.yourdomain.xyz`)**:
-  - Add a **CNAME record**:
-    - Name / Host: `viva`
-    - Target: `d111111abcdef8.cloudfront.net`
-    - TTL: `300` (or Auto)
+### 4.3 Optional Partner Link-Outs & Community Sponsor
+- **tryb**: Create a practice activity in Tryb Creator Studio, copy its approved share URL into `VITE_TRYB_PRACTICE_URL`, and rebuild `web`. Tryb is formative practice only (no score import).
+- **Devnovate**: Obtain any required partner approval and set a real public URL in `VITE_DEVNOVATE_URL`. No automatic profile sync, SSO, or job API is assumed.
+- **AWS Student Builder Group**: Community/student-builder sponsor only — **not** a runtime cloud service, and credits or mentors are not guaranteed.
 
 ---
 
-## 6. Serving Skill Pages at `https://<domain>/p/{pageId}`
+## 5. Manual Checklist for Real Provider Demo & Reviewer Calibration
 
-Skill Pages are standalone, static HTML credentials generated upon session completion.
-
-### S3 & CloudFront Routing Architecture:
-1. When `POST /api/session/:id/credential` is called:
-   - Computes HMAC-SHA256 seal over the canonical JSON record.
-   - Saves record and seal in DynamoDB `Credentials` table.
-   - Uploads static HTML to S3 at:
-     - `s3://<bucket>/p/<pageId>` (`ContentType: text/html; charset=utf-8`)
-     - `s3://<bucket>/p/<pageId>/index.html`
-     - `s3://<bucket>/pages/<pageId>/index.html`
-2. When a visitor navigates to `https://<domain>/p/{pageId}`:
-   - CloudFront receives the request under the default cache behavior.
-   - S3 directly returns the object stored at key `p/{pageId}` with `200 OK`.
-   - **Zero JavaScript execution is required** to read the Skill Page.
-3. Record Integrity Verification:
-   - The page includes an inline call to `GET /api/verify/{pageId}`.
-   - If the stored HMAC seal matches, it displays the exact badge:
-     `Record matches our database`
-   - If verification fails or is unreachable, it shows "Could not check right now".
-   - **Honesty Rule**: The page never states "trainer-verified", "validated", or "certified". It displays the exact `basisNote`:
-     *"Rubric built from public sources (Microsoft MO-200 skills outline). Trainer co-sign planned in the pilot."*
-
----
-
-## 7. Locking CORS to the Production Origin
-
-To ensure backend API endpoints cannot be abused from other web origins:
-
-1. In `api/src/config.ts`, `CORS_ORIGIN` is supplied via environment variable.
-2. In `infra/template.yaml`, the HTTP API Gateway `AllowOrigins` and Lambda `CORS_ORIGIN` default to your CloudFront distribution domain:
-   ```yaml
-   HttpApi:
-     Properties:
-       CorsConfiguration:
-         AllowOrigins:
-           - "https://yourdomain.xyz"
-         AllowMethods: [GET, POST, PATCH, DELETE, OPTIONS]
-         AllowHeaders: ["Content-Type", "X-Admin-Key"]
-   ```
-3. When deploying with a custom domain, pass `CORS_ORIGIN=https://yourdomain.xyz` so that only browser requests from your domain are accepted.
-
----
-
-## 8. Smoke Testing (`npm run smoke`)
-
-The repository includes an end-to-end smoke test script to verify that all components of the deployment work correctly.
-
-### Run Against Local Mock Server:
-```bash
-npm run smoke
-```
-
-### Run Against Live Production Domain:
-```bash
-npm run smoke -- https://yourdomain.xyz
-```
-
-### What the Smoke Test Verifies:
-1. **`GET /health`**: Confirms health check returns HTTP 200 with operational or mock status.
-2. **`GET /api/skills`**: Confirms available skills catalogue is returned (including Excel).
-3. **Session Lifecycle**:
-   - `POST /api/session/start`: Verifies session initialization and store persistence.
-   - `POST /api/session/:id/turn`: Submits candidate explanation, validates meter evaluation.
-   - `POST /api/session/:id/finish`: Finalizes scoring and computes total score.
-4. **Credential & Sharing**:
-   - `POST /api/session/:id/credential`: Generates unguessable `pageId` and HMAC seal.
-   - `PATCH /api/credential/:pageId/share`: Makes the credential public.
-5. **Skill Page Retrieval**:
-   - `GET /p/{pageId}`: Fetches static HTML and confirms presence of the "Record matches our database" badge.
-6. **Cryptographic Seal Integrity**:
-   - `GET /api/verify/{pageId}`: Recomputes the HMAC-SHA256 seal and validates integrity (`valid: true`).
-
----
-
-## 9. Tear Down / Clean Up
-
-To delete all AWS resources and avoid ongoing charges:
-
-```bash
-# 1. Empty S3 web bucket (required before CloudFormation can delete the bucket)
-STACK=viva-teach-back
-WEB_BUCKET=$(aws cloudformation describe-stacks --stack-name $STACK \
-  --query "Stacks[0].Outputs[?OutputKey=='WebBucketName'].OutputValue" --output text)
-aws s3 rm "s3://$WEB_BUCKET" --recursive
-
-# 2. Delete SAM CloudFormation stack
-sam delete --stack-name $STACK
-```
+When live keys and human reviewers are available:
+1. **Record One Real Provider-Backed Demo**:
+   - Start API with `MOCK_MODE=0` and valid ElevenLabs + AWS Bedrock credentials.
+   - Run a complete session, then execute `npm run demo:record` to capture a real trace if desired.
+2. **Run One Reviewer Calibration Session**:
+   - Export finished sessions for human grading: `npm run reviewer:export`
+   - Have an Excel-strong reviewer inspect `tests/reviewer/transcripts/*.md` and fill `tests/reviewer/sessions.csv`.
+   - Compute agreement report: `npm run reviewer:compare`
+   - Calibrate ECVE weights ($0.60P + 0.25U + 0.15C$) based on empirical pilot findings before claiming measured accuracy.

@@ -1,7 +1,7 @@
 AWSTemplateFormatVersion: "2010-09-09"
 Transform: AWS::Serverless-2016-10-31
 Description: >
-  Viva Teach-Back – serverless backend and static web hosting.
+  Prooffolio – serverless backend, Skill Passport signing, and static web hosting.
 
 Globals:
   Function:
@@ -24,6 +24,8 @@ Globals:
         ADMIN_KEY: !Ref AdminKey
         COST_CAP_INR: !Ref CostCapInr
         MAX_SESSION_DURATION_SECONDS: !Ref MaxSessionDurationSeconds
+        MAX_UPLOAD_BYTES: 10485760
+        PASSPORT_ISSUER: !Sub "https://${CloudFrontDistribution.DomainName}"
 
 Parameters:
   BedrockModelId:
@@ -428,6 +430,77 @@ Resources:
             ApiId: !Ref HttpApi
             Path: /health
             Method: GET
+
+  GetIntegrationsFunction:
+    Type: AWS::Serverless::Function
+    Properties:
+      Handler: dist/handlers/lambda.getIntegrationsHandler
+      CodeUri: ../api
+      Role: !GetAtt LambdaRole.Arn
+      Events:
+        Api:
+          Type: HttpApi
+          Properties:
+            ApiId: !Ref HttpApi
+            Path: /api/integrations
+            Method: GET
+
+  GetJwksFunction:
+    Type: AWS::Serverless::Function
+    Properties:
+      Handler: dist/handlers/lambda.getJwksHandler
+      CodeUri: ../api
+      Role: !GetAtt LambdaRole.Arn
+      Events:
+        Api:
+          Type: HttpApi
+          Properties:
+            ApiId: !Ref HttpApi
+            Path: /.well-known/jwks.json
+            Method: GET
+
+  GetPublicPassportFunction:
+    Type: AWS::Serverless::Function
+    Properties:
+      Handler: dist/handlers/lambda.getPublicPassportHandler
+      CodeUri: ../api
+      Role: !GetAtt LambdaRole.Arn
+      Events:
+        Api:
+          Type: HttpApi
+          Properties:
+            ApiId: !Ref HttpApi
+            Path: /api/passport/{id}
+            Method: GET
+
+  StartChallengeFunction:
+    Type: AWS::Serverless::Function
+    Properties:
+      Handler: dist/handlers/lambda.startChallengeHandler
+      CodeUri: ../api
+      Role: !GetAtt LambdaRole.Arn
+      Events:
+        Api:
+          Type: HttpApi
+          Properties:
+            ApiId: !Ref HttpApi
+            Path: /api/challenge/{challengeId}/start
+            Method: POST
+
+  UploadArtifactFunction:
+    Type: AWS::Serverless::Function
+    Properties:
+      Handler: dist/handlers/lambda.uploadArtifactHandler
+      CodeUri: ../api
+      Role: !GetAtt LambdaRole.Arn
+      Timeout: 30
+      Events:
+        Api:
+          Type: HttpApi
+          Properties:
+            ApiId: !Ref HttpApi
+            Path: /api/attempt/{attemptId}/upload
+            Method: POST
 
 Outputs:
   ApiUrl:
