@@ -1,7 +1,15 @@
 import { config } from "../config";
 import type { SkillRubric } from "../rubric";
 import type { AgentLevel, Language, VoiceMode } from "../types";
+import type { FactSheet } from "../validator/pythonValidator";
 
+/**
+ * Provider Responsibility Split:
+ * - ElevenLabs handles speech input/output (STT/TTS) and conversational turn-taking.
+ * - Prooffolio's application backend owns selecting evidence-grounded questions,
+ *   calling Bedrock where configured, validating outputs, and storing evidence/scores.
+ * - ElevenLabs / LLMs must never invent spreadsheet facts or independently issue a pass.
+ */
 export interface VoiceConnection {
   mode: VoiceMode;
   signedUrl?: string;
@@ -17,6 +25,28 @@ function probesFor(rubric: SkillRubric): string {
 
 export function createDynamicVariables(skill: string, level: AgentLevel, language: Language, rubric: SkillRubric): Record<string, string> {
   return { skill, level, language, probes: probesFor(rubric) };
+}
+
+export function createExaminerDynamicVariables(
+  challengeTitle: string,
+  level: AgentLevel,
+  language: Language,
+  rubric: SkillRubric,
+  factSheet?: FactSheet
+): Record<string, string> {
+  const factSummary = factSheet
+    ? factSheet.formulaFacts
+        .map((f) => `${f.sourceRef}: ${f.formula ?? "no-formula"} (${f.metric})`)
+        .join("; ")
+    : "No fact sheet attached";
+  return {
+    skill: challengeTitle,
+    challengeTitle,
+    level,
+    language,
+    probes: probesFor(rubric),
+    factSheetSummary: factSummary
+  };
 }
 
 async function createSignedUrl(): Promise<string> {
