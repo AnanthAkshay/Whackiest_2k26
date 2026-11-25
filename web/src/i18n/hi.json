@@ -253,5 +253,20 @@
   "onlineOnlyBadge": "केवल ऑनलाइन",
   "onlineOnlyValidationNote": "क्लाउड सत्यापन के लिए इंटरनेट कनेक्शन आवश्यक है।",
   "onlineOnlyVivaNote": "लाइव AI वाइवा के लिए इंटरनेट कनेक्शन आवश्यक है।",
-  "onlineOnlyVerifyNote": "क्रेडेंशियल हस्ताक्षर और सार्वजनिक सत्यापन के लिए इंटरनेट आवश्यक है।"
+  "onlineOnlyVerifyNote": "क्रेडेंशियल हस्ताक्षर और सार्वजनिक सत्यापन के लिए इंटरनेट आवश्यक है।",
+  "navHowItWorks": "यह कैसे काम करता है",
+  "navForLearners": "शिक्षार्थियों के लिए",
+  "navForEmployers": "नियोक्ताओं के लिए",
+  "navVerify": "सत्यापित करें",
+  "navStart": "शुरू करें",
+  "navMenuToggle": "नेविगेशन मेनू खोलें या बंद करें",
+  "mainNavLabel": "मुख्य नेविगेशन",
+  "footerIntegrations": "एकीकरण",
+  "footerHealth": "सिस्टम स्वास्थ्य",
+  "heroHeadline": "दिखाएँ कि आप क्या कर सकते हैं। अपनी भाषा में।",
+  "heroStartChallenge": "अपनी चुनौती शुरू करें",
+  "heroVerifyPassport": "पासपोर्ट सत्यापित करें",
+  "sampleClusterLabel": "नमूना",
+  "builtWithLabel": "निर्मित:",
+  "linkOutsLabel": "लिंक-आउट:"
 }

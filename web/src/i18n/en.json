@@ -253,5 +253,20 @@
   "onlineOnlyBadge": "Online-only",
   "onlineOnlyValidationNote": "Cloud validation requires an active internet connection (or local Mock Mode).",
   "onlineOnlyVivaNote": "Live AI Viva audio streaming requires an active internet connection.",
-  "onlineOnlyVerifyNote": "Credential signing and public verification require an active internet connection."
+  "onlineOnlyVerifyNote": "Credential signing and public verification require an active internet connection.",
+  "navHowItWorks": "How it works",
+  "navForLearners": "For learners",
+  "navForEmployers": "For employers",
+  "navVerify": "Verify",
+  "navStart": "Start",
+  "navMenuToggle": "Toggle navigation menu",
+  "mainNavLabel": "Primary navigation",
+  "footerIntegrations": "Integrations",
+  "footerHealth": "System health",
+  "heroHeadline": "Show what you can do. In your own language.",
+  "heroStartChallenge": "Start your challenge",
+  "heroVerifyPassport": "Verify a passport",
+  "sampleClusterLabel": "Sample",
+  "builtWithLabel": "Built with",
+  "linkOutsLabel": "Link-outs:"
 }

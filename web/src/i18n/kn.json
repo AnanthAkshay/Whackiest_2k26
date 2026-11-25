@@ -253,5 +253,20 @@
   "onlineOnlyBadge": "ಆನ್‌ಲೈನ್-ಮಾತ್ರ",
   "onlineOnlyValidationNote": "ಕ್ಲೌಡ್ ಪರಿಶೀಲನೆಗೆ ಇಂಟರ್ನೆಟ್ ಸಂಪರ್ಕ ಅಗತ್ಯವಿದೆ.",
   "onlineOnlyVivaNote": "ಲೈವ್ AI ವೈವಾಗೆ ಇಂಟರ್ನೆಟ್ ಸಂಪರ್ಕ ಅಗತ್ಯವಿದೆ.",
-  "onlineOnlyVerifyNote": "ಪ್ರಮಾಣಪತ್ರ ಸಹಿ ಮತ್ತು ಸಾರ್ವಜನಿಕ ಪರಿಶೀಲನೆಗೆ ಇಂಟರ್ನೆಟ್ ಅಗತ್ಯವಿದೆ."
+  "onlineOnlyVerifyNote": "ಪ್ರಮಾಣಪತ್ರ ಸಹಿ ಮತ್ತು ಸಾರ್ವಜನಿಕ ಪರಿಶೀಲನೆಗೆ ಇಂಟರ್ನೆಟ್ ಅಗತ್ಯವಿದೆ.",
+  "navHowItWorks": "ಇದು ಹೇಗೆ ಕೆಲಸ ಮಾಡುತ್ತದೆ",
+  "navForLearners": "ಕಲಿಯುವವರಿಗೆ",
+  "navForEmployers": "ಉದ್ಯೋಗದಾತರಿಗೆ",
+  "navVerify": "ಪರಿಶೀಲಿಸಿ",
+  "navStart": "ಪ್ರಾರಂಭಿಸಿ",
+  "navMenuToggle": "ನ್ಯಾವಿಗೇಷನ್ ಮೆನು ತೆರೆಯಿರಿ",
+  "mainNavLabel": "ಮುಖ್ಯ ನ್ಯಾವಿಗೇಷನ್",
+  "footerIntegrations": "ಏಕೀಕರಣಗಳು",
+  "footerHealth": "ಸಿಸ್ಟಮ್ ಆರೋಗ್ಯ",
+  "heroHeadline": "ನೀವು ಏನು ಮಾಡಬಲ್ಲಿರಿ ಎಂಬುದನ್ನು ತೋರಿಸಿ. ನಿಮ್ಮದೇ ಭಾಷೆಯಲ್ಲಿ.",
+  "heroStartChallenge": "ನಿಮ್ಮ ಸವಾಲು ಪ್ರಾರಂಭಿಸಿ",
+  "heroVerifyPassport": "ಪಾಸ್‌ಪೋರ್ಟ್ ಪರಿಶೀಲಿಸಿ",
+  "sampleClusterLabel": "ಮಾದರಿ",
+  "builtWithLabel": "ನಿರ್ಮಿತ:",
+  "linkOutsLabel": "ಲಿಂಕ್-ಔಟ್‌ಗಳು:"
 }
