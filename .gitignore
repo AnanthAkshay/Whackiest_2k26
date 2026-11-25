@@ -10,3 +10,8 @@ coverage/
 *.log
 *.tsbuildinfo
 .DS_Store
+*.pem
+dev-keys.json
+__pycache__/
+*.pyc
+.pytest_cache/

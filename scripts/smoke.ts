@@ -1,5 +1,5 @@
 /**
- * Viva Teach-Back — End-to-End Smoke Test
+ * Prooffolio — End-to-End Smoke Test
  *
  * Verifies live or staging deployment:
  * 1. GET /health
