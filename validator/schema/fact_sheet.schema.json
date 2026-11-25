@@ -1,0 +1,395 @@
+{
+  "$defs": {
+    "CheckResultItem": {
+      "properties": {
+        "checkId": {
+          "title": "Checkid",
+          "type": "string"
+        },
+        "name": {
+          "title": "Name",
+          "type": "string"
+        },
+        "status": {
+          "enum": [
+            "pass",
+            "fail",
+            "unknown",
+            "not_applicable"
+          ],
+          "title": "Status",
+          "type": "string"
+        },
+        "critical": {
+          "title": "Critical",
+          "type": "boolean"
+        },
+        "score": {
+          "title": "Score",
+          "type": "number"
+        },
+        "maxScore": {
+          "title": "Maxscore",
+          "type": "number"
+        },
+        "sourceRef": {
+          "title": "Sourceref",
+          "type": "string"
+        },
+        "explanation": {
+          "title": "Explanation",
+          "type": "string"
+        },
+        "actionableHint": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Actionablehint"
+        }
+      },
+      "required": [
+        "checkId",
+        "name",
+        "status",
+        "critical",
+        "score",
+        "maxScore",
+        "sourceRef",
+        "explanation"
+      ],
+      "title": "CheckResultItem",
+      "type": "object"
+    },
+    "ExpectedVsActualTotals": {
+      "properties": {
+        "expectedTotalRevenue": {
+          "anyOf": [
+            {
+              "type": "number"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Expectedtotalrevenue"
+        },
+        "actualTotalRevenue": {
+          "anyOf": [
+            {
+              "type": "number"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Actualtotalrevenue"
+        },
+        "expectedAverageOrder": {
+          "anyOf": [
+            {
+              "type": "number"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Expectedaverageorder"
+        },
+        "actualAverageOrder": {
+          "anyOf": [
+            {
+              "type": "number"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Actualaverageorder"
+        },
+        "expectedUniqueOrders": {
+          "anyOf": [
+            {
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Expecteduniqueorders"
+        },
+        "actualUniqueOrders": {
+          "anyOf": [
+            {
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Actualuniqueorders"
+        }
+      },
+      "title": "ExpectedVsActualTotals",
+      "type": "object"
+    },
+    "FormulaFact": {
+      "properties": {
+        "factId": {
+          "title": "Factid",
+          "type": "string"
+        },
+        "metric": {
+          "title": "Metric",
+          "type": "string"
+        },
+        "sourceRef": {
+          "title": "Sourceref",
+          "type": "string"
+        },
+        "formula": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Formula"
+        },
+        "supported": {
+          "title": "Supported",
+          "type": "boolean"
+        },
+        "cachedValue": {
+          "anyOf": [
+            {
+              "type": "number"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Cachedvalue"
+        },
+        "expectedValue": {
+          "anyOf": [
+            {
+              "type": "number"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Expectedvalue"
+        },
+        "status": {
+          "enum": [
+            "pass",
+            "fail",
+            "unknown",
+            "not_applicable"
+          ],
+          "title": "Status",
+          "type": "string"
+        }
+      },
+      "required": [
+        "factId",
+        "metric",
+        "sourceRef",
+        "supported",
+        "status"
+      ],
+      "title": "FormulaFact",
+      "type": "object"
+    },
+    "QualitativeObservation": {
+      "properties": {
+        "factId": {
+          "title": "Factid",
+          "type": "string"
+        },
+        "sourceRef": {
+          "title": "Sourceref",
+          "type": "string"
+        },
+        "message": {
+          "title": "Message",
+          "type": "string"
+        }
+      },
+      "required": [
+        "factId",
+        "sourceRef",
+        "message"
+      ],
+      "title": "QualitativeObservation",
+      "type": "object"
+    },
+    "WorkbookStructure": {
+      "properties": {
+        "sheetNames": {
+          "items": {
+            "type": "string"
+          },
+          "title": "Sheetnames",
+          "type": "array"
+        },
+        "expectedSheetsPresent": {
+          "title": "Expectedsheetspresent",
+          "type": "boolean"
+        },
+        "salesDataHeaders": {
+          "items": {
+            "type": "string"
+          },
+          "title": "Salesdataheaders",
+          "type": "array"
+        },
+        "expectedHeadersMatch": {
+          "title": "Expectedheadersmatch",
+          "type": "boolean"
+        }
+      },
+      "required": [
+        "sheetNames",
+        "expectedSheetsPresent",
+        "salesDataHeaders",
+        "expectedHeadersMatch"
+      ],
+      "title": "WorkbookStructure",
+      "type": "object"
+    }
+  },
+  "properties": {
+    "attemptId": {
+      "title": "Attemptid",
+      "type": "string"
+    },
+    "artifactId": {
+      "title": "Artifactid",
+      "type": "string"
+    },
+    "validatorVersion": {
+      "title": "Validatorversion",
+      "type": "string"
+    },
+    "fileHash": {
+      "title": "Filehash",
+      "type": "string"
+    },
+    "status": {
+      "enum": [
+        "ok",
+        "review_required",
+        "parse_error"
+      ],
+      "title": "Status",
+      "type": "string"
+    },
+    "practicalScore": {
+      "maximum": 100.0,
+      "minimum": 0.0,
+      "title": "Practicalscore",
+      "type": "number"
+    },
+    "workbookStructure": {
+      "$ref": "#/$defs/WorkbookStructure"
+    },
+    "checkResults": {
+      "items": {
+        "$ref": "#/$defs/CheckResultItem"
+      },
+      "title": "Checkresults",
+      "type": "array"
+    },
+    "factIds": {
+      "items": {
+        "type": "string"
+      },
+      "title": "Factids",
+      "type": "array"
+    },
+    "formulaFacts": {
+      "items": {
+        "$ref": "#/$defs/FormulaFact"
+      },
+      "title": "Formulafacts",
+      "type": "array"
+    },
+    "rowCounts": {
+      "additionalProperties": {
+        "type": "integer"
+      },
+      "title": "Rowcounts",
+      "type": "object"
+    },
+    "duplicateCounts": {
+      "additionalProperties": {
+        "type": "integer"
+      },
+      "title": "Duplicatecounts",
+      "type": "object"
+    },
+    "expectedVsActualTotals": {
+      "$ref": "#/$defs/ExpectedVsActualTotals"
+    },
+    "qualitativeObservations": {
+      "items": {
+        "$ref": "#/$defs/QualitativeObservation"
+      },
+      "title": "Qualitativeobservations",
+      "type": "array"
+    },
+    "warnings": {
+      "items": {
+        "type": "string"
+      },
+      "title": "Warnings",
+      "type": "array"
+    },
+    "errors": {
+      "items": {
+        "type": "string"
+      },
+      "title": "Errors",
+      "type": "array"
+    }
+  },
+  "required": [
+    "attemptId",
+    "artifactId",
+    "validatorVersion",
+    "fileHash",
+    "status",
+    "practicalScore",
+    "workbookStructure",
+    "checkResults",
+    "factIds",
+    "formulaFacts",
+    "rowCounts",
+    "duplicateCounts",
+    "expectedVsActualTotals",
+    "qualitativeObservations",
+    "warnings",
+    "errors"
+  ],
+  "title": "FactSheet",
+  "type": "object"
+}

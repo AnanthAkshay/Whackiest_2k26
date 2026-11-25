@@ -1,0 +1,192 @@
+{
+  "attemptId": "att_fixture_01",
+  "artifactId": "art_fixture_01",
+  "validatorVersion": "1.0.0",
+  "fileHash": "d16a1d96bde3096f32b1cc0de125bd2b9e56f8b268209e15ace949298fddf8bd",
+  "status": "ok",
+  "practicalScore": 100,
+  "workbookStructure": {
+    "sheetNames": [
+      "Sales_Data",
+      "Summary"
+    ],
+    "expectedSheetsPresent": true,
+    "salesDataHeaders": [
+      "Order ID",
+      "Date",
+      "Customer Name",
+      "Category",
+      "Amount"
+    ],
+    "expectedHeadersMatch": true
+  },
+  "checkResults": [
+    {
+      "checkId": "chk_structure_sheets",
+      "name": "Workbook Structure & Required Sheets",
+      "status": "pass",
+      "critical": true,
+      "score": 20,
+      "maxScore": 20,
+      "sourceRef": "Workbook!Sheets",
+      "explanation": "Sales_Data and Summary sheets exist with all 5 expected header columns.",
+      "actionableHint": null
+    },
+    {
+      "checkId": "chk_duplicates_removed",
+      "name": "Duplicate Order Removal",
+      "status": "pass",
+      "critical": true,
+      "score": 20,
+      "maxScore": 20,
+      "sourceRef": "Sales_Data!A2:A17",
+      "explanation": "Found 16 unique orders with 0 duplicates.",
+      "actionableHint": null
+    },
+    {
+      "checkId": "chk_whitespace_casing",
+      "name": "Customer Name Hygiene",
+      "status": "pass",
+      "critical": false,
+      "score": 15,
+      "maxScore": 15,
+      "sourceRef": "Sales_Data!C2:C17",
+      "explanation": "All Customer Name cells are trimmed and title-cased.",
+      "actionableHint": null
+    },
+    {
+      "checkId": "chk_date_normalization",
+      "name": "ISO Date Standardization",
+      "status": "pass",
+      "critical": true,
+      "score": 15,
+      "maxScore": 15,
+      "sourceRef": "Sales_Data!B2:B17",
+      "explanation": "All Date cells follow ISO YYYY-MM-DD or valid Excel date format.",
+      "actionableHint": null
+    },
+    {
+      "checkId": "chk_missing_currency",
+      "name": "Missing Values & Numeric Currency",
+      "status": "pass",
+      "critical": false,
+      "score": 10,
+      "maxScore": 10,
+      "sourceRef": "Sales_Data!D2:E17",
+      "explanation": "All blank categories are filled and all Amount values are numeric.",
+      "actionableHint": null
+    },
+    {
+      "checkId": "chk_summary_formulas",
+      "name": "Summary Formulas (=SUM, =AVERAGE, =COUNTIF)",
+      "status": "pass",
+      "critical": true,
+      "score": 20,
+      "maxScore": 20,
+      "sourceRef": "Summary!B2:B9",
+      "explanation": "Summary sheet uses live supported formulas (=SUM, =AVERAGE, =COUNTIF) matching expected totals.",
+      "actionableHint": null
+    }
+  ],
+  "factIds": [
+    "fact_sheets_present",
+    "fact_headers_match",
+    "fact_unique_order_count",
+    "fact_duplicates_removed",
+    "fact_trimmed_names",
+    "fact_dates_standardized",
+    "fact_missing_categories_imputed",
+    "fact_numeric_amounts",
+    "fact_summary_formulas"
+  ],
+  "formulaFacts": [
+    {
+      "factId": "fact_total_revenue_match",
+      "metric": "Total Revenue",
+      "sourceRef": "Summary!B2",
+      "formula": "=SUM(Sales_Data!E2:E17)",
+      "supported": true,
+      "cachedValue": 13050,
+      "expectedValue": 13050,
+      "status": "pass"
+    },
+    {
+      "factId": "fact_average_order_match",
+      "metric": "Average Order Value",
+      "sourceRef": "Summary!B3",
+      "formula": "=AVERAGE(Sales_Data!E2:E17)",
+      "supported": true,
+      "cachedValue": 815.63,
+      "expectedValue": 815.63,
+      "status": "pass"
+    },
+    {
+      "factId": "fact_countif_electronics_count",
+      "metric": "electronics count",
+      "sourceRef": "Summary!B5",
+      "formula": "=COUNTIF(Sales_Data!D2:D17,\"Electronics\")",
+      "supported": true,
+      "cachedValue": 3,
+      "expectedValue": null,
+      "status": "pass"
+    },
+    {
+      "factId": "fact_countif_grocery_count",
+      "metric": "grocery count",
+      "sourceRef": "Summary!B6",
+      "formula": "=COUNTIF(Sales_Data!D2:D17,\"Grocery\")",
+      "supported": true,
+      "cachedValue": 4,
+      "expectedValue": null,
+      "status": "pass"
+    },
+    {
+      "factId": "fact_countif_home_count",
+      "metric": "home count",
+      "sourceRef": "Summary!B7",
+      "formula": "=COUNTIF(Sales_Data!D2:D17,\"Home\")",
+      "supported": true,
+      "cachedValue": 3,
+      "expectedValue": null,
+      "status": "pass"
+    },
+    {
+      "factId": "fact_countif_stationery_count",
+      "metric": "stationery count",
+      "sourceRef": "Summary!B8",
+      "formula": "=COUNTIF(Sales_Data!D2:D17,\"Stationery\")",
+      "supported": true,
+      "cachedValue": 4,
+      "expectedValue": null,
+      "status": "pass"
+    },
+    {
+      "factId": "fact_countif_general_(imputed)_count",
+      "metric": "general (imputed) count",
+      "sourceRef": "Summary!B9",
+      "formula": "=COUNTIF(Sales_Data!D2:D17,\"General\")",
+      "supported": true,
+      "cachedValue": 2,
+      "expectedValue": null,
+      "status": "pass"
+    }
+  ],
+  "rowCounts": {
+    "salesDataRows": 16,
+    "uniqueOrders": 16
+  },
+  "duplicateCounts": {
+    "duplicateOrderIds": 0
+  },
+  "expectedVsActualTotals": {
+    "expectedTotalRevenue": 13050,
+    "actualTotalRevenue": 13050,
+    "expectedAverageOrder": 815.63,
+    "actualAverageOrder": 815.62,
+    "expectedUniqueOrders": 16,
+    "actualUniqueOrders": 16
+  },
+  "qualitativeObservations": [],
+  "warnings": [],
+  "errors": []
+}

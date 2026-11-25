@@ -1,0 +1,148 @@
+{
+  "challengeId": "retail_sales_cleanup",
+  "roleId": "data_entry_operator",
+  "title": "Retail Sales Cleanup & Reporting",
+  "version": "1.0.0",
+  "skillRubricId": "excel",
+  "skillRubricVersion": "1.0.0",
+  "basis": "public-sources",
+  "basisNote": "Rubric built from public sources (Microsoft MO-200 skills outline). Trainer co-sign planned in the pilot.",
+  "reviewNote": "Trainer co-sign is planned for the pilot and has not yet happened.",
+  "trainerCoSigned": false,
+  "sources": [
+    {
+      "title": "MO-200 skills outline document",
+      "url": "https://arch-center.azureedge.net/Learning/Credentials/mo-200-microsoft-excel-2019-skills-measured.pdf",
+      "accessed": "2026-11-24"
+    },
+    {
+      "title": "Overview of formulas in Excel",
+      "url": "https://support.microsoft.com/en-us/excel/get-started/overview-of-formulas-in-excel",
+      "accessed": "2026-11-24"
+    },
+    {
+      "title": "Format numbers",
+      "url": "https://support.microsoft.com/en-us/excel/format-numbers",
+      "accessed": "2026-11-24"
+    },
+    {
+      "title": "Filter data in a range or table in Excel",
+      "url": "https://support.microsoft.com/en-gb/excel/get-started/filter-data-in-a-range-or-table-in-excel",
+      "accessed": "2026-11-24"
+    }
+  ],
+  "acceptedFormats": [".xlsx"],
+  "maxSizeBytes": 10485760,
+  "expectedSheets": ["Sales_Data", "Summary"],
+  "expectedColumns": ["Order ID", "Date", "Customer Name", "Category", "Amount"],
+  "checks": [
+    {
+      "checkId": "chk_structure_sheets",
+      "name": "Workbook Structure & Required Sheets",
+      "weight": 0.2,
+      "critical": true,
+      "sourceStatus": "grounded",
+      "sourceRefs": [0],
+      "linkedSkillCriterionId": "worksheets-workbooks-navigation",
+      "mappingNote": "Practical evidence: Sales_Data and Summary sheets exist with required columns. Conceptual evidence: explaining workbook vs worksheet tabs.",
+      "validatorMeasurement": "python_openpyxl_sheet_and_header_check",
+      "vivaFactRefs": ["fact_sheets_present", "fact_headers_match"],
+      "acceptableEvidence": "Valid macro-free .xlsx workbook containing both Sales_Data and Summary sheets with exact header columns.",
+      "levels": {
+        "0": "Not evident: Workbook is unreadable, macro-enabled, or missing Sales_Data / Summary sheets.",
+        "1": "Partially evident: Both sheets exist, but header names or column order deviate from specification.",
+        "2": "Demonstrated: Valid .xlsx with both required sheets and all 5 expected header columns."
+      }
+    },
+    {
+      "checkId": "chk_duplicates_removed",
+      "name": "Duplicate Order Removal",
+      "weight": 0.2,
+      "critical": true,
+      "sourceStatus": "grounded",
+      "sourceRefs": [0, 3],
+      "linkedSkillCriterionId": "tables-sorting-filtering",
+      "mappingNote": "Practical evidence: unique Order ID count matches seed expectation. Conceptual evidence: explaining how duplicate rows skew totals.",
+      "validatorMeasurement": "python_unique_order_id_count_check",
+      "vivaFactRefs": ["fact_unique_order_count", "fact_duplicates_removed"],
+      "acceptableEvidence": "All duplicate Order ID rows removed so unique row count equals expected seed count (16).",
+      "levels": {
+        "0": "Not evident: Duplicate Order IDs remain or valid unique rows were deleted.",
+        "1": "Partially evident: One duplicate removed, but at least one duplicate Order ID remains.",
+        "2": "Demonstrated: Zero duplicate Order IDs remain and all 16 unique orders are preserved."
+      }
+    },
+    {
+      "checkId": "chk_whitespace_casing",
+      "name": "Customer Name Hygiene",
+      "weight": 0.15,
+      "critical": false,
+      "sourceStatus": "grounded",
+      "sourceRefs": [0],
+      "linkedSkillCriterionId": "cells-ranges-references",
+      "mappingNote": "Practical evidence: zero leading/trailing spaces in Customer Name cells. Conceptual evidence: explaining =TRIM or cell cleanup.",
+      "validatorMeasurement": "python_whitespace_and_casing_scan",
+      "vivaFactRefs": ["fact_trimmed_names"],
+      "acceptableEvidence": "Customer Name cells contain no leading/trailing spaces and use consistent title casing.",
+      "levels": {
+        "0": "Not evident: Leading/trailing whitespace or lowercase inconsistencies remain across most rows.",
+        "1": "Partially evident: Spaces trimmed on most rows, but casing or 1-2 rows remain uncleaned.",
+        "2": "Demonstrated: 100% of Customer Name cells are trimmed and properly cased."
+      }
+    },
+    {
+      "checkId": "chk_date_normalization",
+      "name": "ISO Date Standardization",
+      "weight": 0.15,
+      "critical": true,
+      "sourceStatus": "grounded",
+      "sourceRefs": [0, 2],
+      "linkedSkillCriterionId": "formatting-number-formats",
+      "mappingNote": "Practical evidence: all Date cells parse to YYYY-MM-DD. Conceptual evidence: explaining why consistent date formats enable sorting.",
+      "validatorMeasurement": "python_iso_date_format_check",
+      "vivaFactRefs": ["fact_dates_standardized"],
+      "acceptableEvidence": "Every cell in the Date column follows ISO YYYY-MM-DD string or valid Excel date serial.",
+      "levels": {
+        "0": "Not evident: Mixed date formats (DD/MM/YYYY, YYYY.MM.DD) remain uncleaned.",
+        "1": "Partially evident: Most dates standardized, but 1-3 rows remain in mixed text formats.",
+        "2": "Demonstrated: All 16 Date cells are normalized to ISO YYYY-MM-DD."
+      }
+    },
+    {
+      "checkId": "chk_missing_currency",
+      "name": "Missing Values & Numeric Currency",
+      "weight": 0.1,
+      "critical": false,
+      "sourceStatus": "grounded",
+      "sourceRefs": [0, 2],
+      "linkedSkillCriterionId": "formatting-number-formats",
+      "mappingNote": "Practical evidence: blank categories imputed as General and Amount stored as numeric. Conceptual evidence: explaining number vs text formatting.",
+      "validatorMeasurement": "python_numeric_amount_and_category_check",
+      "vivaFactRefs": ["fact_missing_categories_imputed", "fact_numeric_amounts"],
+      "acceptableEvidence": "Blank categories filled with 'General' and all Amount values stored as numeric values without 'Rs.' text prefixes.",
+      "levels": {
+        "0": "Not evident: Text prefixes remain in Amount or blank categories remain empty.",
+        "1": "Partially evident: Numeric amounts fixed, but blank categories left empty (or vice versa).",
+        "2": "Demonstrated: All blank categories imputed and all Amount values stored as clean numbers."
+      }
+    },
+    {
+      "checkId": "chk_summary_formulas",
+      "name": "Summary Formulas (=SUM, =AVERAGE, =COUNTIF)",
+      "weight": 0.2,
+      "critical": true,
+      "sourceStatus": "grounded",
+      "sourceRefs": [0, 1],
+      "linkedSkillCriterionId": "formulas-functions",
+      "mappingNote": "Practical evidence: Summary sheet contains live =SUM, =AVERAGE, and =COUNTIF formulas. Conceptual evidence: explaining why formulas are preferred over hardcoded totals.",
+      "validatorMeasurement": "python_formula_ast_and_value_check",
+      "vivaFactRefs": ["fact_summary_formulas", "fact_total_revenue_match"],
+      "acceptableEvidence": "Summary sheet uses live =SUM, =AVERAGE, and =COUNTIF formulas referencing Sales_Data ranges.",
+      "levels": {
+        "0": "Not evident: Summary cells are blank or contain hardcoded numbers instead of formulas.",
+        "1": "Partially evident: =SUM is present, but =AVERAGE or =COUNTIF formulas are missing or reference wrong ranges.",
+        "2": "Demonstrated: Live =SUM, =AVERAGE, and =COUNTIF formulas present with accurate range references."
+      }
+    }
+  ]
+}
