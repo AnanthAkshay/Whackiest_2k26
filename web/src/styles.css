@@ -118,6 +118,100 @@ textarea { width: 100%; min-height: 126px; resize: vertical; padding: 13px; bord
 .text-mode-active { border-color: #1f8a70; color: #1f8a70; background: #eaf6f1; }
 
 .health-card { min-height: auto; padding: 14px 16px; }
+
+/* Prooffolio 7-Stage Journey & Component Styles (360px Mobile-First) */
+.nav-top-row { display: flex; align-items: center; justify-content: space-between; gap: 10px; margin-bottom: 6px; }
+.brand-link { text-decoration: none; }
+.nav-quick-link { color: #176f5a; font-size: .84rem; font-weight: 800; text-decoration: none; padding: 6px 10px; border-radius: 999px; background: #eaf3ee; }
+.journey-pill { text-decoration: none; }
+.journey-plain-list { display: grid; gap: 10px; margin: 18px 0; }
+.journey-plain-card { padding: 12px 14px; border: 1px solid #d8e2dc; border-radius: 14px; background: #fff; }
+.journey-plain-card strong { display: block; color: #176f5a; font-size: .95rem; margin-bottom: 2px; }
+.journey-plain-card p { margin: 0; color: #43534a; font-size: .88rem; line-height: 1.4; }
+.cta-stack { display: grid; gap: 6px; margin-top: 8px; }
+.mock-disclosure { margin-top: 14px; padding: 10px 12px; border-radius: 10px; background: #f3f7f4; border: 1px dashed #b9c9bf; color: #43534a; }
+
+.demo-fill-box { display: flex; align-items: center; gap: 10px; flex-wrap: wrap; margin: 14px 0; }
+.demo-fill-box .secondary { width: auto; margin-top: 0; min-height: 44px; padding: 10px 14px; }
+.sample-pill { display: inline-flex; align-items: center; padding: 3px 9px; border-radius: 999px; font-size: .74rem; font-weight: 800; background: #eaf3ee; color: #176f5a; }
+.form-stack { display: grid; gap: 10px; margin-top: 10px; }
+.field-label { display: block; margin-top: 8px; font-size: .86rem; font-weight: 800; color: #315245; }
+.text-input { width: 100%; min-height: 48px; padding: 11px 13px; border: 1px solid #b9c9bf; border-radius: 12px; background: #fff; color: #14251d; font-size: 1rem; }
+.field-group { border: 0; padding: 0; margin: 8px 0 0; }
+.lang-pill-row { display: grid; grid-template-columns: repeat(3, 1fr); gap: 8px; margin-top: 6px; }
+.lang-pill { min-height: 46px; border: 1px solid #b9c9bf; border-radius: 12px; background: #fff; color: #14251d; font-weight: 700; }
+.lang-pill.active { border-color: #1f8a70; background: #1f8a70; color: #fff; }
+
+.role-card-selected { border-color: #1f8a70; background: #f3fbf8; }
+.mini-skill-list { margin: 8px 0 0; padding-left: 18px; color: #43534a; font-size: .86rem; line-height: 1.45; }
+
+.card-list { display: grid; gap: 12px; margin-top: 16px; }
+.info-card { padding: 15px 16px; border: 1px solid #dbe3dd; border-radius: 16px; background: #fff; }
+.card-header-row { display: flex; justify-content: space-between; align-items: flex-start; gap: 10px; margin-bottom: 6px; }
+.time-pill { font-size: .76rem; font-weight: 800; color: #536159; white-space: nowrap; }
+.code-example { display: block; margin-top: 8px; padding: 8px 10px; border-radius: 8px; background: #f3f7f4; color: #14251d; font-size: .82rem; overflow-x: auto; }
+.external-practice-card { display: flex; gap: 14px; align-items: center; justify-content: space-between; margin-top: 18px; padding: 15px 16px; border: 1px solid #b2d5c8; border-radius: 16px; background: #f0faf5; }
+.external-practice-text { flex: 1; }
+.external-practice-text h2 { margin: 6px 0 4px; font-size: 1rem; }
+.external-practice-text p { margin: 0 0 8px; font-size: .86rem; color: #43534a; line-height: 1.4; }
+.external-practice-qr { flex-shrink: 0; }
+
+.spec-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(110px, 1fr)); gap: 10px; margin-bottom: 12px; }
+.spec-label { display: block; font-size: .74rem; color: #64736a; font-weight: 700; text-transform: uppercase; }
+.steps-heading { margin: 8px 0 6px; font-size: .92rem; }
+.steps-list { margin: 0; padding-left: 18px; color: #43534a; font-size: .86rem; line-height: 1.5; }
+.upload-section { margin-top: 20px; }
+.dropzone { margin-top: 10px; padding: 18px; border: 2px dashed #9aac9f; border-radius: 16px; background: #fff; text-align: center; }
+.dropzone-active { border-color: #1f8a70; background: #f0faf5; }
+.dropzone p { margin: 0 0 8px; color: #536159; font-size: .9rem; }
+.progress-card { margin-top: 14px; padding: 14px; border: 1px solid #dbe3dd; border-radius: 14px; background: #fff; }
+.sha-line { word-break: break-all; }
+
+.check-badge { display: inline-flex; padding: 3px 9px; border-radius: 999px; font-size: .74rem; font-weight: 800; white-space: nowrap; }
+.check-badge--pass { background: #dff4eb; color: #176f5a; }
+.check-badge--issue { background: #fff0ec; color: #a13d28; }
+.check-badge--not_applicable { background: #edf1ef; color: #536159; }
+
+.meter-provisional-note { margin: 0 0 8px; font-size: .78rem; }
+.question-highlight { margin: 10px 0; padding: 12px; border-radius: 12px; background: #f3f9f6; border: 1px solid #d3e2d8; text-align: left; }
+.question-highlight p { margin: 0; color: #14251d; line-height: 1.45; }
+.repeat-btn { min-height: 36px; margin-top: 6px; padding: 4px 0; font-size: .84rem; text-align: left; }
+.transcript-correct-btn { display: inline-block; margin-top: 6px; border: 0; background: transparent; color: #176f5a; font-size: .78rem; font-weight: 800; text-decoration: underline; padding: 0; }
+.transcript-edit-box { display: grid; gap: 6px; margin-top: 4px; }
+
+.ecve-breakdown { margin-top: 18px; }
+.ecve-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 8px; margin: 10px 0 12px; }
+.ecve-metric { padding: 10px; border-radius: 12px; background: #f3f9f6; text-align: center; }
+.ecve-metric strong { font-size: 1.2rem; color: #176f5a; }
+.verification-meaning { margin-top: 18px; }
+
+.filter-card { display: grid; gap: 6px; padding: 14px 16px; border: 1px solid #dbe3dd; border-radius: 16px; background: #fff; }
+.match-pill { padding: 3px 9px; border-radius: 999px; font-size: .78rem; font-weight: 800; background: #1f8a70; color: #fff; white-space: nowrap; }
+.opp-card h2 { margin: 4px 0; font-size: 1.05rem; }
+.opp-meta { margin: 0 0 10px; color: #64736a; font-size: .84rem; }
+.opp-skills-block { margin-top: 8px; font-size: .86rem; }
+.opp-gaps-block { padding-top: 8px; border-top: 1px solid #e6ece8; }
+.empty-state { text-align: center; }
+
+/* Offline, Sync Queue, Practice Drills & Online-Only Badges */
+.offline-status-bar { display: flex; align-items: center; flex-wrap: wrap; gap: 8px; margin-bottom: 14px; padding: 8px 12px; border: 1px solid #d8e2dc; border-radius: 12px; background: #fff; }
+.offline-pill { background: #fff0ec; color: #a13d28; }
+.sync-badge { display: inline-flex; align-items: center; padding: 3px 9px; border-radius: 999px; font-size: .74rem; font-weight: 800; }
+.sync-badge--idle { background: #edf1ef; color: #536159; }
+.sync-badge--pending { background: #fff4d6; color: #714d08; }
+.sync-badge--synced { background: #dff4eb; color: #176f5a; }
+.sync-badge--failed { background: #fff0ec; color: #a13d28; }
+.online-only-pill { display: inline-flex; align-items: center; padding: 2px 8px; border-radius: 999px; font-size: .72rem; font-weight: 800; background: #e8eefc; color: #1f487e; }
+.lesson-actions-row { margin-top: 10px; }
+.lesson-actions-row .secondary { min-height: 40px; margin-top: 0; padding: 8px 12px; font-size: .86rem; }
+.lesson-done-btn { border-color: #1f8a70; background: #eaf6f1; color: #176f5a; }
+.practice-section { margin-top: 24px; }
+.practice-section h2 { margin: 8px 0 4px; }
+.drill-options { display: grid; gap: 8px; margin-top: 10px; }
+.drill-option-btn { width: 100%; min-height: 44px; padding: 10px 12px; border: 1px solid #c9d6ce; border-radius: 10px; background: #fff; color: #14251d; text-align: left; font-size: .88rem; }
+.drill-option-btn.selected { border-color: #1f8a70; background: #eaf6f1; font-weight: 700; }
+.drill-feedback-ok { margin: 10px 0 0; padding: 10px; border-radius: 10px; background: #eaf6f1; color: #176f5a; font-size: .86rem; }
+.drill-feedback-try { margin: 10px 0 0; padding: 10px; border-radius: 10px; background: #fff4d6; color: #714d08; font-size: .86rem; }
 .health-card-header { display: flex; align-items: center; justify-content: space-between; gap: 10px; width: 100%; }
 .status-pill { display: inline-block; padding: 3px 8px; border-radius: 99px; font-size: .75rem; font-weight: 800; text-transform: uppercase; }
 .status-ok { color: #14593f; background: #dcf2e7; }

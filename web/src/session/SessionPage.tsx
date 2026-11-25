@@ -38,6 +38,8 @@ function SessionExperience(): JSX.Element {
   const [statusNote, setStatusNote] = useState("");
   const [fallbackReason, setFallbackReason] = useState<FallbackReason>();
   const [draft, setDraft] = useState("");
+  const [editingTurnIdx, setEditingTurnIdx] = useState<number | null>(null);
+  const [editTurnDraft, setEditTurnDraft] = useState("");
   const [elapsedSeconds, setElapsedSeconds] = useState(0);
   const [maxDurationSeconds, setMaxDurationSeconds] = useState<number>();
   const [durationWarning, setDurationWarning] = useState(false);
@@ -316,8 +318,13 @@ function SessionExperience(): JSX.Element {
   if (!session) return <main className="shell"><p className="loading">{statusNote || t("sessionStarting")}</p></main>;
 
   return <main className="shell">
-    <p className="eyebrow">{isDemo && <span className="replay-badge">{t("replayBadge")}</span>} {t("sessionEyebrow", { skill: session.skill ?? skill?.skill ?? "", language: t(languageKeys[session.language ?? language]) })}</p>
+    <p className="eyebrow">
+      {isDemo && <span className="replay-badge">{t("replayBadge")}</span>}{" "}
+      <span className="sample-pill">{t(languageKeys[session.language ?? language])}</span>{" "}
+      {t("sessionEyebrow", { skill: session.skill ?? skill?.skill ?? "", language: t(languageKeys[session.language ?? language]) })}
+    </p>
     <h1>{t("sessionTitle")}</h1>
+    <p className="fineprint"><span className="online-only-pill">{t("onlineOnlyBadge")}</span> {t("onlineOnlyVivaNote")}</p>
     <p className="session-time">{t("elapsedTime", { time })}</p>
     <MeterBar value={session.understanding} stalled={session.stalled ?? false} />
     {durationWarning && <p className="duration-warning" role="status">{t("durationWarning", { time: durationTime })}</p>}
@@ -327,7 +334,14 @@ function SessionExperience(): JSX.Element {
       {isDemo && <p className="mode-note">{t("replay")}</p>}
       {!isDemo && voice?.mode === "mock" && <p className="mode-note">{t("mockSession")}</p>}
       {!isDemo && voice?.mode === "elevenlabs" && <p className="mode-note">{avatarState === "speaking" ? t("agentSpeaking") : avatarState === "listening" ? t("agentListening") : t("agentReady")}</p>}
-      {agentText && <p>{agentText}</p>}
+      {agentText && (
+        <div className="question-highlight">
+          <p>{agentText}</p>
+          <button type="button" className="text-button repeat-btn" onClick={() => speak(agentText, session.language ?? language)}>
+            {t("repeatQuestion")}
+          </button>
+        </div>
+      )}
       {!isDemo && <button className="secondary type-toggle" aria-pressed={textFallbackOpen} onClick={() => setTextFallbackOpen((open) => !open)}>{textFallbackOpen ? t("useVoiceInstead") : t("typeInstead")}</button>}
       {showMockSpeech && <button className="primary large-button" onClick={() => listenOnce(language, (text) => { setPartialCandidateText(""); void submitMockTurn(text); }, () => { setStatusNote(t("speechUnavailable")); moveToTextFallback("microphone"); }, setPartialCandidateText)}>{t("speakExplanation")}</button>}
       {fallbackReason && <p className="voice-fallback" role="alert">{fallbackReason === "microphone" ? t("microphoneLost") : t("connectionFailed")}</p>}
@@ -337,7 +351,49 @@ function SessionExperience(): JSX.Element {
     <section className={"transcript " + (transcriptOpen ? "" : "is-collapsed")} aria-labelledby="transcript-heading">
       <div className="transcript-header"><h2 id="transcript-heading">{t("whatHeard")}</h2><button className="transcript-toggle" aria-expanded={transcriptOpen} aria-controls="session-transcript" onClick={() => setTranscriptOpen((open) => !open)}>{transcriptOpen ? t("hideTranscript") : t("showTranscript")}</button></div>
       {transcriptOpen && <div className="transcript-body" id="session-transcript">
-        {transcript.map((turn, index) => <article className={"transcript-bubble " + turn.speaker} key={turn.createdAt + "-" + index}><strong>{turn.speaker === "agent" ? t("beginner") : t("you")}</strong><span>{turn.text}</span><time dateTime={turn.createdAt}>{timeLabel(turn.createdAt, session.language ?? language)}</time></article>)}
+        {transcript.map((turn, index) => (
+          <article className={"transcript-bubble " + turn.speaker} key={turn.createdAt + "-" + index}>
+            <strong>{turn.speaker === "agent" ? t("beginner") : t("you")}</strong>
+            {editingTurnIdx === index ? (
+              <div className="transcript-edit-box">
+                <textarea
+                  value={editTurnDraft}
+                  onChange={(e) => setEditTurnDraft(e.target.value)}
+                  aria-label={t("correctTranscript")}
+                />
+                <button
+                  type="button"
+                  className="secondary"
+                  onClick={() => {
+                    const cleaned = editTurnDraft.trim();
+                    if (cleaned) {
+                      setTranscript((curr) => curr.map((item, idx) => (idx === index ? { ...item, text: cleaned } : item)));
+                      void submitText(cleaned);
+                    }
+                    setEditingTurnIdx(null);
+                  }}
+                >
+                  {t("saveCorrection")}
+                </button>
+              </div>
+            ) : (
+              <span>{turn.text}</span>
+            )}
+            <time dateTime={turn.createdAt}>{timeLabel(turn.createdAt, session.language ?? language)}</time>
+            {turn.speaker === "candidate" && !isDemo && editingTurnIdx !== index && (
+              <button
+                type="button"
+                className="transcript-correct-btn"
+                onClick={() => {
+                  setEditingTurnIdx(index);
+                  setEditTurnDraft(turn.text);
+                }}
+              >
+                {t("correctTranscript")}
+              </button>
+            )}
+          </article>
+        ))}
         {partialCandidateText && <article className="transcript-bubble candidate partial"><strong>{t("you")}</strong><span>{partialCandidateText}</span><em>{t("recognising")}</em></article>}
         <div ref={transcriptEndRef} />
       </div>}

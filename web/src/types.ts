@@ -74,3 +74,104 @@ export interface SkillRecord {
   basisNote?: string;
   pageId?: string;
 }
+
+// ==========================================
+// Prooffolio 7-Stage User Journey UI Types
+// ==========================================
+
+export interface LearnerProfileUI {
+  displayName: string;
+  careerGoal: string;
+  preferredLanguage: Language;
+  coarseLocation: string;
+  isDemoData: boolean;
+}
+
+export interface RoleOption {
+  roleId: string;
+  title: string;
+  sector: string;
+  description: string;
+  skills: string[];
+}
+
+export interface LearningCard {
+  id: string;
+  title: string;
+  summary: string;
+  example: string;
+  minutes: number;
+}
+
+export interface ChallengeInfo {
+  challengeId: string;
+  roleId: string;
+  title: string;
+  version: string;
+  rubricVersion: string;
+  acceptedFormat: string;
+  maxSizeMb: number;
+  estimatedSteps: string[];
+  instructions: string;
+}
+
+export type ValidationCheckStatus = "pass" | "issue" | "not_applicable";
+
+export interface ValidationCheckItem {
+  id: string;
+  title: string;
+  explanation: string;
+  status: ValidationCheckStatus;
+  detail: string;
+}
+
+export interface ValidationReportUI {
+  attemptId: string;
+  fileName: string;
+  fileSizeBytes: number;
+  sha256: string;
+  practicalScore: number;
+  validatorVersion: string;
+  isMock: boolean;
+  checks: ValidationCheckItem[];
+}
+
+export type ECVEOutcome =
+  | "Demonstrated"
+  | "Partially demonstrated"
+  | "Not yet demonstrated"
+  | "Pending Human Review";
+
+export interface ECVEResultUI {
+  attemptId: string;
+  P: number;
+  U: number;
+  C: number;
+  composite: number;
+  criticalGatesPassed: boolean;
+  outcome: ECVEOutcome;
+  reviewExplanation: string;
+  isMock: boolean;
+}
+
+export interface OpportunitySkillRequirement {
+  skillId: string;
+  label: string;
+  weight: number;
+  matched: boolean;
+}
+
+export interface OpportunityItem {
+  id: string;
+  title: string;
+  employer: string;
+  roleId: string;
+  district: string;
+  city: string;
+  pincode: string;
+  sourceLabel: string;
+  isSample: boolean;
+  postedDate: string;
+  requiredSkills: OpportunitySkillRequirement[];
+  recommendedPractice: string;
+}

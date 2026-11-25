@@ -1,0 +1,119 @@
+{
+  "label": "Pre-seeded demo",
+  "isDemoData": true,
+  "learner": {
+    "userId": "cand_demo_meera_hassan",
+    "publicHandle": "meera_hassan_demo",
+    "displayName": "Meera (Demo Scenario)",
+    "preferredLanguage": "kn",
+    "careerGoal": "Entry-Level Data Entry Operator",
+    "coarseLocation": "Hassan, Karnataka",
+    "isDemoData": true
+  },
+  "role": {
+    "roleId": "data_entry_operator",
+    "title": "Entry-Level Data Entry Operator"
+  },
+  "challenge": {
+    "challengeId": "retail_sales_cleanup",
+    "title": "Retail Sales Cleanup & Reporting",
+    "version": "1.0.0",
+    "seedId": "seed_meera_demo_01"
+  },
+  "validatorFactSheet": {
+    "attemptId": "att_meera_demo_01",
+    "artifactId": "art_meera_demo_01",
+    "validatorVersion": "1.0.0",
+    "fileHash": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "status": "ok",
+    "practicalScore": 100,
+    "factIds": [
+      "fact_sheets_present",
+      "fact_headers_match",
+      "fact_unique_order_count",
+      "fact_duplicates_removed",
+      "fact_trimmed_names",
+      "fact_dates_standardized",
+      "fact_missing_categories_imputed",
+      "fact_numeric_amounts",
+      "fact_summary_formulas",
+      "fact_total_revenue_match"
+    ],
+    "formulaFacts": [
+      {
+        "factId": "fact_total_revenue_match",
+        "metric": "Total Revenue",
+        "sourceRef": "Summary!B2",
+        "formula": "SUM(Sales_Data!E2:E17)",
+        "supported": true,
+        "cachedValue": 14800,
+        "expectedValue": 14800,
+        "status": "pass"
+      },
+      {
+        "factId": "fact_countif_electronics_count",
+        "metric": "Electronics Count",
+        "sourceRef": "Summary!B5",
+        "formula": "COUNTIF(Sales_Data!D2:D17,\"Electronics\")",
+        "supported": true,
+        "cachedValue": 5,
+        "expectedValue": 5,
+        "status": "pass"
+      }
+    ]
+  },
+  "vivaTranscript": [
+    {
+      "speaker": "agent",
+      "text": "I noticed COUNTIF in Summary!B5 and SUM in Summary!B2. Why did you use a formula instead of typing the total?",
+      "createdAt": "2026-11-25T00:05:00.000Z"
+    },
+    {
+      "speaker": "candidate",
+      "text": "If any order amount or category changes in Sales_Data, =SUM and =COUNTIF recalculate automatically without manual mistakes.",
+      "createdAt": "2026-11-25T00:05:20.000Z"
+    },
+    {
+      "speaker": "agent",
+      "text": "Your Sales_Data sheet shows 16 unique orders. How did you handle duplicate Order IDs?",
+      "createdAt": "2026-11-25T00:05:35.000Z"
+    },
+    {
+      "speaker": "candidate",
+      "text": "I checked Order ID for duplicates and removed the 2 repeated rows so revenue isn't counted twice.",
+      "createdAt": "2026-11-25T00:05:55.000Z"
+    }
+  ],
+  "provisionalMeterTrace": [
+    { "turnIndex": 0, "value": 0 },
+    { "turnIndex": 1, "value": 45 },
+    { "turnIndex": 2, "value": 90 }
+  ],
+  "ecveResult": {
+    "P": 100,
+    "U": 90,
+    "C": 95,
+    "composite": 96.75,
+    "criticalGatesPassed": true,
+    "outcome": "Demonstrated"
+  },
+  "skillPassport": {
+    "passportId": "pass_meera_demo_01",
+    "publicHandle": "meera_hassan_demo",
+    "status": "active",
+    "verificationType": "ed25519-jws",
+    "keyId": "dev-mock-ed25519-v1",
+    "evidenceHash": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "rubricBasis": "Rubric built from public sources (Microsoft MO-200 skills outline). Trainer co-sign planned in the pilot."
+  },
+  "sampleOpportunity": {
+    "id": "opp_demo_hassan_01",
+    "title": "Data Entry Associate (Retail Inventory)",
+    "employer": "Hassan Regional Supply Hub (Sample)",
+    "district": "Hassan",
+    "city": "Hassan",
+    "pincode": "573201",
+    "sampleOrLive": "sample",
+    "matchPercent": 70
+  }
+}

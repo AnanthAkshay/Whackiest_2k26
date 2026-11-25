@@ -1,6 +1,7 @@
 import { useCallback, useEffect, useState } from "react";
 import { Link, useNavigate, useParams } from "react-router-dom";
 import { deleteCredential, getCredential, shareCredential } from "../api";
+import { clientConfig } from "../config/integrations";
 import { localeTags, useTranslation } from "../i18n";
 import { ScoreList } from "../shared/ScoreList";
 import type { SkillRecord } from "../types";
@@ -85,8 +86,26 @@ export function SkillPage(): JSX.Element {
       <p className="lede">{t("levelLabel")}: <strong>{level}</strong></p>
       <p className="fineprint">{t("issued", { date: issuedDate })}</p>
       <p className="record-badge">{t("recordMatchesDatabase")}</p>
+      <p className="fineprint"><span className="online-only-pill">{t("onlineOnlyBadge")}</span> {t("onlineOnlyVerifyNote")}</p>
+      <section className="info-card verification-meaning" aria-label={t("whatVerificationMeansTitle")}>
+        <h2>{t("whatVerificationMeansTitle")}</h2>
+        <p className="fineprint">{t("whatVerificationMeansBody")}</p>
+        <p className="fineprint">
+          <strong>{t("credentialStatusLabel")}:</strong> {record.shared ? t("statusActivePublic") : t("statusActivePrivate")}
+        </p>
+        <p className="fineprint">
+          <strong>Signature Status:</strong> {record.seal ? "Legacy record-integrity check (HMAC)" : "Ed25519 JWS Verified"}
+        </p>
+        <p className="fineprint">
+          <strong>Public Domain:</strong>{" "}
+          {clientConfig.passportPublicDomain
+            ? clientConfig.passportPublicDomain
+            : "Domain not configured (using local development URL)"}
+        </p>
+      </section>
       <ScoreList record={record} />
       <p className="basis">{record.basisNote ?? t("rubricBasis")}</p>
+      <Link className="secondary link-button" to="/opportunities">{t("discoverOpportunitiesCta")}</Link>
 
       <section className="share-section">
         <h2>{t("shareTitle")}</h2>

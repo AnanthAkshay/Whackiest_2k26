@@ -57,9 +57,10 @@ export function HealthPage(): JSX.Element {
     }
   }
 
-  function statusLabel(status: "ok" | "mock" | "error"): string {
-    if (status === "ok") return t("serviceOk");
-    if (status === "mock") return t("serviceMock");
+  function statusLabel(svc: { status: "ok" | "mock" | "error"; displayState?: string }): string {
+    if (svc.displayState) return svc.displayState;
+    if (svc.status === "ok") return t("serviceOk");
+    if (svc.status === "mock") return t("serviceMock");
     return t("serviceError");
   }
 
@@ -80,35 +81,19 @@ export function HealthPage(): JSX.Element {
 
       {report && (
         <div className="tap-stack">
-          <article className="tap-card health-card">
-            <div className="health-card-header">
-              <strong>{report.services.elevenLabs.name}</strong>
-              <span className={`status-pill status-${report.services.elevenLabs.status}`}>
-                {statusLabel(report.services.elevenLabs.status)}
-              </span>
-            </div>
-            <span>{report.services.elevenLabs.message}</span>
-          </article>
-
-          <article className="tap-card health-card">
-            <div className="health-card-header">
-              <strong>{report.services.bedrock.name}</strong>
-              <span className={`status-pill status-${report.services.bedrock.status}`}>
-                {statusLabel(report.services.bedrock.status)}
-              </span>
-            </div>
-            <span>{report.services.bedrock.message}</span>
-          </article>
-
-          <article className="tap-card health-card">
-            <div className="health-card-header">
-              <strong>{report.services.store.name}</strong>
-              <span className={`status-pill status-${report.services.store.status}`}>
-                {statusLabel(report.services.store.status)}
-              </span>
-            </div>
-            <span>{report.services.store.message}</span>
-          </article>
+          {Object.values(report.services)
+            .filter((svc): svc is NonNullable<typeof svc> => Boolean(svc))
+            .map((svc) => (
+              <article key={svc.name} className="tap-card health-card">
+                <div className="health-card-header">
+                  <strong>{svc.name}</strong>
+                  <span className={`status-pill status-${svc.status}`}>
+                    {statusLabel(svc)}
+                  </span>
+                </div>
+                <span>{svc.message}</span>
+              </article>
+            ))}
         </div>
       )}
 

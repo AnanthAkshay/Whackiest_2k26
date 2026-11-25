@@ -2,12 +2,16 @@ import { useEffect, useState } from "react";
 import { Link, useNavigate, useParams } from "react-router-dom";
 import { createCredential, getSkillRecord } from "../api";
 import { useTranslation } from "../i18n";
+import { computeECVEResult } from "../mock/demoData";
+import { useSetup } from "../setup/SetupContext";
+import { JourneyNav } from "../shared/JourneyNav";
 import { ScoreList } from "../shared/ScoreList";
 import { Sparkline } from "../shared/Sparkline";
 import type { SkillRecord } from "../types";
 
 export function ResultsPage(): JSX.Element {
   const { id = "" } = useParams();
+  const { validationReport } = useSetup();
   const { t } = useTranslation();
   const navigate = useNavigate();
   const [record, setRecord] = useState<SkillRecord>();
@@ -66,13 +70,40 @@ export function ResultsPage(): JSX.Element {
   }
 
   const weakScores = record.scores.filter((s) => s.status !== "correct" && s.improveTip);
+  const ecve = computeECVEResult(validationReport?.practicalScore ?? record.total, record.total, 85);
 
   return (
     <main className="shell">
+      <JourneyNav activeStage="results" />
       <p className="eyebrow">{isDemo && <span className="replay-badge">{t("replayBadge")}</span>} {t("resultsEyebrow")}</p>
-      <div className="result-total" aria-label={t("totalLabel")}>{record.total}</div>
-      <h1>{resultName(record.overallLevel, t)}</h1>
+      <div className="result-total" aria-label={t("totalLabel")}>{ecve.composite}</div>
+      <h1>{ecve.outcome}</h1>
       <p className="lede">{t("resultIntro")}</p>
+
+      <section className="info-card ecve-breakdown" aria-label={t("ecveTitle")}>
+        <h2>{t("ecveTitle")}</h2>
+        <div className="ecve-grid">
+          <div className="ecve-metric">
+            <span className="spec-label">{t("ecvePracticalLabel")} (60%)</span>
+            <strong>{ecve.P}%</strong>
+          </div>
+          <div className="ecve-metric">
+            <span className="spec-label">{t("ecveUnderstandingLabel")} (25%)</span>
+            <strong>{ecve.U}%</strong>
+          </div>
+          <div className="ecve-metric">
+            <span className="spec-label">{t("ecveConsistencyLabel")} (15%)</span>
+            <strong>{ecve.C}%</strong>
+          </div>
+        </div>
+        <p className="fineprint">
+          <strong>{t("criticalGatesLabel")}:</strong>{" "}
+          {ecve.criticalGatesPassed ? t("criticalGatesPassed") : t("criticalGatesFailed")}
+        </p>
+        <p className="fineprint">{ecve.reviewExplanation}</p>
+        <p className="fineprint basis">{t("ecveWeightsNote")}</p>
+      </section>
+
       {record.meterTrace.length >= 2 && (
         <div className="sparkline-section">
           <p className="label">{t("meterProgress")}</p>
@@ -97,8 +128,4 @@ export function ResultsPage(): JSX.Element {
       <Link className="text-link" to="/">{t("startAgain")}</Link>
     </main>
   );
-}
-
-function resultName(level: SkillRecord["overallLevel"], t: ReturnType<typeof useTranslation>["t"]): string {
-  return level === "Starting" ? t("resultStarting") : level === "Developing" ? t("resultDeveloping") : t("resultReady");
 }

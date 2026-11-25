@@ -29,6 +29,7 @@ export function MeterBar({ value, stalled }: MeterBarProps): JSX.Element {
         <span>{t("meter")}</span>
         <strong aria-live="polite">{value}%</strong>
       </div>
+      <p className="fineprint meter-provisional-note">{t("meterProvisionalNote")}</p>
       <div
         className={"meter" + (stalled ? " meter--stalled" : "")}
         role="progressbar"

@@ -1,6 +1,6 @@
 import type { AgentLevel, CriterionState, Language, Session, SkillRecord, SkillSummary, Speaker, VoiceMode } from "./types";
 
-const apiBase = import.meta.env.VITE_API_URL ?? "http://localhost:8787";
+const apiBase = (import.meta as { env?: Record<string, string | undefined> }).env?.VITE_API_URL ?? "http://localhost:8787";
 
 async function request<T>(path: string, init?: RequestInit): Promise<T> {
   const response = await fetch(`${apiBase}${path}`, {
@@ -33,6 +33,7 @@ export interface PublicConfig {
 export interface ServiceHealth {
   name: string;
   status: "ok" | "mock" | "error";
+  displayState?: "Live" | "Mock" | "Unavailable" | "Not configured";
   message: string;
 }
 
@@ -44,6 +45,9 @@ export interface HealthReport {
     elevenLabs: ServiceHealth;
     bedrock: ServiceHealth;
     store: ServiceHealth;
+    validator?: ServiceHealth;
+    awsPersistence?: ServiceHealth;
+    domain?: ServiceHealth;
   };
 }
 
@@ -91,4 +95,29 @@ export function shareCredential(pageId: string): Promise<{ shared: boolean }> {
 
 export function deleteCredential(pageId: string): Promise<{ deleted: boolean }> {
   return request("/api/credential/" + pageId, { method: "DELETE" });
+}
+
+export function startChallengeAttempt(
+  challengeId: string,
+  userId = "demo_learner",
+  idempotencyKey?: string
+): Promise<{ attempt: { attemptId: string; seedId: string }; starterDownloadPath: string }> {
+  return request(`/api/challenge/${challengeId}/start`, {
+    method: "POST",
+    body: JSON.stringify({ challengeId, userId, idempotencyKey })
+  });
+}
+
+export function uploadChallengeArtifact(
+  attemptId: string,
+  payload: { fileName: string; mimeType: string; contentBase64: string; idempotencyKey: string }
+): Promise<{ artifact: { artifactId: string; sha256: string; size: number }; sheets: string[] }> {
+  return request(`/api/attempt/${attemptId}/upload`, {
+    method: "POST",
+    body: JSON.stringify(payload)
+  });
+}
+
+export function getStarterWorkbookUrl(seedId = "seed_default_demo"): string {
+  return `${apiBase}/api/challenge/retail_sales_cleanup/starter.xlsx?seedId=${encodeURIComponent(seedId)}`;
 }

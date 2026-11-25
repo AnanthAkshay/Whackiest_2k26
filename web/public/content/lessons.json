@@ -1,0 +1,200 @@
+{
+  "version": "1.0.0",
+  "roleId": "data_entry_operator",
+  "sourceNote": "Original beginner summaries adapted from public Microsoft MO-200 skills outline and Microsoft Support help topics. Not an official Microsoft certification.",
+  "lessons": [
+    {
+      "id": "lesson-rows-columns",
+      "topic": "rows_columns",
+      "minutes": 3,
+      "title": {
+        "en": "1. Rows, columns & clean headers",
+        "hi": "1. पंक्तियाँ, कॉलम और साफ हेडर",
+        "kn": "1. ಸಾಲುಗಳು, ಕಾಲಮ್‌ಗಳು ಮತ್ತು ಶೀರ್ಷಿಕೆಗಳು"
+      },
+      "summary": {
+        "en": "Columns run vertically (A, B, C) for each field like Date or Amount. Rows run horizontally (1, 2, 3) for each retail order. Keep Row 1 as a single clear header row without merged cells.",
+        "hi": "कॉलम (A, B, C) प्रत्येक फ़ील्ड दिखाते हैं और पंक्तियाँ (1, 2, 3) प्रत्येक ऑर्डर। पंक्ति 1 को बिना मर्ज किए साफ हेडर रखें।",
+        "kn": "ಕಾಲಮ್‌ಗಳು (A, B, C) ಕ್ಷೇತ್ರಗಳನ್ನು ಮತ್ತು ಸಾಲುಗಳು (1, 2, 3) ಪ್ರತಿ ಆರ್ಡರ್ ಅನ್ನು ತೋರಿಸುತ್ತವೆ. ಸಾಲು 1 ಅನ್ನು ಸ್ಪಷ್ಟ ಹೆಡರ್ ಆಗಿ ಇಡಿ."
+      },
+      "example": "Header row: A1=Order ID | B1=Date | C1=Customer Name | D1=Category | E1=Amount",
+      "needsNativeReview": true
+    },
+    {
+      "id": "lesson-cell-references",
+      "topic": "cell_references",
+      "minutes": 4,
+      "title": {
+        "en": "2. Relative vs absolute cell references ($A$1)",
+        "hi": "2. सापेक्ष बनाम निरपेक्ष सेल संदर्भ ($A$1)",
+        "kn": "2. ಸಾಪೇಕ್ಷ ಮತ್ತು ಸ್ಥಿರ ಸೆಲ್ ಉಲ್ಲೇಖಗಳು ($A$1)"
+      },
+      "summary": {
+        "en": "When you copy a formula down a column, relative references like E2 change to E3, E4 automatically. Add dollar signs like $G$1 to lock a fixed tax rate or target cell.",
+        "hi": "फ़ॉर्मूला कॉपी करने पर E2 अपने आप E3 बन जाता है। किसी निश्चित सेल को लॉक करने के लिए $G$1 का उपयोग करें।",
+        "kn": "ಸೂತ್ರವನ್ನು ಕೆಳಗೆ ನಕಲಿಸಿದಾಗ E2 ತಾನಾಗಿಯೇ E3 ಆಗುತ್ತದೆ. ಸ್ಥಿರ ಮೌಲ್ಯವನ್ನು ಲಾಕ್ ಮಾಡಲು $G$1 ಬಳಸಿ."
+      },
+      "example": "=E2*$G$1 keeps tax cell G1 locked while moving across rows 2 to 101.",
+      "needsNativeReview": true
+    },
+    {
+      "id": "lesson-formulas",
+      "topic": "formulas",
+      "minutes": 5,
+      "title": {
+        "en": "3. Core formulas (=SUM, =AVERAGE, =COUNTIF, =TRIM)",
+        "hi": "3. मुख्य फ़ॉर्मूले (=SUM, =AVERAGE, =COUNTIF, =TRIM)",
+        "kn": "3. ಪ್ರಮುಖ ಸೂತ್ರಗಳು (=SUM, =AVERAGE, =COUNTIF, =TRIM)"
+      },
+      "summary": {
+        "en": "Always start formulas with '='. Use =TRIM() to remove extra spaces in names, =SUM() for total revenue, =AVERAGE() for mean order value, and =COUNTIF() to count matching categories.",
+        "hi": "फ़ॉर्मूला हमेशा '=' से शुरू करें। अतिरिक्त स्पेस हटाने के लिए =TRIM(), कुल योग के लिए =SUM() और गिनती के लिए =COUNTIF() उपयोग करें।",
+        "kn": "ಸೂತ್ರವನ್ನು ಯಾವಾಗಲೂ '=' ನಿಂದ ಪ್ರಾರಂಭಿಸಿ. ಹೆಚ್ಚುವರಿ ಸ್ಪೇಸ್ ತೆಗೆಯಲು =TRIM(), ಮೊತ್ತಕ್ಕೆ =SUM() ಮತ್ತು ಎಣಿಕೆಗೆ =COUNTIF() ಬಳಸಿ."
+      },
+      "example": "=SUM(E2:E101) | =AVERAGE(E2:E101) | =COUNTIF(D2:D101, \"Electronics\")",
+      "needsNativeReview": true
+    },
+    {
+      "id": "lesson-sorting-filtering",
+      "topic": "sorting_filtering",
+      "minutes": 3,
+      "title": {
+        "en": "4. Sorting & filtering without breaking rows",
+        "hi": "4. पंक्तियाँ तोड़े बिना सॉर्ट और फ़िल्टर करना",
+        "kn": "4. ಸಾಲುಗಳನ್ನು ಮುರಿಯದೆ ವಿಂಗಡಣೆ ಮತ್ತು ಫಿಲ್ಟರ್"
+      },
+      "summary": {
+        "en": "Select the entire table before sorting so a customer name stays aligned with its order amount. Use Filters on headers to inspect blank categories or outliers quickly.",
+        "hi": "सॉर्ट करने से पहले पूरी तालिका चुनें ताकि नाम और राशि सही पंक्ति में रहें। खाली श्रेणी देखने के लिए फ़िल्टर लगाएँ।",
+        "kn": "ವಿಂಗಡಿಸುವ ಮೊದಲು ಸಂಪೂರ್ಣ ಕೋಷ್ಟಕವನ್ನು ಆಯ್ಕೆಮಾಡಿ. ಖಾಲಿ ವರ್ಗಗಳನ್ನು ಹುಡುಕಲು ಫಿಲ್ಟರ್ ಬಳಸಿ."
+      },
+      "example": "Data -> Filter -> Check (Blanks) in Category column to spot missing values.",
+      "needsNativeReview": true
+    },
+    {
+      "id": "lesson-duplicates",
+      "topic": "duplicates",
+      "minutes": 3,
+      "title": {
+        "en": "5. Finding & handling duplicate orders",
+        "hi": "5. डुप्लिकेट ऑर्डर ढूँढना और ठीक करना",
+        "kn": "5. ನಕಲಿ ಆರ್ಡರ್‌ಗಳನ್ನು ಹುಡುಕುವುದು"
+      },
+      "summary": {
+        "en": "Duplicate rows inflate total sales. Check if two rows share the exact same Order ID, Date, Customer, and Amount before removing true duplicates.",
+        "hi": "डुप्लिकेट पंक्तियाँ कुल बिक्री को बढ़ा देती हैं। हटाने से पहले Order ID और राशि की जाँच करें।",
+        "kn": "ನಕಲಿ ಸಾಲುಗಳು ಒಟ್ಟು ಮಾರಾಟವನ್ನು ತಪ್ಪಾಗಿ ಹೆಚ್ಚಿಸುತ್ತವೆ. ತೆಗೆದುಹಾಕುವ ಮೊದಲು Order ID ಪರಿಶೀಲಿಸಿ."
+      },
+      "example": "Data -> Remove Duplicates -> Select Order ID to keep one unique row per order.",
+      "needsNativeReview": true
+    },
+    {
+      "id": "lesson-dates-currency",
+      "topic": "dates_currency",
+      "minutes": 4,
+      "title": {
+        "en": "6. Standardizing dates (YYYY-MM-DD) & currency",
+        "hi": "6. दिनांक (YYYY-MM-DD) और मुद्रा को मानक बनाना",
+        "kn": "6. ದಿನಾಂಕ (YYYY-MM-DD) ಮತ್ತು ಕರೆನ್ಸಿ"
+      },
+      "summary": {
+        "en": "Mixed dates like 12/05/2026 and 2026.05.12 break sorting. Convert dates to ISO YYYY-MM-DD and keep Amount as plain numeric currency (without text symbols inside formulas).",
+        "hi": "मिश्रित दिनांक सॉर्टिंग तोड़ते हैं। दिनांक को YYYY-MM-DD में बदलें और राशि को संख्या के रूप में रखें।",
+        "kn": "ಮಿಶ್ರಿತ ದಿನಾಂಕಗಳು ವಿಂಗಡಣೆಯನ್ನು ಮುರಿಯುತ್ತವೆ. ದಿನಾಂಕವನ್ನು YYYY-MM-DD ಗೆ ಬದಲಾಯಿಸಿ."
+      },
+      "example": "12/05/2026 -> 2026-05-12 | Rs. 1,450 -> 1450 formatted as Currency (₹).",
+      "needsNativeReview": true
+    },
+    {
+      "id": "lesson-summary-reports",
+      "topic": "summary_reports",
+      "minutes": 4,
+      "title": {
+        "en": "7. Building & spot-checking a summary report",
+        "hi": "7. सारांश रिपोर्ट बनाना और जाँचना",
+        "kn": "7. ಸಾರಾಂಶ ವರದಿ ತಯಾರಿಸುವುದು"
+      },
+      "summary": {
+        "en": "Place Total Revenue, Average Order Value, and Category Counts in a dedicated Summary tab. Always spot-check that category counts add up to your total data rows.",
+        "hi": "Summary टैब में कुल बिक्री, औसत और श्रेणी गिनती रखें। जाँचें कि सभी श्रेणियों का योग कुल पंक्तियों के बराबर हो।",
+        "kn": "Summary ಟ್ಯಾಬ್‌ನಲ್ಲಿ ಒಟ್ಟು ಮಾರಾಟ ಮತ್ತು ಸರಾಸರಿ ಇರಿಸಿ. ವರ್ಗಗಳ ಒಟ್ಟು ಎಣಿಕೆ ಸಾಲುಗಳಿಗೆ ಹೊಂದಿಕೆಯಾಗುತ್ತದೆಯೇ ಪರಿಶೀಲಿಸಿ."
+      },
+      "example": "If 100 rows exist, Electronics + Grocery + Home counts must sum to 100.",
+      "needsNativeReview": true
+    }
+  ],
+  "practiceDrills": [
+    {
+      "id": "drill-duplicate-row",
+      "title": {
+        "en": "Spot the duplicate row",
+        "hi": "डुप्लिकेट पंक्ति पहचानें",
+        "kn": "ನಕಲಿ ಸಾಲನ್ನು ಗುರುತಿಸಿ"
+      },
+      "prompt": {
+        "en": "Look at these 3 rows: Row 2 (ORD-104, Ravi, 500), Row 3 (ORD-105, Meena, 750), Row 4 (ORD-104, Ravi, 500). Which row should be removed?",
+        "hi": "इन 3 पंक्तियों को देखें: Row 2 (ORD-104, Ravi, 500), Row 3 (ORD-105, Meena, 750), Row 4 (ORD-104, Ravi, 500). कौन सी पंक्ति हटाई जानी चाहिए?",
+        "kn": "ಈ 3 ಸಾಲುಗಳನ್ನು ನೋಡಿ: Row 2 (ORD-104, Ravi, 500), Row 3 (ORD-105, Meena, 750), Row 4 (ORD-104, Ravi, 500). ಯಾವ ಸಾಲನ್ನು ತೆಗೆದುಹಾಕಬೇಕು?"
+      },
+      "options": [
+        { "id": "a", "label": "Row 3 (ORD-105, Meena, 750)" },
+        { "id": "b", "label": "Row 4 (ORD-104, Ravi, 500)" },
+        { "id": "c", "label": "Remove all three rows" }
+      ],
+      "correctOptionId": "b",
+      "explanation": {
+        "en": "Row 4 repeats the exact same Order ID (ORD-104), customer, and amount as Row 2. Removing Row 4 keeps one clean record.",
+        "hi": "Row 4 में Row 2 जैसा ही Order ID (ORD-104) और राशि दोहराई गई है।",
+        "kn": "Row 4 ರಲ್ಲಿ Row 2 ರ ಅದೇ Order ID (ORD-104) ಮತ್ತು ಮೊತ್ತ ಪುನರಾವರ್ತನೆಯಾಗಿದೆ."
+      }
+    },
+    {
+      "id": "drill-choose-formula",
+      "title": {
+        "en": "Choose the right formula",
+        "hi": "सही फ़ॉर्मूला चुनें",
+        "kn": "ಸರಿಯಾದ ಸೂತ್ರವನ್ನು ಆಯ್ಕೆಮಾಡಿ"
+      },
+      "prompt": {
+        "en": "You need to count how many orders in D2:D101 belong to the 'Electronics' category. Which formula works?",
+        "hi": "D2:D101 में 'Electronics' श्रेणी के ऑर्डर गिनने के लिए कौन सा फ़ॉर्मूला सही है?",
+        "kn": "D2:D101 ರಲ್ಲಿ 'Electronics' ವರ್ಗದ ಆರ್ಡರ್‌ಗಳನ್ನು ಎಣಿಸಲು ಯಾವ ಸೂತ್ರ ಸರಿ?"
+      },
+      "options": [
+        { "id": "a", "label": "=SUM(D2:D101, \"Electronics\")" },
+        { "id": "b", "label": "=COUNTIF(D2:D101, \"Electronics\")" },
+        { "id": "c", "label": "=AVERAGE(D2:D101)" }
+      ],
+      "correctOptionId": "b",
+      "explanation": {
+        "en": "=COUNTIF(range, criteria) counts cells that match a specific text category.",
+        "hi": "=COUNTIF(range, criteria) किसी श्रेणी से मेल खाने वाले सेल गिनता है।",
+        "kn": "=COUNTIF(range, criteria) ನಿರ್ದಿಷ್ಟ ವರ್ಗಕ್ಕೆ ಹೊಂದಿಕೆಯಾಗುವ ಸೆಲ್‌ಗಳನ್ನು ಎಣಿಸುತ್ತದೆ."
+      }
+    },
+    {
+      "id": "drill-formatting-error",
+      "title": {
+        "en": "Spot the formatting error",
+        "hi": "फ़ॉर्मेटिंग त्रुटि पहचानें",
+        "kn": "ಫಾರ್ಮ್ಯಾಟಿಂಗ್ ದೋಷವನ್ನು ಗುರುತಿಸಿ"
+      },
+      "prompt": {
+        "en": "Why does =SUM(E2:E101) skip cell E15 if E15 contains 'Rs. 1200' typed as text?",
+        "hi": "यदि E15 में 'Rs. 1200' टेक्स्ट के रूप में लिखा है, तो =SUM(E2:E101) उसे क्यों छोड़ देता है?",
+        "kn": "E15 ನಲ್ಲಿ 'Rs. 1200' ಎಂದು ಪಠ್ಯವಾಗಿ ಬರೆದಿದ್ದರೆ =SUM(E2:E101) ಅದನ್ನು ಏಕೆ ಬಿಟ್ಟುಬಿಡುತ್ತದೆ?"
+      },
+      "options": [
+        { "id": "a", "label": "Text prefixes like 'Rs.' make Excel treat the cell as text instead of a number" },
+        { "id": "b", "label": "SUM only works up to row 10" },
+        { "id": "c", "label": "Cell E15 needs bold formatting" }
+      ],
+      "correctOptionId": "a",
+      "explanation": {
+        "en": "Store plain numbers (1200) and apply Currency number formatting so =SUM includes every row.",
+        "hi": "सादा नंबर (1200) लिखें और मुद्रा फ़ॉर्मेट लागू करें ताकि =SUM सभी पंक्तियों को जोड़े।",
+        "kn": "ಸರಳ ಸಂಖ್ಯೆ (1200) ಬರೆದು ಕರೆನ್ಸಿ ಫಾರ್ಮ್ಯಾಟ್ ಅನ್ವಯಿಸಿ."
+      }
+    }
+  ]
+}

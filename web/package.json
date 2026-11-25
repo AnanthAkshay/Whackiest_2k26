@@ -6,7 +6,8 @@
   "scripts": {
     "dev": "vite",
     "typecheck": "tsc -b --pretty false",
-    "build": "tsc -b && vite build"
+    "build": "tsc -b && vite build",
+    "test": "tsx --tsconfig tsconfig.app.json --test src/App.test.tsx src/offline/offlineStore.test.ts"
   },
   "dependencies": {
     "@elevenlabs/react": "^1.24.0",
