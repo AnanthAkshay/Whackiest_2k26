@@ -6,6 +6,8 @@ import { useTranslation } from "../i18n";
 import { computeECVEResult } from "../mock/demoData";
 import { useSetup } from "../setup/SetupContext";
 import { JourneyNav } from "../shared/JourneyNav";
+import { VerificationSealSvg } from "../shared/animmaster";
+import { VercelTooltip } from "../shared/skiper";
 import { ScoreList } from "../shared/ScoreList";
 import { Sparkline } from "../shared/Sparkline";
 import {
@@ -165,10 +167,17 @@ export function ResultsPage(): JSX.Element {
             <GlassBadge>
               <StatusMark tone={tone} label={ecve.outcome} />
             </GlassBadge>
-            <span className="pf-label">Composite = 0.60P + 0.25U + 0.15C</span>
+            <div style={{ display: "inline-flex", alignItems: "center", gap: "8px", flexWrap: "wrap" }}>
+              <span className="pf-label">Composite = 0.60P + 0.25U + 0.15C</span>
+              <VercelTooltip
+                label="Weights"
+                content="60% Practical Execution (code checks), 25% Conceptual Understanding (AI Viva), 15% Evidence Consistency. Proposed weights pending pilot calibration."
+              />
+            </div>
           </div>
           <h1 className="pf-page-title" style={{ marginTop: "12px" }}>{ecve.outcome}</h1>
-          <div className="results-composite-line tabular-nums">
+          <div className="results-composite-line tabular-nums" style={{ alignItems: "center" }}>
+            {ecve.outcome === "Demonstrated" && <VerificationSealSvg size={44} />}
             <span className="pf-page-title" style={{ color: "var(--accent-hover)" }}>{ecve.composite}</span>
             <span className="fineprint">/ 100</span>
           </div>

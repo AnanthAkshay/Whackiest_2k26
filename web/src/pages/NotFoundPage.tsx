@@ -1,11 +1,12 @@
 import { Link } from "react-router-dom";
+import { GlassPanel } from "../shared/ui";
 
 export function NotFoundPage(): JSX.Element {
   return (
     <main className="shell">
       <div className="pf-frame">
         <div className="ref-error-page">
-          <div className="ref-error-inner">
+          <GlassPanel className="ref-error-inner">
             <span className="pf-label">PROOFFOLIO · 404</span>
             <h1 className="pf-page-title" style={{ marginTop: "12px" }}>
               That page isn&apos;t here.
@@ -21,7 +22,7 @@ export function NotFoundPage(): JSX.Element {
                 BACK HOME
               </Link>
             </div>
-          </div>
+          </GlassPanel>
         </div>
       </div>
     </main>

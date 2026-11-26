@@ -1,9 +1,10 @@
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
-import { CaretDown } from "@phosphor-icons/react";
 import { useTranslation } from "../i18n";
 import { createMockValidationReport } from "../mock/demoData";
 import { useSetup } from "../setup/SetupContext";
+import { AnimatedTabs, BentoGrid, BentoGridItem, GlowingEffect } from "../shared/aceternity";
+import { MinimalCardExpand } from "../shared/skiper";
 import { JourneyNav } from "../shared/JourneyNav";
 import {
   Accordion,
@@ -28,7 +29,7 @@ export function ValidationReportPage(): JSX.Element {
   const { validationReport, setValidationReport, inputMode, chooseInputMode, language } = useSetup();
   const { t } = useTranslation();
   const navigate = useNavigate();
-  const [expandedIds, setExpandedIds] = useState<Record<string, boolean>>({});
+  const [checkFilter, setCheckFilter] = useState<"all" | "pass" | "issue" | "not_applicable">("all");
 
   if (!validationReport) {
     return (
@@ -68,13 +69,13 @@ export function ValidationReportPage(): JSX.Element {
     return "warn";
   }
 
-  function toggleRow(id: string): void {
-    setExpandedIds((prev) => ({ ...prev, [id]: !prev[id] }));
-  }
-
   const passedCount = validationReport.checks.filter((c) => c.status === "pass").length;
   const blockedChecks = validationReport.checks.filter((c) => c.status === "issue");
   const naCount = validationReport.checks.filter((c) => c.status === "not_applicable").length;
+  const visibleChecks =
+    checkFilter === "all"
+      ? validationReport.checks
+      : validationReport.checks.filter((c) => c.status === checkFilter);
 
   const summaryRows = (
     <>
@@ -113,20 +114,32 @@ export function ValidationReportPage(): JSX.Element {
           </div>
         </GlassPanel>
 
-        <div className="validation-summary-grid">
-          <GlassCard as="div" padding="sm">
-            <span className="pf-label">Passed</span>
-            <div className="ecve-big-num tabular-nums" style={{ margin: "6px 0 0" }}>{passedCount}</div>
-          </GlassCard>
-          <GlassCard as="div" padding="sm">
-            <span className="pf-label">Issues</span>
-            <div className="ecve-big-num tabular-nums" style={{ margin: "6px 0 0" }}>{blockedChecks.length}</div>
-          </GlassCard>
-          <GlassCard as="div" padding="sm">
-            <span className="pf-label">Not applicable</span>
-            <div className="ecve-big-num tabular-nums" style={{ margin: "6px 0 0" }}>{naCount}</div>
-          </GlassCard>
-        </div>
+        <BentoGrid className="validation-summary-grid" aria-label="Validation summary counts">
+          <BentoGridItem>
+            <GlowingEffect>
+              <GlassCard as="div" padding="sm">
+                <span className="pf-label">Passed</span>
+                <div className="ecve-big-num tabular-nums" style={{ margin: "6px 0 0" }}>{passedCount}</div>
+              </GlassCard>
+            </GlowingEffect>
+          </BentoGridItem>
+          <BentoGridItem>
+            <GlowingEffect>
+              <GlassCard as="div" padding="sm">
+                <span className="pf-label">Issues</span>
+                <div className="ecve-big-num tabular-nums" style={{ margin: "6px 0 0" }}>{blockedChecks.length}</div>
+              </GlassCard>
+            </GlowingEffect>
+          </BentoGridItem>
+          <BentoGridItem>
+            <GlowingEffect>
+              <GlassCard as="div" padding="sm">
+                <span className="pf-label">Not applicable</span>
+                <div className="ecve-big-num tabular-nums" style={{ margin: "6px 0 0" }}>{naCount}</div>
+              </GlassCard>
+            </GlowingEffect>
+          </BentoGridItem>
+        </BentoGrid>
 
         {validationReport.isMock && (
           <p className="fineprint mock-disclosure">{t("mockValidationNotice")}</p>
@@ -136,40 +149,41 @@ export function ValidationReportPage(): JSX.Element {
           <div className="form-main-col">
             {/* Solid opaque report surface for technical findings */}
             <Card as="section" aria-label={t("objectiveChecksLabel")}>
-              <span className="pf-label">Technical findings</span>
-              <div className="ruled-list check-rows-section">
-                {validationReport.checks.map((chk) => {
-                  const isOpen = Boolean(expandedIds[chk.id]);
+              <div className="card-header-row" style={{ marginBottom: "12px" }}>
+                <span className="pf-label">Technical findings</span>
+                <AnimatedTabs
+                  ariaLabel="Filter validation checks"
+                  value={checkFilter}
+                  onChange={setCheckFilter}
+                  tabs={[
+                    { value: "all", label: "All", count: validationReport.checks.length },
+                    { value: "pass", label: "Passed", count: passedCount },
+                    { value: "issue", label: "Flagged", count: blockedChecks.length },
+                    { value: "not_applicable", label: "Pending", count: naCount }
+                  ]}
+                />
+              </div>
+              <div className="ruled-list check-rows-section" style={{ display: "grid", gap: "10px", borderTop: 0 }}>
+                {visibleChecks.map((chk) => {
                   const tone = toneForStatus(chk.status);
                   return (
-                    <div key={chk.id} className={`ruled-row check-row check-row--${tone}`}>
-                      <button
-                        type="button"
-                        className="check-row-trigger"
-                        aria-expanded={isOpen}
-                        onClick={() => toggleRow(chk.id)}
-                      >
+                    <MinimalCardExpand
+                      key={chk.id}
+                      title={
                         <span className="check-row-left">
                           <StatusMark tone={tone} />
                           <strong>{chk.title}</strong>
                         </span>
-                        <span className="check-row-right">
-                          <span className={`status-text status-text--${tone}`}>{statusBadgeLabel(chk.status)}</span>
-                          <CaretDown
-                            size={16}
-                            weight="regular"
-                            className={"check-row-chevron" + (isOpen ? " is-open" : "")}
-                            aria-hidden="true"
-                          />
-                        </span>
-                      </button>
-                      {isOpen && (
-                        <div className="check-row-details">
-                          <p>{chk.explanation}</p>
-                          <span className="cell-ref-chip mono">{chk.detail}</span>
-                        </div>
-                      )}
-                    </div>
+                      }
+                      rightSlot={
+                        <span className={`status-text status-text--${tone}`}>{statusBadgeLabel(chk.status)}</span>
+                      }
+                    >
+                      <div className="check-row-details" style={{ padding: 0 }}>
+                        <p>{chk.explanation}</p>
+                        <span className="cell-ref-chip mono">{chk.detail}</span>
+                      </div>
+                    </MinimalCardExpand>
                   );
                 })}
               </div>

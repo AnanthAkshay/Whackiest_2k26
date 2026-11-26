@@ -2,7 +2,7 @@ import { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
 import { clientConfig, getClientIntegrations, type ClientIntegrationItem } from "../config/integrations";
 import { JourneyNav } from "../shared/JourneyNav";
-import { StatusMark, type StatusTone } from "../shared/ui";
+import { GlassCard, StatusMark, type StatusTone } from "../shared/ui";
 
 function stateForIntegration(status: string): { label: string; tone: StatusTone } {
   if (/live|active|configured/i.test(status) && !/not configured/i.test(status)) {
@@ -49,7 +49,7 @@ export function IntegrationsPage(): JSX.Element {
           Honest status of runtime providers, community sponsors, and optional external link-outs ({sourceNote}).
         </p>
 
-      <section className="ruled-list" aria-label="Sponsor integration statuses">
+      <GlassCard as="section" className="ruled-list" aria-label="Sponsor integration statuses">
         {items.map((item) => {
           const { label, tone } = stateForIntegration(item.status);
           return (
@@ -76,7 +76,7 @@ export function IntegrationsPage(): JSX.Element {
             </article>
           );
         })}
-      </section>
+      </GlassCard>
 
       <div className="cta-stack" style={{ marginTop: "24px" }}>
         <Link to="/health" className="pf-btn pf-btn--secondary">

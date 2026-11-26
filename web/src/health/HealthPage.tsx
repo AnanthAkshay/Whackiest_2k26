@@ -2,7 +2,7 @@ import { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
 import { finishSession, getHealth, sendTurn, startSession, type HealthReport } from "../api";
 import { useTranslation } from "../i18n";
-import { Button, Card, Skeleton, StatusMark, type StatusTone } from "../shared/ui";
+import { Button, Card, GlassCard, Skeleton, StatusMark, type StatusTone } from "../shared/ui";
 
 interface TestSessionResult {
   sessionId: string;
@@ -88,7 +88,7 @@ export function HealthPage(): JSX.Element {
       )}
 
       {report && (
-        <section className="ruled-list" aria-label="Service statuses">
+        <GlassCard as="section" className="ruled-list" aria-label="Service statuses">
           {Object.values(report.services)
             .filter((svc): svc is NonNullable<typeof svc> => Boolean(svc))
             .map((svc) => {
@@ -106,7 +106,7 @@ export function HealthPage(): JSX.Element {
                 </article>
               );
             })}
-        </section>
+        </GlassCard>
       )}
 
       <div className="health-actions" style={{ marginTop: "24px" }}>

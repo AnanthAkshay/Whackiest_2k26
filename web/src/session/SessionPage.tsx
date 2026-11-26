@@ -1,10 +1,12 @@
 import { ConversationProvider, type MessagePayload, useConversation } from "@elevenlabs/react";
 import { useCallback, useEffect, useRef, useState, type CSSProperties } from "react";
 import { useNavigate } from "react-router-dom";
-import { PaperPlaneRight, SpeakerHigh } from "@phosphor-icons/react";
+import { SpeakerHigh } from "@phosphor-icons/react";
 import { finishSession, getConfig, sendTurn, startSession, type VoiceConnection } from "../api";
 import { localeTags, useTranslation } from "../i18n";
 import { useSetup } from "../setup/SetupContext";
+import { AnimatedTabs, MultiStepLoader, Spotlight, TypewriterEffect } from "../shared/aceternity";
+import { AiInput, DynamicIsland } from "../shared/skiper";
 import { Button, GlassBadge, GlassPanel, Modal, Sheet, Skeleton } from "../shared/ui";
 import type { Language, Session, SkillRecord, TranscriptTurn } from "../types";
 import { listenOnce, speak } from "../voice";
@@ -412,6 +414,18 @@ function SessionExperience(): JSX.Element {
         {showTextEntry ? " — Text chat mode" : ""}
       </div>
 
+      <DynamicIsland
+        label={stateLabel}
+        meta={`${time} · ${confidenceVal}%`}
+        tone={waveState === "thinking" ? "warn" : "ok"}
+        pulse={waveState === "listening" || waveState === "speaking" || waveState === "thinking"}
+        details={
+          <span>
+            Mode: <strong>{showTextEntry ? "Text" : "Voice"}</strong> · Provisional score is updated live and finalized in ECVE.
+          </span>
+        }
+      />
+
       <GlassPanel as="section" padding="sm" className="viva-session-header">
         <div className="viva-topbar-meta">
           <div className="viva-badges">
@@ -422,7 +436,23 @@ function SessionExperience(): JSX.Element {
               Grounded in your file
             </button>
           </div>
-          <span className="session-time mono">{time}</span>
+          <div style={{ display: "flex", alignItems: "center", gap: "10px", flexWrap: "wrap" }}>
+            {!isDemo && (
+              <AnimatedTabs
+                ariaLabel="Interview input mode"
+                value={showTextEntry ? "text" : "voice"}
+                onChange={(mode) => {
+                  setTextFallbackOpen(mode === "text");
+                  chooseInputMode(mode);
+                }}
+                tabs={[
+                  { value: "voice", label: "Voice" },
+                  { value: "text", label: "Text" }
+                ]}
+              />
+            )}
+            <span className="session-time mono">{time}</span>
+          </div>
         </div>
 
         {durationWarning && (
@@ -444,10 +474,11 @@ function SessionExperience(): JSX.Element {
       </GlassPanel>
 
       {!showTextEntry ? (
-        <section className="viva-voice-stage viva-voice-dark" aria-label={t("sessionTitle")}>
+        <section className="viva-voice-stage viva-voice-dark" style={{ position: "relative", overflow: "hidden" }} aria-label={t("sessionTitle")}>
+          <Spotlight x="50%" y="18%" />
           {agentText && (
-            <div className="viva-question-wrap">
-              <h1 className="viva-question-dm">{agentText}</h1>
+            <div className="viva-question-wrap" style={{ position: "relative", zIndex: 1 }}>
+              <TypewriterEffect key={agentText} text={agentText} className="viva-question-dm" />
               <button
                 type="button"
                 className="viva-repeat-btn"
@@ -457,6 +488,17 @@ function SessionExperience(): JSX.Element {
                 <span>{t("repeatQuestion")}</span>
               </button>
             </div>
+          )}
+          {waveState === "thinking" && (
+            <MultiStepLoader
+              title="Examiner processing"
+              currentStep={1}
+              steps={[
+                { label: "Grounded in workbook facts" },
+                { label: "Evaluating explanation against rubric" },
+                { label: "Preparing next follow-up" }
+              ]}
+            />
           )}
 
           {/* Monochrome 48-bar Waveform (no glowing blob) */}
@@ -607,32 +649,17 @@ function SessionExperience(): JSX.Element {
           </div>
 
           {!isDemo && (
-            <div className="chat-composer">
-              <textarea
-                ref={textareaRef}
-                rows={1}
-                className="chat-input"
-                value={draft}
-                onChange={(e) => handleDraftChange(e.target.value)}
-                onKeyDown={(e) => {
-                  if (e.key === "Enter" && !e.shiftKey) {
-                    e.preventDefault();
-                    void submitText(draft);
-                  }
-                }}
-                placeholder={t("textPlaceholder")}
-                aria-label={t("textPlaceholder")}
-              />
-              <Button
-                variant="dark"
-                className="chat-send-btn"
-                disabled={!draft.trim() || isThinking}
-                onClick={() => void submitText(draft)}
-                aria-label={t("sendText")}
-              >
-                <PaperPlaneRight size={18} weight="regular" aria-hidden="true" />
-              </Button>
-            </div>
+            <AiInput
+              value={draft}
+              onChange={handleDraftChange}
+              onSubmit={(e) => {
+                e.preventDefault();
+                void submitText(draft);
+              }}
+              placeholder={t("textPlaceholder")}
+              disabled={isThinking}
+              sendLabel={t("sendText")}
+            />
           )}
 
           <div className="viva-secondary-controls">

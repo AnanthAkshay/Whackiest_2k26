@@ -3,12 +3,13 @@ import { Link } from "react-router-dom";
 import { useTranslation } from "../i18n";
 import { getDevnovateUrl, MVP_ROLES, SAMPLE_OPPORTUNITIES } from "../mock/demoData";
 import { JourneyNav } from "../shared/JourneyNav";
+import { AnimatedTabs, FocusCard, GlareCard, PinBadge, useFocusCards } from "../shared/aceternity";
 import {
   Accordion,
   Button,
   Card,
+  GlassPanel,
   InfoNote,
-  OptionButton,
   RuledRow,
   TextLink
 } from "../shared/ui";
@@ -45,6 +46,7 @@ export function OpportunitiesPage(): JSX.Element {
   } | null>(null);
   const rawDevnovateUrl = getDevnovateUrl();
   const devnovateUrl = rawDevnovateUrl ? appendOutboundUtm(rawDevnovateUrl, getStoredUtm()) : "";
+  const { hovered, setHovered, gridClassName } = useFocusCards<string>();
 
   const normalizedQuery = locationQuery.trim().toLowerCase();
   const filtered = SAMPLE_OPPORTUNITIES.filter((opp) => {
@@ -91,27 +93,22 @@ export function OpportunitiesPage(): JSX.Element {
 
         <div className="menu-filter-section">
           <span className="pf-label">FILTER BY</span>
-          <div className="menu-filter-row" role="group" aria-label="Quick opportunity filters">
-            {(
-              [
+          <div style={{ marginTop: "8px" }}>
+            <AnimatedTabs
+              ariaLabel="Quick opportunity filters"
+              value={quickFilter}
+              onChange={setQuickFilter}
+              tabs={[
                 { value: "all", label: "All" },
                 { value: "nearby", label: "Nearby" },
                 { value: "entry", label: "Entry-level" },
                 { value: "language", label: "Language" }
-              ] as const
-            ).map((opt) => (
-              <OptionButton
-                key={opt.value}
-                selected={quickFilter === opt.value}
-                onClick={() => setQuickFilter(opt.value)}
-              >
-                {opt.label}
-              </OptionButton>
-            ))}
+              ]}
+            />
           </div>
         </div>
 
-        <Card as="section" className="filter-card cta-spacer" aria-label={t("filterOpportunitiesLabel")}>
+        <GlassPanel as="section" className="filter-card cta-spacer" aria-label={t("filterOpportunitiesLabel")}>
           <label className="field-label" htmlFor="opp-role-filter" style={{ marginTop: 0 }}>
             {t("filterRoleLabel")}
           </label>
@@ -149,7 +146,7 @@ export function OpportunitiesPage(): JSX.Element {
               {gpsStatus}
             </p>
           )}
-        </Card>
+        </GlassPanel>
 
         {filtered.length === 0 ? (
           <section className="empty-ghost-wrap" role="status">
@@ -174,7 +171,7 @@ export function OpportunitiesPage(): JSX.Element {
             </div>
           </section>
         ) : (
-          <section className="ruled-list" aria-label={t("opportunitiesListLabel")}>
+          <section className={`ruled-list ${gridClassName}`} style={{ display: "grid", gap: "16px", borderTop: 0 }} aria-label={t("opportunitiesListLabel")}>
             {filtered.map((opp) => {
               const { matchPct, matchedWeight, totalWeight } = computeMatchDetails(opp);
               const matchedSkills = opp.requiredSkills.filter((s) => s.matched);
@@ -182,18 +179,28 @@ export function OpportunitiesPage(): JSX.Element {
               const initial = (opp.employer || opp.title).trim().charAt(0).toUpperCase();
 
               return (
-                <article key={opp.id} className="ruled-row menu-lesson-row">
-                  <div className="menu-lesson-grid">
-                    <div className="menu-lesson-thumb" aria-hidden="true">
-                      {initial}
-                    </div>
-                    <div className="menu-lesson-main">
-                      <div className="opp-row-head">
-                        <div>
-                          <span className="pf-label">
-                            {opp.isSample ? opp.sourceLabel : t("liveSourceLabel")} · Updated {opp.postedDate}
-                          </span>
-                          <h2 className="opp-role-dm">{opp.title}</h2>
+                <FocusCard
+                  key={opp.id}
+                  focused={hovered === opp.id}
+                  onEnter={() => setHovered(opp.id)}
+                  onLeave={() => setHovered(null)}
+                >
+                  <GlareCard>
+                    <article className="pf-card pf-card--glass menu-lesson-row">
+                      <div className="menu-lesson-grid">
+                        <div className="menu-lesson-thumb" aria-hidden="true">
+                          {initial}
+                        </div>
+                        <div className="menu-lesson-main">
+                          <div className="opp-row-head">
+                            <div>
+                              <div style={{ display: "flex", alignItems: "center", gap: "10px", flexWrap: "wrap", marginBottom: "6px" }}>
+                                <span className="pf-label">
+                                  {opp.isSample ? opp.sourceLabel : t("liveSourceLabel")} · Updated {opp.postedDate}
+                                </span>
+                                <PinBadge label={opp.city} />
+                              </div>
+                              <h2 className="opp-role-dm">{opp.title}</h2>
                           <p className="fineprint" style={{ margin: 0 }}>
                             {opp.employer} · {opp.city}, {opp.district} ({opp.pincode})
                           </p>
@@ -265,9 +272,11 @@ export function OpportunitiesPage(): JSX.Element {
                           />
                         ))}
                       </Accordion>
-                    </div>
-                  </div>
-                </article>
+                        </div>
+                      </div>
+                    </article>
+                  </GlareCard>
+                </FocusCard>
               );
             })}
           </section>

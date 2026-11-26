@@ -4,6 +4,17 @@ import { deleteCredential, getCredential, shareCredential } from "../api";
 import { clientConfig } from "../config/integrations";
 import { localeTags, useTranslation } from "../i18n";
 import { useSetup } from "../setup/SetupContext";
+import {
+  CardBody,
+  CardContainer,
+  CardItem,
+  EvervaultCard,
+  GlareCard,
+  GlowingEffect,
+  MovingBorder,
+  PinBadge
+} from "../shared/aceternity";
+import { VerificationSealSvg } from "../shared/animmaster";
 import { ScoreList } from "../shared/ScoreList";
 import {
   Button,
@@ -240,39 +251,58 @@ export function SkillPage(): JSX.Element {
           {t("skillPageEyebrow")}
         </p>
 
-        {/* Dark (#0B0B0B) Credential Panel with 2px Lavender top rule */}
-        <article className="passport-kohaku-card" aria-label="Skill Passport Credential">
-          <div className="passport-card-inner">
-            <div className="passport-card-top">
-              <span className="passport-wordmark">
-                <span className="wordmark-light">PROOF</span>
-                <span className="wordmark-bold">FOLIO</span>
-              </span>
-              <span className="passport-type-label">SKILL PASSPORT</span>
-            </div>
+        <CardContainer className="no-print-tilt">
+          <CardBody>
+            <GlareCard>
+              <GlowingEffect>
+                <article className="passport-kohaku-card" aria-label="Skill Passport Credential">
+                  <div className="passport-card-inner">
+                    <div className="passport-card-top">
+                      <span className="passport-wordmark">
+                        <span className="wordmark-light">PROOF</span>
+                        <span className="wordmark-bold">FOLIO</span>
+                      </span>
+                      <span className="passport-type-label">SKILL PASSPORT</span>
+                    </div>
 
-            <div className="passport-identity">
-              <h1 className="pf-page-title passport-handle-dm">{displayName}</h1>
-              <p className="passport-role-sub">{record.skill}</p>
-            </div>
+                    <CardItem translateZ={22} className="passport-identity">
+                      <h1 className="pf-page-title passport-handle-dm">{displayName}</h1>
+                      <p className="passport-role-sub">{record.skill}</p>
+                    </CardItem>
 
-            <div className="passport-facts-grid">
-              <div className="passport-facts-rows">
-                <RuledRow label="Composite" value={<span className="tabular-nums">{record.total} / 100</span>} />
-                <RuledRow label="Outcome" value={outcomeLabel} />
-                <RuledRow label="Issued" value={issuedDate} />
-                <RuledRow label="Passport ID" value={<code className="mono">{id || "demo"}</code>} />
-                <RuledRow label="Key ID" value={<code className="mono">{jwsKid}</code>} />
-                <RuledRow label="Artifact SHA-256" value={<code className="mono crypto-code">{artifactSha}</code>} />
-              </div>
-              <PassportQrTile url={`/p/${id}`} />
-            </div>
-          </div>
-        </article>
+                    <div className="passport-facts-grid">
+                      <div className="passport-facts-rows">
+                        <RuledRow label="Composite" value={<span className="tabular-nums">{record.total} / 100</span>} />
+                        <RuledRow label="Outcome" value={outcomeLabel} />
+                        <RuledRow label="Issued" value={issuedDate} />
+                        <RuledRow label="Passport ID" value={<code className="mono">{id || "demo"}</code>} />
+                        <RuledRow label="Key ID" value={<code className="mono">{jwsKid}</code>} />
+                        <RuledRow label="Artifact SHA-256" value={<code className="mono crypto-code">{artifactSha}</code>} />
+                      </div>
+                      <CardItem translateZ={18}>
+                        <PassportQrTile url={`/p/${id}`} />
+                      </CardItem>
+                    </div>
+                  </div>
+                </article>
+              </GlowingEffect>
+            </GlareCard>
+          </CardBody>
+        </CardContainer>
 
         {/* Verification Block */}
-        <GlassPanel as="section" className="crypto-proof-card">
-          <StatusMark tone="ok" label={t("recordMatchesDatabase")} />
+        <GlowingEffect>
+          <EvervaultCard seed={artifactSha}>
+            <GlassPanel as="section" className="crypto-proof-card">
+              <div style={{ display: "flex", flexWrap: "wrap", alignItems: "center", justifyContent: "space-between", gap: "12px" }}>
+                <div style={{ display: "inline-flex", alignItems: "center", gap: "12px" }}>
+                  <VerificationSealSvg size={36} />
+                  <StatusMark tone="ok" label={t("recordMatchesDatabase")} />
+                </div>
+                <MovingBorder>
+                  <PinBadge label="Ed25519 Signed · JWS" />
+                </MovingBorder>
+              </div>
 
           <p className="fineprint">{t("whatVerificationMeansBody")}</p>
 
@@ -292,13 +322,15 @@ export function SkillPage(): JSX.Element {
             </div>
           </div>
 
-          <div className="crypto-footer-links">
-            <TextLink href="/.well-known/jwks.json" target="_blank" rel="noopener noreferrer">
-              Verify independently
-            </TextLink>
-            <span className="fineprint">{clientConfig.passportPublicDomain || "Local development URL"}</span>
-          </div>
-        </GlassPanel>
+            <div className="crypto-footer-links">
+              <TextLink href="/.well-known/jwks.json" target="_blank" rel="noopener noreferrer">
+                Verify independently
+              </TextLink>
+              <span className="fineprint">{clientConfig.passportPublicDomain || "Local development URL"}</span>
+            </div>
+            </GlassPanel>
+          </EvervaultCard>
+        </GlowingEffect>
 
         {/* Actions */}
         <GlassCard as="section" className="passport-actions-card no-print">

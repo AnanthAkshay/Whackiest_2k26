@@ -5,6 +5,8 @@ import { getStarterWorkbookUrl, startChallengeAttempt, uploadChallengeArtifact }
 import { useTranslation } from "../i18n";
 import { createMockValidationReport, MVP_CHALLENGE } from "../mock/demoData";
 import { useSetup } from "../setup/SetupContext";
+import { Spotlight } from "../shared/aceternity";
+import { DynamicIsland } from "../shared/skiper";
 import { JourneyNav } from "../shared/JourneyNav";
 import {
   Accordion,
@@ -272,7 +274,31 @@ export function ChallengePage(): JSX.Element {
             </Card>
 
             <section className="upload-section" aria-label={t("uploadSectionTitle")}>
-              <GlassPanel as="div" className="upload-central-panel">
+              {phase !== "idle" && (
+                <DynamicIsland
+                  label={
+                    phase === "uploading"
+                      ? "Uploading workbook..."
+                      : phase === "validating"
+                      ? "Running deterministic checks..."
+                      : phase === "success"
+                      ? "Workbook verified"
+                      : "Upload needs attention"
+                  }
+                  meta={`${resolvedCount}/4 checks`}
+                  tone={phase === "error" ? "bad" : phase === "success" ? "ok" : "warn"}
+                  pulse={phase === "uploading" || phase === "validating"}
+                  details={
+                    selectedFile ? (
+                      <span>
+                        File: <code className="mono">{selectedFile.name}</code> ({progress}%)
+                      </span>
+                    ) : undefined
+                  }
+                />
+              )}
+              <GlassPanel as="div" className="upload-central-panel" style={{ position: "relative", overflow: "hidden" }}>
+                <Spotlight x="50%" y="25%" />
                 <div className="card-header-row">
                   <h2>{t("uploadSectionTitle")}</h2>
                   <GlassBadge>{t("onlineOnlyBadge")}</GlassBadge>

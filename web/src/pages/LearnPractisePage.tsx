@@ -17,6 +17,7 @@ import {
   type OfflineProgressState
 } from "../offline/offlineStore";
 import { useSetup } from "../setup/SetupContext";
+import { AnimatedTabs } from "../shared/aceternity";
 import { JourneyNav } from "../shared/JourneyNav";
 import {
   Accordion,
@@ -26,8 +27,7 @@ import {
   GlassPanel,
   OptionButton,
   RuledRow,
-  StatusMark,
-  Tabs
+  StatusMark
 } from "../shared/ui";
 import { appendOutboundUtm, getStoredUtm } from "../shared/utm";
 
@@ -220,11 +220,11 @@ export function LearnPractisePage(): JSX.Element {
         </section>
 
         <div style={{ marginTop: "24px" }}>
-          <Tabs
+          <AnimatedTabs
             ariaLabel="Lesson groups"
-            items={GROUP_TABS.map((g) => ({ id: g.id, label: g.label }))}
-            activeId={group}
-            onSelect={setGroup}
+            tabs={GROUP_TABS.map((g) => ({ value: g.id, label: g.label }))}
+            value={group}
+            onChange={setGroup}
           />
           <p className="fineprint" style={{ marginTop: "12px" }}>
             <strong>{activeGroupMeta.label}:</strong> {activeGroupMeta.desc}

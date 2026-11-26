@@ -321,7 +321,9 @@ export function AppShell({ children }: { children: ReactNode }): JSX.Element {
       )}
 
       <div id="main-content" className="app-content" tabIndex={-1}>
-        {children}
+        <div key={location.pathname} className="am-route-enter">
+          {children}
+        </div>
       </div>
 
       <Frame>

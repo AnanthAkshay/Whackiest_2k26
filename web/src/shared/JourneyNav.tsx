@@ -1,5 +1,6 @@
 import { Link } from "react-router-dom";
 import { useTranslation } from "../i18n";
+import { SvgFollowScroll } from "./skiper";
 import { Stepper } from "./ui";
 
 export type JourneyStageKey =
@@ -24,6 +25,13 @@ const STAGES: { key: JourneyStageKey; label: string; to: string }[] = [
 
 export function JourneyNav({ activeStage }: { activeStage: JourneyStageKey }): JSX.Element {
   const { t } = useTranslation();
+  const activeIdx = STAGES.findIndex(
+    (stage) =>
+      stage.key === activeStage ||
+      (stage.key === "demonstrate" && activeStage === "validation") ||
+      (stage.key === "explain" && activeStage === "results")
+  );
+  const progressPct = activeIdx >= 0 ? Math.round(((activeIdx + 1) / STAGES.length) * 100) : 20;
 
   return (
     <header className="home-header">
@@ -35,6 +43,7 @@ export function JourneyNav({ activeStage }: { activeStage: JourneyStageKey }): J
           {t("navOpportunities")}
         </Link>
       </div>
+      <SvgFollowScroll progressPct={progressPct} label={`Journey progress ${progressPct}%`} />
       <Stepper
         variant="pills"
         ariaLabel={t("journeyNavLabel")}
