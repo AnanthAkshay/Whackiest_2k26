@@ -172,7 +172,10 @@
   .glass-card,
   .pf-card--glass-strong,
   .glass-panel,
-  .pf-card--glass-soft {
+  .pf-card--glass-soft,
+  .pf-btn--glass,
+  .pf-chip--glass,
+  .pf-tooltip-bubble {
     background: var(--glass-fallback);
   }
 }

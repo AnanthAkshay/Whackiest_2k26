@@ -348,10 +348,10 @@ h2, .section-heading {
   gap: var(--space-24);
   padding: var(--space-32);
   border-radius: var(--radius-xl);
-  background: #1B1F1A;
-  color: #F5F3EC;
+  background: #111318;
+  color: #F4F6F9;
   border: 1px solid rgba(255, 255, 255, 0.14);
-  box-shadow: 0 20px 50px rgba(18, 20, 17, 0.22), inset 0 1px 0 rgba(255, 255, 255, 0.10);
+  box-shadow: 0 20px 50px rgba(11, 13, 16, 0.24), inset 0 1px 0 rgba(255, 255, 255, 0.10);
 }
 
 .final-cta-band {
@@ -935,4 +935,11 @@ h2, .section-heading {
 
 @media (min-width: 1024px) {
   .shell { width: min(100%, var(--layout-max)); }
+}
+
+@supports not ((backdrop-filter: blur(1px)) or (-webkit-backdrop-filter: blur(1px))) {
+  .trust-strip,
+  .final-cta-band {
+    background: var(--glass-fallback);
+  }
 }

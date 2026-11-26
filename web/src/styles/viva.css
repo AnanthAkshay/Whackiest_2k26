@@ -232,3 +232,11 @@
 .chat-send-btn { min-width: 54px; min-height: 54px; }
 .factsheet-cell-list { list-style: none; margin: var(--space-12) 0 0; padding: 0; border-top: 1px solid var(--border); }
 .factsheet-cell-item { display: grid; gap: 4px; padding: var(--space-12) 0; border-bottom: 1px solid var(--border); }
+
+@supports not ((backdrop-filter: blur(1px)) or (-webkit-backdrop-filter: blur(1px))) {
+  .waveform-panel,
+  .chat-stream-panel,
+  .chat-bubble--agent {
+    background: var(--glass-fallback);
+  }
+}

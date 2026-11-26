@@ -1,33 +1,33 @@
 :root {
   color-scheme: light dark;
 
-  /* Warm Editorial Palette — Light Theme */
-  --bg-primary: #F7F2E9;
-  --bg-secondary: #EFE6D8;
+  /* Apple Minimalism + Evidence Intelligence — Light Theme */
+  --bg-primary: #F6F7F9;
+  --bg-secondary: #ECEFF4;
   --surface: #FFFFFF;
-  --surface-muted: #F9F6F0;
-  --text-primary: #252525;
-  --text-secondary: #73716D;
-  --border: #E7E0D6;
-  --accent: #27C76F;
-  --accent-hover: #1EAC5F;
-  --success: #198754;
+  --surface-muted: #F2F4F7;
+  --text-primary: #111315;
+  --text-secondary: #5E6470;
+  --border: #E2E6ED;
+  --accent: #10B981;
+  --accent-hover: #059669;
+  --success: #059669;
   --warning: #B7791F;
-  --danger: #C44747;
-  --review: #4A5568;
-  --focus: #1B4D3E;
+  --danger: #DC2626;
+  --review: #475569;
+  --focus: #047857;
 
-  /* Warm Glassmorphism Tokens — Light Theme */
-  --glass-bg: rgba(255, 255, 255, 0.58);
-  --glass-bg-strong: rgba(255, 255, 255, 0.76);
-  --glass-bg-soft: rgba(255, 255, 255, 0.36);
-  --glass-border: rgba(255, 255, 255, 0.75);
-  --glass-border-subtle: rgba(80, 70, 55, 0.10);
+  /* Crisp Glassmorphism Tokens — Light Theme */
+  --glass-bg: rgba(255, 255, 255, 0.68);
+  --glass-bg-strong: rgba(255, 255, 255, 0.84);
+  --glass-bg-soft: rgba(255, 255, 255, 0.44);
+  --glass-border: rgba(255, 255, 255, 0.85);
+  --glass-border-subtle: rgba(17, 19, 21, 0.08);
   --glass-blur: 22px;
   --glass-blur-strong: 32px;
-  --glass-shadow: 0 12px 40px rgba(69, 55, 36, 0.08);
-  --glass-highlight: inset 0 1px 0 rgba(255, 255, 255, 0.85);
-  --glass-fallback: rgba(255, 255, 255, 0.94);
+  --glass-shadow: 0 12px 40px rgba(15, 23, 42, 0.07);
+  --glass-highlight: inset 0 1px 0 rgba(255, 255, 255, 0.9);
+  --glass-fallback: rgba(255, 255, 255, 0.96);
 
   /* Radii */
   --radius-pill: 9999px;
@@ -108,68 +108,68 @@
 
 @media (prefers-color-scheme: dark) {
   :root:not([data-theme="light"]) {
-    --bg-primary: #121411;
-    --bg-secondary: #1B1F1A;
-    --surface: #222720;
-    --surface-muted: #282D26;
-    --text-primary: #F5F3EC;
-    --text-secondary: #B1B5AB;
-    --border: #343B32;
-    --accent: #42D982;
-    --accent-hover: #67E59B;
-    --success: #55D98B;
-    --warning: #F2C46D;
-    --danger: #F17B7B;
-    --review: #A3B1C6;
-    --focus: #42D982;
-    --pure-white: #222720;
-    --btn-primary-ink: #121411;
-    --shadow-sm: 0 1px 2px rgba(0, 0, 0, 0.25);
-    --shadow-card: 0 8px 24px rgba(0, 0, 0, 0.28);
-    --shadow-float: 0 12px 32px rgba(0, 0, 0, 0.36);
+    --bg-primary: #0B0D10;
+    --bg-secondary: #12151B;
+    --surface: #161A22;
+    --surface-muted: #1E232D;
+    --text-primary: #F4F6F9;
+    --text-secondary: #9CA3AF;
+    --border: #262C36;
+    --accent: #34D399;
+    --accent-hover: #6EE7B7;
+    --success: #34D399;
+    --warning: #FBBF24;
+    --danger: #F87171;
+    --review: #94A3B8;
+    --focus: #34D399;
+    --pure-white: #161A22;
+    --btn-primary-ink: #0B0D10;
+    --shadow-sm: 0 1px 2px rgba(0, 0, 0, 0.30);
+    --shadow-card: 0 8px 24px rgba(0, 0, 0, 0.34);
+    --shadow-float: 0 12px 32px rgba(0, 0, 0, 0.44);
 
     /* Dark Glass Tokens */
-    --glass-bg: rgba(34, 39, 32, 0.64);
-    --glass-bg-strong: rgba(34, 39, 32, 0.82);
-    --glass-bg-soft: rgba(34, 39, 32, 0.42);
-    --glass-border: rgba(255, 255, 255, 0.13);
-    --glass-border-subtle: rgba(255, 255, 255, 0.08);
-    --glass-shadow: 0 12px 40px rgba(0, 0, 0, 0.22);
-    --glass-highlight: inset 0 1px 0 rgba(255, 255, 255, 0.12);
-    --glass-fallback: rgba(34, 39, 32, 0.94);
+    --glass-bg: rgba(22, 26, 34, 0.68);
+    --glass-bg-strong: rgba(22, 26, 34, 0.84);
+    --glass-bg-soft: rgba(22, 26, 34, 0.44);
+    --glass-border: rgba(255, 255, 255, 0.12);
+    --glass-border-subtle: rgba(255, 255, 255, 0.07);
+    --glass-shadow: 0 16px 44px rgba(0, 0, 0, 0.36);
+    --glass-highlight: inset 0 1px 0 rgba(255, 255, 255, 0.10);
+    --glass-fallback: rgba(22, 26, 34, 0.96);
   }
 }
 
 :root[data-theme="dark"] {
-  --bg-primary: #121411;
-  --bg-secondary: #1B1F1A;
-  --surface: #222720;
-  --surface-muted: #282D26;
-  --text-primary: #F5F3EC;
-  --text-secondary: #B1B5AB;
-  --border: #343B32;
-  --accent: #42D982;
-  --accent-hover: #67E59B;
-  --success: #55D98B;
-  --warning: #F2C46D;
-  --danger: #F17B7B;
-  --review: #A3B1C6;
-  --focus: #42D982;
-  --pure-white: #222720;
-  --btn-primary-ink: #121411;
-  --shadow-sm: 0 1px 2px rgba(0, 0, 0, 0.25);
-  --shadow-card: 0 8px 24px rgba(0, 0, 0, 0.28);
-  --shadow-float: 0 12px 32px rgba(0, 0, 0, 0.36);
+  --bg-primary: #0B0D10;
+  --bg-secondary: #12151B;
+  --surface: #161A22;
+  --surface-muted: #1E232D;
+  --text-primary: #F4F6F9;
+  --text-secondary: #9CA3AF;
+  --border: #262C36;
+  --accent: #34D399;
+  --accent-hover: #6EE7B7;
+  --success: #34D399;
+  --warning: #FBBF24;
+  --danger: #F87171;
+  --review: #94A3B8;
+  --focus: #34D399;
+  --pure-white: #161A22;
+  --btn-primary-ink: #0B0D10;
+  --shadow-sm: 0 1px 2px rgba(0, 0, 0, 0.30);
+  --shadow-card: 0 8px 24px rgba(0, 0, 0, 0.34);
+  --shadow-float: 0 12px 32px rgba(0, 0, 0, 0.44);
 
   /* Dark Glass Tokens */
-  --glass-bg: rgba(34, 39, 32, 0.64);
-  --glass-bg-strong: rgba(34, 39, 32, 0.82);
-  --glass-bg-soft: rgba(34, 39, 32, 0.42);
-  --glass-border: rgba(255, 255, 255, 0.13);
-  --glass-border-subtle: rgba(255, 255, 255, 0.08);
-  --glass-shadow: 0 12px 40px rgba(0, 0, 0, 0.22);
-  --glass-highlight: inset 0 1px 0 rgba(255, 255, 255, 0.12);
-  --glass-fallback: rgba(34, 39, 32, 0.94);
+  --glass-bg: rgba(22, 26, 34, 0.68);
+  --glass-bg-strong: rgba(22, 26, 34, 0.84);
+  --glass-bg-soft: rgba(22, 26, 34, 0.44);
+  --glass-border: rgba(255, 255, 255, 0.12);
+  --glass-border-subtle: rgba(255, 255, 255, 0.07);
+  --glass-shadow: 0 16px 44px rgba(0, 0, 0, 0.36);
+  --glass-highlight: inset 0 1px 0 rgba(255, 255, 255, 0.10);
+  --glass-fallback: rgba(22, 26, 34, 0.96);
 }
 
 :root[data-theme="light"] {
