@@ -1,16 +1,19 @@
 import { ConversationProvider, type MessagePayload, useConversation } from "@elevenlabs/react";
-import { useCallback, useEffect, useRef, useState } from "react";
+import { useCallback, useEffect, useRef, useState, type CSSProperties } from "react";
 import { useNavigate } from "react-router-dom";
+import { PaperPlaneRight, SpeakerHigh } from "@phosphor-icons/react";
 import { finishSession, getConfig, sendTurn, startSession, type VoiceConnection } from "../api";
 import { localeTags, useTranslation } from "../i18n";
 import { useSetup } from "../setup/SetupContext";
-import { Badge, Button, IconMessage, IconMic, IconSend, IconSheet, IconVolume, Sheet } from "../shared/ui";
+import { Button, Modal, Sheet, Skeleton } from "../shared/ui";
 import type { Language, Session, SkillRecord, TranscriptTurn } from "../types";
 import { listenOnce, speak } from "../voice";
 
 const languageKeys = { en: "languageEnglish", hi: "languageHindi", kn: "languageKannada" } as const;
 type FallbackReason = "connection" | "microphone";
-type OrbState = "idle" | "listening" | "speaking" | "thinking";
+type WaveformState = "idle" | "listening" | "speaking" | "thinking";
+
+const WAVEFORM_BARS = Array.from({ length: 48 }, (_, i) => i);
 
 const DEFAULT_FACTSHEET_CELLS = [
   { ref: "Sheet1!A1:F1", desc: "Column headers: Date, Region, SKU, Qty, UnitPrice, Total" },
@@ -299,9 +302,7 @@ function SessionExperience(): JSX.Element {
     if (session.voiceMode === "mock") return submitMockTurn(text);
     const cleanText = text.trim();
     setDraft("");
-    if (textareaRef.current) {
-      textareaRef.current.style.height = "auto";
-    }
+    if (textareaRef.current) textareaRef.current.style.height = "auto";
     setIsThinking(true);
     saveTypedTurn(cleanText);
     if (conversation.status === "connected") {
@@ -362,7 +363,7 @@ function SessionExperience(): JSX.Element {
   const showTextEntry = textFallbackOpen || inputMode === "text" || Boolean(fallbackReason);
   const showMockSpeech = session?.voiceMode === "mock" && !showTextEntry && !isDemo;
 
-  const orbState: OrbState = isThinking
+  const waveState: WaveformState = isThinking
     ? "thinking"
     : voice?.mode === "elevenlabs"
     ? conversation.isSpeaking
@@ -374,23 +375,18 @@ function SessionExperience(): JSX.Element {
     ? "listening"
     : "idle";
 
-  const orbStateLabel =
-    orbState === "speaking"
+  const stateLabel =
+    waveState === "speaking"
       ? t("agentSpeaking")
-      : orbState === "listening"
+      : waveState === "listening"
       ? t("agentListening")
-      : orbState === "thinking"
-      ? "Thinking…"
+      : waveState === "thinking"
+      ? "Thinking"
       : t("agentReady");
 
   const time = String(Math.floor(elapsedSeconds / 60)).padStart(2, "0") + ":" + String(elapsedSeconds % 60).padStart(2, "0");
   const durationTime = maxDurationSeconds === undefined ? "" : String(Math.floor(maxDurationSeconds / 60)).padStart(2, "0") + ":" + String(maxDurationSeconds % 60).padStart(2, "0");
-
-  // Thin violet arc math for provisional confidence meter
   const confidenceVal = Math.max(0, Math.min(100, session?.understanding ?? 0));
-  const arcRadius = 46;
-  const arcCircumference = Math.PI * arcRadius;
-  const arcOffset = arcCircumference - (confidenceVal / 100) * arcCircumference;
 
   const factSheetCells = validationReport?.checks.length
     ? validationReport.checks.map((c) => ({ ref: c.title, desc: c.detail }))
@@ -400,6 +396,10 @@ function SessionExperience(): JSX.Element {
     return (
       <main className="shell">
         <p className="loading">{statusNote || t("sessionStarting")}</p>
+        <div className="form-stack" style={{ marginTop: "16px" }}>
+          <Skeleton variant="title" />
+          <Skeleton variant="card" />
+        </div>
       </main>
     );
   }
@@ -407,90 +407,73 @@ function SessionExperience(): JSX.Element {
   return (
     <main className="shell viva-shell">
       <div className="sr-only" aria-live="polite" aria-atomic="true">
-        {orbStateLabel}
-        {showTextEntry ? " — Text chat mode active" : ""}
+        {stateLabel}
+        {showTextEntry ? " — Text chat mode" : ""}
       </div>
 
       <div className="viva-topbar-meta">
         <div className="viva-badges">
-          {isDemo && <Badge tone="lavender">{t("replayBadge")}</Badge>}
-          <Badge tone="lavender">{t(languageKeys[session.language ?? language])}</Badge>
-          <Badge tone="review">{t("onlineOnlyBadge")}</Badge>
-          <button
-            type="button"
-            className="grounded-chip"
-            onClick={() => setFactSheetOpen(true)}
-          >
-            <IconSheet size={13} />
-            <span>Grounded in your file</span>
+          {isDemo && <span className="eyebrow">{t("replayBadge")}</span>}
+          <span className="pf-chip">{t(languageKeys[session.language ?? language])}</span>
+          <span className="pf-chip pf-chip--review">{t("onlineOnlyBadge")}</span>
+          <button type="button" className="hero-plain-link" onClick={() => setFactSheetOpen(true)}>
+            Grounded in your file
           </button>
         </div>
         <span className="session-time mono">{time}</span>
       </div>
 
       {durationWarning && (
-        <p className="duration-warning" role="status">
+        <p className="rule-feedback rule-feedback--warn" role="status">
           {t("durationWarning", { time: durationTime })}
         </p>
       )}
 
-      {!showTextEntry ? (
-        /* VOICE EXPERIENCE */
-        <section className="viva-voice-stage" aria-label={t("sessionTitle")}>
-          <div className="viva-confidence-arc-wrap" aria-label={`Confidence ${confidenceVal}%, Provisional, not final`}>
-            <svg viewBox="0 0 110 62" className="viva-confidence-arc-svg" aria-hidden="true">
-              <path
-                d="M 9 54 A 46 46 0 0 1 101 54"
-                fill="none"
-                stroke="var(--line)"
-                strokeWidth="4"
-                strokeLinecap="round"
-              />
-              <path
-                d="M 9 54 A 46 46 0 0 1 101 54"
-                fill="none"
-                stroke="var(--violet)"
-                strokeWidth="4"
-                strokeLinecap="round"
-                strokeDasharray={arcCircumference}
-                strokeDashoffset={arcOffset}
-                className="viva-confidence-arc-fill"
-              />
-            </svg>
-            <div className="viva-confidence-meta">
-              <strong>{confidenceVal}%</strong>
-              <span>Provisional, not final</span>
-            </div>
-          </div>
+      {/* Provisional Confidence Meter: 2px horizontal rule with marker */}
+      <div className="provisional-meter" aria-label={`Provisional score ${confidenceVal}%, not final`}>
+        <div className="provisional-meter-head">
+          <span className="fineprint">Provisional score, not final</span>
+          <strong className="mono">{confidenceVal}%</strong>
+        </div>
+        <div className="provisional-rule">
+          <span className="provisional-marker" style={{ left: `${confidenceVal}%` }} />
+        </div>
+      </div>
 
+      {!showTextEntry ? (
+        <section className="viva-voice-stage" aria-label={t("sessionTitle")}>
           {agentText && (
             <div className="viva-question-wrap">
-              <h1 className="viva-question-serif">{agentText}</h1>
+              <h1 className="viva-question-dm">{agentText}</h1>
               <button
                 type="button"
                 className="viva-repeat-btn"
                 onClick={() => speak(agentText, session.language ?? language)}
-                aria-label={t("repeatQuestion")}
-                title={t("repeatQuestion")}
               >
-                <IconVolume size={16} />
+                <SpeakerHigh size={16} weight="regular" aria-hidden="true" />
                 <span>{t("repeatQuestion")}</span>
               </button>
             </div>
           )}
 
-          <div className="viva-orb-stage">
-            <div className={`viva-orb viva-orb--${orbState}`} aria-hidden="true">
-              <span className="viva-orb-ripple" />
-              <span className="viva-orb-conic" />
-              <span className="viva-orb-core" />
+          {/* Monochrome 48-bar Waveform (no glowing blob) */}
+          <div className="waveform-panel" aria-label={stateLabel}>
+            <div className={`waveform-bars waveform--${waveState}`} aria-hidden="true">
+              {WAVEFORM_BARS.map((i) => (
+                <span
+                  key={i}
+                  className="waveform-bar"
+                  style={{ "--bar-i": i } as CSSProperties}
+                />
+              ))}
             </div>
-            <span className={`viva-orb-state-pill viva-orb-state--${orbState}`}>
-              {orbStateLabel}
-            </span>
+            <div className="waveform-static-fallback" aria-hidden="true">
+              <div className="waveform-static-fill" style={{ width: waveState === "idle" ? "20%" : "70%" }} />
+            </div>
+            <span className="eyebrow">{stateLabel}</span>
           </div>
 
-          <section className="viva-glass-transcript" aria-labelledby="transcript-heading">
+          <section className="viva-transcript-panel" aria-labelledby="transcript-heading">
             <div className="viva-glass-header">
               <h2 id="transcript-heading">{t("whatHeard")}</h2>
               {!isDemo && voice?.mode === "mock" && <span className="fineprint">{t("mockSession")}</span>}
@@ -499,14 +482,14 @@ function SessionExperience(): JSX.Element {
               {transcript.map((turn, index) => (
                 <p
                   key={turn.createdAt + "-" + index}
-                  className={"viva-glass-line " + (turn.speaker === "candidate" ? "is-candidate" : "is-agent")}
+                  className={"viva-line " + (turn.speaker === "agent" ? "is-agent" : "is-candidate")}
                 >
                   <strong>{turn.speaker === "agent" ? t("beginner") : t("you")}: </strong>
                   <span>{turn.text}</span>
                 </p>
               ))}
               {partialCandidateText && (
-                <p className="viva-glass-line is-candidate">
+                <p className="viva-line is-candidate">
                   <strong>{t("you")}: </strong>
                   <span>{partialCandidateText}</span>
                 </p>
@@ -518,14 +501,13 @@ function SessionExperience(): JSX.Element {
           <div className="viva-voice-controls">
             {showMockSpeech && (
               <Button
-                variant="primary"
+                variant="dark"
                 size="lg"
                 className="viva-mic-pill"
                 onMouseDown={handleMockSpeak}
                 onClick={handleMockSpeak}
               >
-                <IconMic size={20} />
-                <span>{isRecordingMock ? t("agentListening") : t("speakExplanation")}</span>
+                {isRecordingMock ? t("agentListening") : "HOLD TO SPEAK"}
               </Button>
             )}
 
@@ -544,22 +526,20 @@ function SessionExperience(): JSX.Element {
                     chooseInputMode("text");
                   }}
                 >
-                  <IconMessage size={16} />
-                  <span>Switch to text</span>
+                  SWITCH TO TEXT
                 </Button>
               )}
 
-              <Button variant="ghost" onClick={() => setEndConfirmOpen(true)}>
-                {t("endSession")}
-              </Button>
+              <button type="button" className="hero-plain-link" onClick={() => setEndConfirmOpen(true)}>
+                END SESSION
+              </button>
             </div>
           </div>
         </section>
       ) : (
-        /* TEXT CHAT EXPERIENCE */
         <section className="viva-chat-stage" aria-label={t("sessionTitle")}>
           {fallbackReason && (
-            <p className="voice-fallback" role="alert">
+            <p className="rule-feedback rule-feedback--warn" role="alert">
               {fallbackReason === "microphone" ? t("microphoneLost") : t("connectionFailed")}
             </p>
           )}
@@ -616,10 +596,8 @@ function SessionExperience(): JSX.Element {
             ))}
 
             {isThinking && (
-              <div className="chat-bubble chat-bubble--agent typing-bubble" aria-label="Examiner is typing">
-                <span className="typing-dot" />
-                <span className="typing-dot" />
-                <span className="typing-dot" />
+              <div className="chat-bubble chat-bubble--agent" aria-label="Examiner is typing">
+                <Skeleton variant="text" width={120} />
               </div>
             )}
             <div ref={transcriptEndRef} />
@@ -643,13 +621,13 @@ function SessionExperience(): JSX.Element {
                 aria-label={t("textPlaceholder")}
               />
               <Button
-                variant="primary"
+                variant="dark"
                 className="chat-send-btn"
                 disabled={!draft.trim() || isThinking}
                 onClick={() => void submitText(draft)}
                 aria-label={t("sendText")}
               >
-                <IconSend size={18} />
+                <PaperPlaneRight size={18} weight="regular" aria-hidden="true" />
               </Button>
             </div>
           )}
@@ -664,26 +642,21 @@ function SessionExperience(): JSX.Element {
                   chooseInputMode("voice");
                 }}
               >
-                <IconMic size={16} />
-                <span>{t("useVoiceInstead")}</span>
+                {t("useVoiceInstead")}
               </Button>
             )}
-            <Button variant="ghost" onClick={() => setEndConfirmOpen(true)}>
-              {t("endSession")}
-            </Button>
+            <button type="button" className="hero-plain-link" onClick={() => setEndConfirmOpen(true)}>
+              END SESSION
+            </button>
           </div>
         </section>
       )}
 
       {statusNote && <p className="fineprint" role="status">{statusNote}</p>}
 
-      <Sheet
-        open={factSheetOpen}
-        onClose={() => setFactSheetOpen(false)}
-        title="Grounded in your file"
-      >
+      <Sheet open={factSheetOpen} onClose={() => setFactSheetOpen(false)} title="Grounded in your file">
         <p className="fineprint">
-          The AI Examiner references these deterministic FactSheet cells from your submitted workbook:
+          FactSheet cells referenced from your submitted workbook:
         </p>
         <ul className="factsheet-cell-list">
           {factSheetCells.map((cell) => (
@@ -695,23 +668,19 @@ function SessionExperience(): JSX.Element {
         </ul>
       </Sheet>
 
-      <Sheet
-        open={endConfirmOpen}
-        onClose={() => setEndConfirmOpen(false)}
-        title="End AI Viva session?"
-      >
+      <Modal open={endConfirmOpen} onClose={() => setEndConfirmOpen(false)} title="End AI Viva session?">
         <p className="fineprint">
           Ending now will score your current responses and generate your ECVE breakdown.
         </p>
         <div className="cta-stack">
-          <Button variant="primary" fullWidth onClick={() => void finish()}>
-            Finish &amp; score
-          </Button>
           <Button variant="secondary" fullWidth onClick={() => setEndConfirmOpen(false)}>
-            Keep going
+            Cancel
+          </Button>
+          <Button variant="dark" fullWidth onClick={() => void finish()}>
+            END SESSION
           </Button>
         </div>
-      </Sheet>
+      </Modal>
     </main>
   );
 }
