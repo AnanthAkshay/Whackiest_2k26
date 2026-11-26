@@ -1,6 +1,6 @@
 import type { ButtonHTMLAttributes, ReactNode } from "react";
 
-export type ButtonVariant = "primary" | "dark" | "secondary" | "ghost";
+export type ButtonVariant = "primary" | "dark" | "secondary" | "ghost" | "glass";
 export type ButtonSize = "md" | "lg";
 
 export interface ButtonStyleOptions {
@@ -52,4 +52,8 @@ export function Button({
       {children}
     </button>
   );
+}
+
+export function GlassButton({ variant = "glass", ...props }: ButtonProps): JSX.Element {
+  return <Button variant={variant} {...props} />;
 }

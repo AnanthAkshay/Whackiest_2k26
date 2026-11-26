@@ -1,6 +1,6 @@
 import type { HTMLAttributes, ReactNode } from "react";
 
-export type ChipTone = "neutral" | "lavender" | "ok" | "warn" | "bad" | "review";
+export type ChipTone = "neutral" | "lavender" | "ok" | "warn" | "bad" | "review" | "glass";
 
 export interface ChipProps extends HTMLAttributes<HTMLSpanElement> {
   tone?: ChipTone;
@@ -23,3 +23,7 @@ export function Chip({
 export const Badge = Chip;
 export type BadgeProps = ChipProps;
 export type BadgeTone = ChipTone;
+
+export function GlassBadge({ tone = "glass", ...props }: ChipProps): JSX.Element {
+  return <Chip tone={tone} {...props} />;
+}

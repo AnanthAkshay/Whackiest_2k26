@@ -1,8 +1,9 @@
 export { Accordion } from "./Accordion";
 export { Breadcrumb, type BreadcrumbItem } from "./Breadcrumb";
-export { Button, buttonClasses, type ButtonProps, type ButtonSize, type ButtonStyleOptions, type ButtonVariant } from "./Button";
-export { Card, type CardPadding, type CardProps, type CardVariant } from "./Card";
-export { Badge, Chip, type BadgeProps, type BadgeTone, type ChipProps, type ChipTone } from "./Chip";
+export { Button, GlassButton, buttonClasses, type ButtonProps, type ButtonSize, type ButtonStyleOptions, type ButtonVariant } from "./Button";
+export { Card, GlassCard, GlassPanel, type CardPadding, type CardProps, type CardVariant } from "./Card";
+export { Badge, Chip, GlassBadge, type BadgeProps, type BadgeTone, type ChipProps, type ChipTone } from "./Chip";
+export { GlassHeader, GlassIconButton, GlassModal, GlassNavigation, GlassSheet, GlassTooltip } from "./Glass";
 export { CopyButton, type CopyButtonProps } from "./CopyButton";
 export { Frame } from "./Frame";
 export { Grain } from "./Grain";

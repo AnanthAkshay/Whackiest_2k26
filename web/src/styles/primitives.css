@@ -132,13 +132,90 @@
   transform: translateY(-1px);
 }
 
-/* Card: Large rounded panels, subtle 1px border, minimal shadow */
+/* Card: Large rounded panels, subtle 1px border, minimal shadow + Glass variants */
 .pf-card {
   padding: var(--space-24);
   border-radius: var(--radius-lg);
   border: 1px solid var(--border);
   background: var(--surface);
   box-shadow: var(--shadow-card);
+}
+
+.pf-card--glass,
+.glass-card {
+  background: var(--glass-bg);
+  backdrop-filter: blur(var(--glass-blur)) saturate(145%);
+  -webkit-backdrop-filter: blur(var(--glass-blur)) saturate(145%);
+  border: 1px solid var(--glass-border);
+  box-shadow: var(--glass-shadow), var(--glass-highlight);
+}
+
+.pf-card--glass-strong,
+.glass-panel {
+  background: var(--glass-bg-strong);
+  backdrop-filter: blur(var(--glass-blur-strong)) saturate(150%);
+  -webkit-backdrop-filter: blur(var(--glass-blur-strong)) saturate(150%);
+  border: 1px solid var(--glass-border);
+  box-shadow: var(--glass-shadow), var(--glass-highlight);
+}
+
+.pf-card--glass-soft {
+  background: var(--glass-bg-soft);
+  backdrop-filter: blur(14px) saturate(135%);
+  -webkit-backdrop-filter: blur(14px) saturate(135%);
+  border: 1px solid var(--glass-border-subtle);
+  box-shadow: var(--glass-highlight);
+}
+
+@supports not ((backdrop-filter: blur(1px)) or (-webkit-backdrop-filter: blur(1px))) {
+  .pf-card--glass,
+  .glass-card,
+  .pf-card--glass-strong,
+  .glass-panel,
+  .pf-card--glass-soft {
+    background: var(--glass-fallback);
+  }
+}
+
+.pf-btn--glass {
+  background: var(--glass-bg-strong);
+  backdrop-filter: blur(var(--glass-blur)) saturate(145%);
+  -webkit-backdrop-filter: blur(var(--glass-blur)) saturate(145%);
+  border: 1px solid var(--glass-border);
+  color: var(--text-primary);
+  box-shadow: var(--shadow-sm), var(--glass-highlight);
+}
+
+.pf-btn--glass:hover:not(:disabled) {
+  background: var(--surface);
+  transform: translateY(-1px);
+  box-shadow: var(--glass-shadow), var(--glass-highlight);
+}
+
+.pf-chip--glass {
+  background: var(--glass-bg);
+  backdrop-filter: blur(12px) saturate(135%);
+  -webkit-backdrop-filter: blur(12px) saturate(135%);
+  border: 1px solid var(--glass-border);
+}
+
+.pf-tooltip {
+  position: relative;
+  display: inline-flex;
+  align-items: center;
+}
+
+.pf-tooltip-bubble {
+  padding: 8px 12px;
+  border-radius: var(--radius-sm);
+  background: var(--glass-bg-strong);
+  backdrop-filter: blur(var(--glass-blur)) saturate(145%);
+  -webkit-backdrop-filter: blur(var(--glass-blur)) saturate(145%);
+  border: 1px solid var(--glass-border);
+  box-shadow: var(--glass-shadow), var(--glass-highlight);
+  color: var(--text-primary);
+  font-size: 13px;
+  line-height: 1.4;
 }
 
 .pf-card--subtle {
@@ -518,9 +595,18 @@
   overflow-y: auto;
   padding: var(--space-24);
   border-radius: var(--radius-xl) var(--radius-xl) 0 0;
-  border: 1px solid var(--border);
-  background: var(--surface);
-  box-shadow: var(--shadow-float);
+  border: 1px solid var(--glass-border);
+  background: var(--glass-bg-strong);
+  backdrop-filter: blur(var(--glass-blur-strong)) saturate(145%);
+  -webkit-backdrop-filter: blur(var(--glass-blur-strong)) saturate(145%);
+  box-shadow: var(--glass-shadow), var(--glass-highlight);
+}
+
+@supports not ((backdrop-filter: blur(1px)) or (-webkit-backdrop-filter: blur(1px))) {
+  .pf-sheet,
+  .pf-modal {
+    background: var(--glass-fallback);
+  }
 }
 
 .pf-modal { max-width: 480px; border-radius: var(--radius-xl); }

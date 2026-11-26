@@ -17,6 +17,18 @@
   --review: #4A5568;
   --focus: #1B4D3E;
 
+  /* Warm Glassmorphism Tokens — Light Theme */
+  --glass-bg: rgba(255, 255, 255, 0.58);
+  --glass-bg-strong: rgba(255, 255, 255, 0.76);
+  --glass-bg-soft: rgba(255, 255, 255, 0.36);
+  --glass-border: rgba(255, 255, 255, 0.75);
+  --glass-border-subtle: rgba(80, 70, 55, 0.10);
+  --glass-blur: 22px;
+  --glass-blur-strong: 32px;
+  --glass-shadow: 0 12px 40px rgba(69, 55, 36, 0.08);
+  --glass-highlight: inset 0 1px 0 rgba(255, 255, 255, 0.85);
+  --glass-fallback: rgba(255, 255, 255, 0.94);
+
   /* Radii */
   --radius-pill: 9999px;
   --radius-xl: 28px;
@@ -115,6 +127,16 @@
     --shadow-sm: 0 1px 2px rgba(0, 0, 0, 0.25);
     --shadow-card: 0 8px 24px rgba(0, 0, 0, 0.28);
     --shadow-float: 0 12px 32px rgba(0, 0, 0, 0.36);
+
+    /* Dark Glass Tokens */
+    --glass-bg: rgba(34, 39, 32, 0.64);
+    --glass-bg-strong: rgba(34, 39, 32, 0.82);
+    --glass-bg-soft: rgba(34, 39, 32, 0.42);
+    --glass-border: rgba(255, 255, 255, 0.13);
+    --glass-border-subtle: rgba(255, 255, 255, 0.08);
+    --glass-shadow: 0 12px 40px rgba(0, 0, 0, 0.22);
+    --glass-highlight: inset 0 1px 0 rgba(255, 255, 255, 0.12);
+    --glass-fallback: rgba(34, 39, 32, 0.94);
   }
 }
 
@@ -138,6 +160,16 @@
   --shadow-sm: 0 1px 2px rgba(0, 0, 0, 0.25);
   --shadow-card: 0 8px 24px rgba(0, 0, 0, 0.28);
   --shadow-float: 0 12px 32px rgba(0, 0, 0, 0.36);
+
+  /* Dark Glass Tokens */
+  --glass-bg: rgba(34, 39, 32, 0.64);
+  --glass-bg-strong: rgba(34, 39, 32, 0.82);
+  --glass-bg-soft: rgba(34, 39, 32, 0.42);
+  --glass-border: rgba(255, 255, 255, 0.13);
+  --glass-border-subtle: rgba(255, 255, 255, 0.08);
+  --glass-shadow: 0 12px 40px rgba(0, 0, 0, 0.22);
+  --glass-highlight: inset 0 1px 0 rgba(255, 255, 255, 0.12);
+  --glass-fallback: rgba(34, 39, 32, 0.94);
 }
 
 :root[data-theme="light"] {

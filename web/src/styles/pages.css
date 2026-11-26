@@ -191,8 +191,10 @@ h2, .section-heading {
 
 /* Trust Strip */
 .trust-strip {
-  background: var(--surface);
-  border-bottom: 1px solid var(--border);
+  background: var(--glass-bg-soft);
+  backdrop-filter: blur(14px) saturate(135%);
+  -webkit-backdrop-filter: blur(14px) saturate(135%);
+  border-bottom: 1px solid var(--glass-border-subtle);
   padding: 18px 0;
 }
 

@@ -12,7 +12,7 @@ import {
 import { useTranslation } from "../i18n";
 import { createMockValidationReport } from "../mock/demoData";
 import { useSetup } from "../setup/SetupContext";
-import { Accordion, Button, Card, Frame, StatusMark } from "../shared/ui";
+import { Accordion, Button, Frame, GlassBadge, GlassCard, GlassPanel, StatusMark } from "../shared/ui";
 
 const JOURNEY_STAGES = [
   { num: "01", key: "1. Learn", outcome: "Study short spreadsheet rules cached for offline access.", to: "/learn", icon: BookOpen },
@@ -80,7 +80,7 @@ export function WelcomePage(): JSX.Element {
 
           <div className="hero-grid">
             <div className="hero-copy">
-              <span className="pf-chip">{t("tagline")}</span>
+              <GlassBadge>{t("tagline")}</GlassBadge>
               <h1 id="hero-heading" className="pf-hero-title" style={{ marginTop: "20px" }}>
                 Your skills deserve to be seen.
               </h1>
@@ -130,7 +130,7 @@ export function WelcomePage(): JSX.Element {
             </div>
 
             <aside className="hero-demo-col" aria-label="Live product sample">
-              <Card as="article" className="hero-passport-preview">
+              <GlassPanel as="article" className="hero-passport-preview">
                 <div className="hero-sample-head">
                   <div>
                     <span className="pf-label">SAMPLE SKILL PASSPORT</span>
@@ -146,9 +146,9 @@ export function WelcomePage(): JSX.Element {
                   <StatusMark tone="ok" label={t("recordMatchesDatabase")} />
                   <code className="mono">{sampleReport.sha256.slice(0, 8)}…{sampleReport.sha256.slice(-6)}</code>
                 </div>
-              </Card>
+              </GlassPanel>
 
-              <Card as="article" variant="subtle" padding="sm">
+              <GlassCard as="article" padding="sm">
                 <span className="pf-label">Validator checks · {sampleReport.fileName}</span>
                 <ul className="sample-check-list">
                   {sampleChecks.map((chk) => {
@@ -162,7 +162,7 @@ export function WelcomePage(): JSX.Element {
                     );
                   })}
                 </ul>
-              </Card>
+              </GlassCard>
             </aside>
           </div>
         </Frame>
@@ -191,7 +191,7 @@ export function WelcomePage(): JSX.Element {
             {JOURNEY_STAGES.map((stage) => {
               const Icon = stage.icon;
               return (
-                <Card key={stage.key} as="article" interactive className="stage-editorial-card">
+                <GlassCard key={stage.key} as="article" interactive className="stage-editorial-card">
                   <div className="stage-card-top">
                     <span className="pf-label tabular-nums">{stage.num}</span>
                     <span className="stage-icon-badge" aria-hidden="true">
@@ -204,7 +204,7 @@ export function WelcomePage(): JSX.Element {
                     <span>Open</span>
                     <ArrowUpRight size={14} weight="regular" aria-hidden="true" />
                   </Link>
-                </Card>
+                </GlassCard>
               );
             })}
           </div>
@@ -216,30 +216,30 @@ export function WelcomePage(): JSX.Element {
             Your work matters more than words on a resume.
           </h2>
           <div className="ecve-cards-grid">
-            <Card as="article">
+            <GlassCard as="article">
               <span className="pf-label">P · PRACTICAL EXECUTION</span>
               <div className="ecve-big-num tabular-nums">60%</div>
               <div className="pillar-track"><div className="pillar-fill" style={{ width: "60%" }} /></div>
               <p className="fineprint" style={{ marginTop: "12px", marginBottom: 0 }}>
                 Deterministic code checks on your submitted .xlsx workbook.
               </p>
-            </Card>
-            <Card as="article">
+            </GlassCard>
+            <GlassCard as="article">
               <span className="pf-label">U · CONCEPTUAL UNDERSTANDING</span>
               <div className="ecve-big-num tabular-nums">25%</div>
               <div className="pillar-track"><div className="pillar-fill" style={{ width: "25%" }} /></div>
               <p className="fineprint" style={{ marginTop: "12px", marginBottom: 0 }}>
                 Artifact-aware AI Viva responses scored against the public MO-200 rubric.
               </p>
-            </Card>
-            <Card as="article">
+            </GlassCard>
+            <GlassCard as="article">
               <span className="pf-label">C · EVIDENCE CONSISTENCY</span>
               <div className="ecve-big-num tabular-nums">15%</div>
               <div className="pillar-track"><div className="pillar-fill" style={{ width: "15%" }} /></div>
               <p className="fineprint" style={{ marginTop: "12px", marginBottom: 0 }}>
                 Cross-check between spoken reasoning and verified file facts.
               </p>
-            </Card>
+            </GlassCard>
           </div>
           <p className="fineprint" style={{ marginTop: "16px" }}>
             <code className="mono">Composite = 0.60P + 0.25U + 0.15C</code> — Proposed assessment design weights, not a guarantee of employment or official certification.

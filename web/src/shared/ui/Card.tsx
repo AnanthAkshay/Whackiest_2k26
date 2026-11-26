@@ -1,6 +1,6 @@
 import type { HTMLAttributes, ReactNode } from "react";
 
-export type CardVariant = "default" | "subtle" | "lavender" | "error";
+export type CardVariant = "default" | "subtle" | "lavender" | "error" | "glass" | "glass-strong" | "glass-soft";
 export type CardPadding = "sm" | "md" | "lg";
 
 export interface CardProps extends HTMLAttributes<HTMLElement> {
@@ -35,4 +35,12 @@ export function Card({
       {children}
     </Tag>
   );
+}
+
+export function GlassCard({ variant = "glass", ...props }: CardProps): JSX.Element {
+  return <Card variant={variant} {...props} />;
+}
+
+export function GlassPanel({ variant = "glass-strong", ...props }: CardProps): JSX.Element {
+  return <Card variant={variant} {...props} />;
 }
