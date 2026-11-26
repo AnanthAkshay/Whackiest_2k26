@@ -30,7 +30,7 @@
 
 .pf-btn--primary {
   background: var(--pure-white);
-  color: #151515;
+  color: var(--dark-ink);
   border-color: var(--line);
 }
 

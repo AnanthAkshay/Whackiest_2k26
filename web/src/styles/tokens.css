@@ -86,7 +86,7 @@
   --dock-muted: var(--muted);
   --surface-light: var(--pure-white);
   --cream-ink: #EDEDED;
-  --dark-ink: var(--graphite);
+  --dark-ink: #151515;
   --muted-light: var(--silver);
   --ok-bright: #68B891;
   --topbar-bg: var(--frame-top);

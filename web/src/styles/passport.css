@@ -96,7 +96,7 @@
   border: 1px solid var(--silver);
   border-radius: var(--r-card);
   background: var(--graphite);
-  color: #EDEDED;
+  color: var(--cream-ink);
   overflow: hidden;
 }
 
@@ -138,7 +138,7 @@
   font-size: 0.95rem;
   letter-spacing: 0.08em;
   text-transform: uppercase;
-  color: #EDEDED;
+  color: var(--cream-ink);
 }
 
 .passport-type-label {
@@ -151,7 +151,7 @@
 
 .passport-handle-dm {
   margin: 0;
-  color: #EDEDED;
+  color: var(--cream-ink);
   font-family: var(--font-display);
   font-size: clamp(2rem, 5vw, 3rem);
   font-weight: 700;
@@ -193,14 +193,14 @@
 .passport-dl dd {
   margin: 4px 0 0;
   font-size: 1rem;
-  color: #EDEDED;
+  color: var(--cream-ink);
 }
 
 .passport-qr-tile {
   display: inline-flex;
   padding: 8px;
   border-radius: var(--r-control);
-  background: #FFFFFF;
+  background: var(--pure-white);
 }
 
 .crypto-proof-card,
@@ -224,12 +224,12 @@
 .crypto-footer-links { display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: var(--space-8); padding-top: var(--space-8); border-top: 1px solid var(--line); }
 .passport-action-buttons { display: flex; flex-wrap: wrap; gap: var(--space-8); }
 .withdraw-btn { color: var(--bad); }
-.withdraw-confirm-btn { background: var(--bad); border-color: var(--bad); color: #FFFFFF; }
+.withdraw-confirm-btn { background: var(--bad); border-color: var(--bad); color: var(--pure-white); }
 .passport-disclaimer { margin: 0; color: var(--muted); font-size: 13px; }
 
 @media print {
   @page { size: A4 portrait; margin: 16mm; }
   .pf-grain, .pf-frame-pattern, .site-topbar, .site-footer, .quiet-subfooter, .mobile-bottom-dock, .back-to-top-btn, .floating-help-btn, .no-print { display: none !important; }
-  .pf-frame { border: 0; margin: 0; width: 100%; background: #FFFFFF; box-shadow: none; }
+  .pf-frame { border: 0; margin: 0; width: 100%; background: var(--pure-white); box-shadow: none; }
   .passport-graphite-card { -webkit-print-color-adjust: exact; print-color-adjust: exact; break-inside: avoid; }
 }
