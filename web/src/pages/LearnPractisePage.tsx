@@ -1,5 +1,6 @@
 import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
+import { Check } from "@phosphor-icons/react";
 import {
   DEFAULT_CONTENT_BUNDLE,
   loadCuratedContent,
@@ -16,36 +17,22 @@ import {
 } from "../offline/offlineStore";
 import { useSetup } from "../setup/SetupContext";
 import { JourneyNav } from "../shared/JourneyNav";
-import { Badge, Button, Card, Chip, IconCheck, IconClock, IconCloudCheck, ProgressRing } from "../shared/ui";
+import { Button, Card, StatusMark } from "../shared/ui";
 
-function TrybQrSvg(): JSX.Element {
-  return (
-    <svg
-      width="72"
-      height="72"
-      viewBox="0 0 24 24"
-      fill="none"
-      aria-label="QR code for Tryb external practice"
-      className="tryb-qr-svg"
-    >
-      <rect width="24" height="24" rx="2" fill="#ffffff" stroke="#d3dcd6" />
-      <rect x="3" y="3" width="6" height="6" fill="#14251d" />
-      <rect x="4" y="4" width="4" height="4" fill="#ffffff" />
-      <rect x="5" y="5" width="2" height="2" fill="#14251d" />
-      <rect x="15" y="3" width="6" height="6" fill="#14251d" />
-      <rect x="16" y="4" width="4" height="4" fill="#ffffff" />
-      <rect x="17" y="5" width="2" height="2" fill="#14251d" />
-      <rect x="3" y="15" width="6" height="6" fill="#14251d" />
-      <rect x="4" y="16" width="4" height="4" fill="#ffffff" />
-      <rect x="5" y="17" width="2" height="2" fill="#14251d" />
-      <rect x="11" y="5" width="2" height="2" fill="#1f8a70" />
-      <rect x="11" y="9" width="2" height="4" fill="#14251d" />
-      <rect x="15" y="11" width="6" height="2" fill="#1f8a70" />
-      <rect x="11" y="15" width="4" height="2" fill="#14251d" />
-      <rect x="17" y="15" width="4" height="6" fill="#14251d" />
-      <rect x="19" y="17" width="1" height="2" fill="#ffffff" />
-    </svg>
-  );
+function appendStoredUtm(url: string): string {
+  if (!url || typeof window === "undefined") return url;
+  try {
+    const raw = window.sessionStorage.getItem("prooffolio_utm");
+    if (!raw) return url;
+    const utm = JSON.parse(raw) as Record<string, string>;
+    const parsed = new URL(url, window.location.origin);
+    for (const [k, v] of Object.entries(utm)) {
+      if (!parsed.searchParams.has(k)) parsed.searchParams.set(k, v);
+    }
+    return parsed.toString();
+  } catch {
+    return url;
+  }
 }
 
 export function LearnPractisePage(): JSX.Element {
@@ -58,7 +45,8 @@ export function LearnPractisePage(): JSX.Element {
   const [isOnline, setIsOnline] = useState<boolean>(
     typeof navigator !== "undefined" ? navigator.onLine : true
   );
-  const trybUrl = getTrybPracticeUrl();
+  const rawTrybUrl = getTrybPracticeUrl();
+  const trybUrl = rawTrybUrl ? appendStoredUtm(rawTrybUrl) : "";
 
   useEffect(() => {
     let cancelled = false;
@@ -145,10 +133,8 @@ export function LearnPractisePage(): JSX.Element {
       <JourneyNav activeStage="learn" />
 
       <div className="offline-status-bar" role="status" aria-live="polite">
-        <Chip tone={isOnline ? "lavender" : "bad"}>
-          {isOnline ? t("networkOnline") : t("networkOffline")}
-        </Chip>
-        <span className={`sync-badge sync-badge--${syncSummary.overallStatus}`}>
+        <span className="eyebrow">{isOnline ? t("networkOnline") : t("networkOffline")}</span>
+        <span className="fineprint">
           {syncSummary.overallStatus === "pending"
             ? t("syncPending", { count: syncSummary.pendingCount })
             : syncSummary.overallStatus === "failed"
@@ -158,7 +144,7 @@ export function LearnPractisePage(): JSX.Element {
             : t("offlineReadyBadge")}
         </span>
         {(syncSummary.overallStatus === "pending" || syncSummary.overallStatus === "failed") && isOnline && (
-          <button type="button" className="transcript-correct-btn" onClick={() => void handleRetrySync()}>
+          <button type="button" className="hero-plain-link" onClick={() => void handleRetrySync()}>
             {t("retrySync")}
           </button>
         )}
@@ -167,47 +153,38 @@ export function LearnPractisePage(): JSX.Element {
       <p className="eyebrow">{t("learnEyebrow")}</p>
       <h1>{t("learnTitle")}</h1>
       <p className="lede">{t("learnBody")}</p>
+      <p className="fineprint">
+        Updated <time dateTime="2026-11-26">2026-11-26</time>
+      </p>
 
-      <section className="lesson-stack" aria-label={t("learnCardsLabel")}>
-        {bundle.lessons.map((lesson) => {
+      <section className="ruled-list" aria-label={t("learnCardsLabel")}>
+        {bundle.lessons.map((lesson, idx) => {
           const completed = offlineState.completedLessonIds.includes(lesson.id);
+          const num = String(idx + 1).padStart(2, "0");
           return (
-            <Card as="article" key={lesson.id} className="lesson-card" padding="sm">
-              <div className="lesson-card-head">
-                <div className="lesson-card-meta">
-                  <Chip tone="lavender">
-                    <IconClock size={12} />
-                    <span>{lesson.minutes} min</span>
-                  </Chip>
-                  <Badge tone="ok" className="offline-cached-badge">
-                    <IconCloudCheck size={12} />
-                    <span>Available offline</span>
-                  </Badge>
+            <article key={lesson.id} className="ruled-row lesson-row">
+              <div className="lesson-row-top">
+                <span className="stage-numeral">{num}</span>
+                <div className="lesson-row-meta">
+                  <span className="eyebrow">{lesson.minutes} MIN</span>
+                  <span className="eyebrow">Offline</span>
                 </div>
-                <ProgressRing
-                  value={completed ? 100 : 0}
-                  size={48}
-                  strokeWidth={5}
-                  tone={completed ? "ok" : "violet"}
-                  label={lesson.title[language] ?? lesson.title.en}
-                />
               </div>
 
-              <div className="lesson-card-body">
-                <h2 className="lesson-card-title">{lesson.title[language] ?? lesson.title.en}</h2>
-                <p className="lesson-body-text">{lesson.summary[language] ?? lesson.summary.en}</p>
-                <code className="code-example">{lesson.example}</code>
-                <div className="lesson-actions-row">
-                  <Button
-                    variant={completed ? "secondary" : "primary"}
-                    onClick={() => void handleCompleteLesson(lesson.id)}
-                  >
-                    {completed && <IconCheck size={16} />}
-                    <span>{completed ? t("lessonCompleted") : t("markLessonDone")}</span>
-                  </Button>
-                </div>
+              <h2 className="lesson-row-title">{lesson.title[language] ?? lesson.title.en}</h2>
+              <p className="lesson-body-text">{lesson.summary[language] ?? lesson.summary.en}</p>
+              <code className="code-example">{lesson.example}</code>
+
+              <div className="lesson-actions-row">
+                <Button
+                  variant={completed ? "secondary" : "dark"}
+                  onClick={() => void handleCompleteLesson(lesson.id)}
+                >
+                  {completed && <Check size={16} weight="regular" aria-hidden="true" />}
+                  <span>{completed ? t("lessonCompleted") : t("markLessonDone")}</span>
+                </Button>
               </div>
-            </Card>
+            </article>
           );
         })}
       </section>
@@ -215,17 +192,19 @@ export function LearnPractisePage(): JSX.Element {
       <p className="fineprint basis">{bundle.sourceNote}</p>
 
       <section className="practice-section" aria-label={t("formativePracticeTitle")}>
-        <Chip tone="lavender">{t("formativeNotCredentialBadge")}</Chip>
-        <h2 style={{ marginTop: "12px" }}>{t("formativePracticeTitle")}</h2>
+        <p className="eyebrow">{t("formativeNotCredentialBadge")}</p>
+        <h2 style={{ marginTop: "8px" }}>{t("formativePracticeTitle")}</h2>
         <p className="fineprint">{t("formativePracticeSubtitle")}</p>
 
-        <div className="card-list">
+        <div className="ruled-list">
           {bundle.practiceDrills.map((drill) => {
             const saved = offlineState.practiceAnswers[drill.id];
             return (
-              <Card as="article" key={drill.id}>
+              <article key={drill.id} className="ruled-row">
                 <strong>{drill.title[language] ?? drill.title.en}</strong>
-                <p>{drill.prompt[language] ?? drill.prompt.en}</p>
+                <p className="fineprint" style={{ margin: "6px 0 0" }}>
+                  {drill.prompt[language] ?? drill.prompt.en}
+                </p>
                 <div className="drill-options">
                   {drill.options.map((opt) => {
                     const selected = saved?.selectedOptionId === opt.id;
@@ -243,67 +222,56 @@ export function LearnPractisePage(): JSX.Element {
                   })}
                 </div>
                 {saved && (
-                  <p className={saved.isCorrect ? "drill-feedback-ok" : "drill-feedback-try"} role="status">
-                    <strong>{saved.isCorrect ? t("drillCorrect") : t("drillTryAgain")}:</strong>{" "}
-                    {drill.explanation[language] ?? drill.explanation.en}
+                  <p
+                    className={"rule-feedback " + (saved.isCorrect ? "rule-feedback--ok" : "rule-feedback--warn")}
+                    role="status"
+                  >
+                    <StatusMark tone={saved.isCorrect ? "ok" : "warn"} size={15} />
+                    <span>
+                      <strong>{saved.isCorrect ? t("drillCorrect") : t("drillTryAgain")}:</strong>{" "}
+                      {drill.explanation[language] ?? drill.explanation.en}
+                    </span>
                   </p>
                 )}
-              </Card>
+              </article>
             );
           })}
         </div>
       </section>
 
-      <section className="external-practice-card" aria-label={t("trybTitle")}>
-        <div className="external-practice-text">
-          <Chip tone="lavender">{t("externalActivityBadge")}</Chip>
-          <h2 style={{ marginTop: "10px" }}>{t("trybTitle")}</h2>
-          {trybUrl ? (
-            <>
-              <p>{t("trybBody")}</p>
-              <a
-                href={trybUrl}
-                target="_blank"
-                rel="noopener noreferrer"
-                className="secondary link-button"
-                onClick={() => void handleOpenTryb()}
-              >
-                {t("openTrybPractice")}
-              </a>
-              <p className="fineprint">{t("trybNoScoreImportNote")}</p>
-              {offlineState.externalLinksOpened.length > 0 && (
-                <p className="fineprint">
-                  {t("trybOpenedObserved", { count: offlineState.externalLinksOpened.length })}
-                </p>
-              )}
-            </>
-          ) : (
-            <>
-              <p><strong>{t("trybNotConfiguredTitle")}</strong></p>
-              <p className="fineprint">{t("trybNotConfiguredBody")}</p>
-            </>
-          )}
-        </div>
-        {trybUrl && (
-          <div className="external-practice-qr">
-            <TrybQrSvg />
-          </div>
+      <Card as="section" className="external-practice-panel" aria-label={t("trybTitle")}>
+        <span className="eyebrow">{t("externalActivityBadge")}</span>
+        <h2 style={{ marginTop: "8px" }}>{t("trybTitle")}</h2>
+        {trybUrl ? (
+          <>
+            <p className="fineprint">{t("trybBody")}</p>
+            <a
+              href={trybUrl}
+              target="_blank"
+              rel="noopener noreferrer"
+              className="pf-btn pf-btn--secondary"
+              onClick={() => void handleOpenTryb()}
+            >
+              {t("openTrybPractice")}
+            </a>
+            <p className="fineprint" style={{ marginTop: "8px" }}>{t("trybNoScoreImportNote")}</p>
+          </>
+        ) : (
+          <>
+            <p><strong>{t("trybNotConfiguredTitle")}</strong></p>
+            <p className="fineprint">{t("trybNotConfiguredBody")}</p>
+          </>
         )}
-      </section>
+      </Card>
 
-      <Button
-        variant="primary"
-        size="lg"
-        fullWidth
-        className="cta-spacer"
-        onClick={() => navigate("/challenge")}
-      >
-        {t("continueToChallenge")}
-      </Button>
-
-      <Button variant="ghost" fullWidth onClick={() => navigate("/role")}>
-        {t("back")}
-      </Button>
+      <div className="cta-stack" style={{ marginTop: "24px" }}>
+        <Button variant="dark" size="lg" fullWidth onClick={() => navigate("/challenge")}>
+          {t("continueToChallenge")}
+        </Button>
+        <Button variant="ghost" fullWidth onClick={() => navigate("/role")}>
+          {t("back")}
+        </Button>
+      </div>
     </main>
   );
 }

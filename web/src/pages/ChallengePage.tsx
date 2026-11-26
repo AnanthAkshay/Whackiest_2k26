@@ -1,25 +1,14 @@
 import { useRef, useState, type ChangeEvent, type DragEvent } from "react";
 import { useNavigate } from "react-router-dom";
+import { FileXls } from "@phosphor-icons/react";
 import { getStarterWorkbookUrl, startChallengeAttempt, uploadChallengeArtifact } from "../api";
 import { useTranslation } from "../i18n";
 import { createMockValidationReport, MVP_CHALLENGE } from "../mock/demoData";
 import { useSetup } from "../setup/SetupContext";
 import { JourneyNav } from "../shared/JourneyNav";
-import {
-  Badge,
-  Button,
-  Card,
-  IconAlert,
-  IconCheck,
-  IconClock,
-  IconCopy,
-  IconSheet,
-  IconUpload,
-  buttonClasses
-} from "../shared/ui";
+import { Button, Card, CopyButton, Skeleton, StatusMark, buttonClasses } from "../shared/ui";
 
 const MAX_BYTES = MVP_CHALLENGE.maxSizeMb * 1024 * 1024;
-
 type UploadPhase = "idle" | "uploading" | "validating" | "success" | "error";
 
 const VALIDATING_STEPS = [
@@ -31,7 +20,7 @@ const VALIDATING_STEPS = [
 
 function formatShaPreview(sha: string): string {
   if (sha.length <= 16) return sha;
-  return `${sha.slice(0, 8)}…${sha.slice(-6)}`;
+  return `${sha.slice(0, 8)}...${sha.slice(-6)}`;
 }
 
 export function ChallengePage(): JSX.Element {
@@ -47,19 +36,13 @@ export function ChallengePage(): JSX.Element {
   const [error, setError] = useState("");
   const [phase, setPhase] = useState<UploadPhase>("idle");
   const [progress, setProgress] = useState(0);
+  const [resolvedCount, setResolvedCount] = useState(0);
   const [verifiedSha, setVerifiedSha] = useState("");
-  const [shaCopied, setShaCopied] = useState(false);
 
   function validateFile(file: File): string | null {
-    if (!file.name.toLowerCase().endsWith(".xlsx")) {
-      return t("uploadInvalidFormat");
-    }
-    if (file.size > MAX_BYTES) {
-      return t("uploadTooLarge", { maxMb: MVP_CHALLENGE.maxSizeMb });
-    }
-    if (file.size === 0) {
-      return t("uploadEmptyFile");
-    }
+    if (!file.name.toLowerCase().endsWith(".xlsx")) return t("uploadInvalidFormat");
+    if (file.size > MAX_BYTES) return t("uploadTooLarge", { maxMb: MVP_CHALLENGE.maxSizeMb });
+    if (file.size === 0) return t("uploadEmptyFile");
     return null;
   }
 
@@ -67,34 +50,33 @@ export function ChallengePage(): JSX.Element {
     setError("");
     setSelectedFile({ name: fileName, size: fileSize });
     setPhase("uploading");
-    setProgress(20);
+    setProgress(25);
+    setResolvedCount(0);
 
-    if (timerRef.current !== null) {
-      window.clearInterval(timerRef.current);
-    }
+    if (timerRef.current !== null) window.clearInterval(timerRef.current);
 
-    let current = 20;
+    let step = 0;
     timerRef.current = window.setInterval(() => {
-      current += 28;
-      if (current >= 100) {
+      step += 1;
+      if (step === 1) {
+        setProgress(65);
+        setPhase("validating");
+        setResolvedCount(1);
+      } else if (step === 2) {
+        setProgress(90);
+        setResolvedCount(3);
+      } else {
         if (timerRef.current !== null) window.clearInterval(timerRef.current);
         timerRef.current = null;
         setProgress(100);
-        setPhase("validating");
+        setResolvedCount(4);
         const report = createMockValidationReport(fileName, fileSize);
         setVerifiedSha(report.sha256);
-        window.setTimeout(() => {
-          setPhase("success");
-          setValidationReport(report);
-          window.setTimeout(() => {
-            navigate("/validation");
-          }, 420);
-        }, 380);
-      } else {
-        setProgress(current);
-        if (current >= 65) setPhase("validating");
+        setPhase("success");
+        setValidationReport(report);
+        window.setTimeout(() => navigate("/validation"), 450);
       }
-    }, 160);
+    }, 220);
   }
 
   function startRealOrMockUpload(file: File): void {
@@ -102,6 +84,7 @@ export function ChallengePage(): JSX.Element {
     setSelectedFile({ name: file.name, size: file.size });
     setPhase("uploading");
     setProgress(25);
+    setResolvedCount(0);
 
     const reader = new FileReader();
     reader.onload = () => {
@@ -109,8 +92,9 @@ export function ChallengePage(): JSX.Element {
         try {
           const resultStr = typeof reader.result === "string" ? reader.result : "";
           const base64 = resultStr.includes(",") ? resultStr.split(",")[1] : resultStr;
-          setProgress(55);
+          setProgress(60);
           setPhase("validating");
+          setResolvedCount(2);
           const started = await startChallengeAttempt(MVP_CHALLENGE.challengeId);
           const uploaded = await uploadChallengeArtifact(started.attempt.attemptId, {
             fileName: file.name,
@@ -119,15 +103,14 @@ export function ChallengePage(): JSX.Element {
             idempotencyKey: `upload_${started.attempt.attemptId}_${file.name}_${file.size}`
           });
           setProgress(100);
+          setResolvedCount(4);
           const report = createMockValidationReport(file.name, uploaded.artifact.size);
           report.attemptId = started.attempt.attemptId;
           report.sha256 = uploaded.artifact.sha256;
           setVerifiedSha(report.sha256);
           setPhase("success");
           setValidationReport(report);
-          window.setTimeout(() => {
-            navigate("/validation");
-          }, 420);
+          window.setTimeout(() => navigate("/validation"), 450);
         } catch (err: unknown) {
           setPhase("error");
           setProgress(0);
@@ -191,13 +174,6 @@ export function ChallengePage(): JSX.Element {
     }
   }
 
-  async function handleCopySha(): Promise<void> {
-    if (!verifiedSha || typeof navigator === "undefined" || !navigator.clipboard) return;
-    await navigator.clipboard.writeText(verifiedSha);
-    setShaCopied(true);
-    window.setTimeout(() => setShaCopied(false), 1800);
-  }
-
   const isBusy = phase === "uploading" || phase === "validating";
 
   return (
@@ -205,17 +181,16 @@ export function ChallengePage(): JSX.Element {
       <JourneyNav activeStage="demonstrate" />
 
       <p className="eyebrow">{t("challengeEyebrow")}</p>
+      <h1>{MVP_CHALLENGE.title}</h1>
+      <p className="lede">{MVP_CHALLENGE.instructions}</p>
 
-      <Card as="section" className="brief-card">
+      <Card as="section" className="brief-panel">
         <div className="card-header-row">
-          <Badge tone="lavender">Brief</Badge>
+          <span className="eyebrow">Brief</span>
           <span className="fineprint">
             v{MVP_CHALLENGE.version} / Rubric v{MVP_CHALLENGE.rubricVersion}
           </span>
         </div>
-
-        <h1 className="brief-title">{MVP_CHALLENGE.title}</h1>
-        <p className="lede">{MVP_CHALLENGE.instructions}</p>
 
         <div className="spec-grid">
           <div>
@@ -228,11 +203,11 @@ export function ChallengePage(): JSX.Element {
           </div>
         </div>
 
-        <h2 className="steps-heading">{t("estimatedStepsLabel")}</h2>
-        <ol className="brief-steps-list">
+        <h2 style={{ marginTop: "16px" }}>{t("estimatedStepsLabel")}</h2>
+        <ol className="brief-ruled-steps">
           {MVP_CHALLENGE.estimatedSteps.map((step, idx) => (
-            <li key={step} className="brief-step-item">
-              <span className="brief-step-num" aria-hidden="true">{idx + 1}</span>
+            <li key={step} className="brief-ruled-step">
+              <span className="stage-numeral">{String(idx + 1).padStart(2, "0")}</span>
               <span>{step}</span>
             </li>
           ))}
@@ -240,24 +215,23 @@ export function ChallengePage(): JSX.Element {
 
         <a
           href={getStarterWorkbookUrl()}
-          className={buttonClasses({ variant: "secondary", className: "brief-download-btn" })}
+          className={buttonClasses({ variant: "secondary", className: "cta-spacer" })}
           download="retail_sales_starter.xlsx"
         >
-          <IconSheet size={18} />
-          <span>Download starter workbook</span>
+          DOWNLOAD STARTER WORKBOOK
         </a>
       </Card>
 
       <section className="upload-section" aria-label={t("uploadSectionTitle")}>
         <div className="card-header-row">
           <h2>{t("uploadSectionTitle")}</h2>
-          <Badge tone="review">{t("onlineOnlyBadge")}</Badge>
+          <span className="pf-chip pf-chip--review">{t("onlineOnlyBadge")}</span>
         </div>
         <p className="fineprint">{t("onlineOnlyValidationNote")}</p>
         <p className="fineprint mock-disclosure">{t("mockUploadNotice")}</p>
 
         <div
-          className={"dropzone-premium" + (dragOver ? " dropzone-active" : "")}
+          className={"dropzone-monochrome" + (dragOver ? " is-dragover" : "")}
           onDragOver={(e) => {
             e.preventDefault();
             setDragOver(true);
@@ -273,14 +247,11 @@ export function ChallengePage(): JSX.Element {
             id="challenge-file-input"
             onChange={handleFileChange}
           />
-          <span className="dropzone-icon-wrap" aria-hidden="true">
-            <IconUpload size={26} />
-          </span>
-          <p className="dropzone-title">Drop your .xlsx here or tap to browse</p>
-          <p className="fineprint">{t("dropzonePrompt")}</p>
+          <FileXls size={28} weight="regular" aria-hidden="true" />
+          <p className="dropzone-title">Drop your .xlsx here, or browse</p>
           <label
             htmlFor="challenge-file-input"
-            className={buttonClasses({ variant: "primary", className: "dropzone-browse-btn" })}
+            className={buttonClasses({ variant: "primary" })}
             role="button"
             tabIndex={0}
           >
@@ -298,27 +269,39 @@ export function ChallengePage(): JSX.Element {
           {t("loadDemoXlsx")}
         </Button>
 
-        {(phase === "uploading" || phase === "validating") && selectedFile && (
-          <Card as="div" className="upload-state-card" role="status" aria-live="polite">
+        {phase === "uploading" && selectedFile && (
+          <Card as="div" className="cta-spacer" role="status" aria-live="polite">
             <div className="meter-heading">
               <span>{t("uploadingFile", { file: selectedFile.name })}</span>
-              <strong>{progress}%</strong>
+              <strong className="mono">{progress}%</strong>
             </div>
-            <div className="meter" role="progressbar" aria-valuenow={progress} aria-valuemin={0} aria-valuemax={100}>
-              <span className="upload-bar-shimmer" style={{ width: `${progress}%` }} />
+            <div className="upload-line-track" role="progressbar" aria-valuenow={progress} aria-valuemin={0} aria-valuemax={100}>
+              <span className="upload-line-fill" style={{ width: `${progress}%` }} />
             </div>
+            <div className="form-stack" style={{ marginTop: "12px" }}>
+              <Skeleton variant="text" />
+              <Skeleton variant="text" />
+            </div>
+            <Button variant="ghost" onClick={handleCancel}>
+              {t("cancelUpload")}
+            </Button>
+          </Card>
+        )}
 
-            {phase === "validating" && (
-              <ul className="validating-checklist" aria-label="Safety and integrity checks">
-                {VALIDATING_STEPS.map((label, idx) => (
-                  <li key={label} className="validating-step" style={{ animationDelay: `${idx * 90}ms` }}>
-                    <IconClock size={14} className="spin-icon" />
+        {phase === "validating" && (
+          <Card as="div" className="cta-spacer" role="status" aria-live="polite">
+            <p className="eyebrow" style={{ marginBottom: "8px" }}>Validating workbook</p>
+            <ul className="ruled-list">
+              {VALIDATING_STEPS.map((label, idx) => {
+                const done = idx < resolvedCount;
+                return (
+                  <li key={label} className="ruled-row validating-row">
                     <span>{label}</span>
+                    {done ? <StatusMark tone="ok" size={16} /> : <Skeleton variant="text" width={80} />}
                   </li>
-                ))}
-              </ul>
-            )}
-
+                );
+              })}
+            </ul>
             <Button variant="ghost" onClick={handleCancel}>
               {t("cancelUpload")}
             </Button>
@@ -326,30 +309,25 @@ export function ChallengePage(): JSX.Element {
         )}
 
         {phase === "success" && (
-          <Card as="div" className="upload-state-card upload-success-morph" role="status" aria-live="polite">
-            <div className="upload-success-head">
-              <IconCheck size={22} className="upload-success-icon" />
-              <strong>Workbook verified &amp; fingerprinted</strong>
+          <Card as="div" className="cta-spacer rule-feedback--ok" role="status" aria-live="polite">
+            <div className="rule-feedback">
+              <StatusMark tone="ok" size={18} />
+              <span>Workbook verified and fingerprinted.</span>
             </div>
             {verifiedSha && (
-              <button
-                type="button"
-                className="sha-copy-chip"
-                onClick={() => void handleCopySha()}
-                title={verifiedSha}
-              >
+              <div className="sha-chip-row">
                 <code className="mono">{formatShaPreview(verifiedSha)}</code>
-                {shaCopied ? <IconCheck size={14} /> : <IconCopy size={14} />}
-              </button>
+                <CopyButton text={verifiedSha} ariaLabel="Copy SHA-256" />
+              </div>
             )}
           </Card>
         )}
 
         {phase === "error" && error && (
-          <Card as="div" variant="error" className="upload-state-card upload-error-shake" role="alert">
-            <div className="upload-error-head">
-              <IconAlert size={20} />
-              <p className="error" style={{ margin: 0 }}>{error}</p>
+          <Card as="div" variant="error" className="cta-spacer" role="alert">
+            <div className="rule-feedback">
+              <StatusMark tone="bad" size={18} />
+              <span>{error}</span>
             </div>
             <Button variant="secondary" onClick={handleRetry} className="cta-spacer">
               {t("retry")}
