@@ -15,6 +15,7 @@ import {
   User,
   X
 } from "@phosphor-icons/react";
+import { DEFAULT_CONTENT_BUNDLE } from "../content/lessons";
 import { useTranslation } from "../i18n";
 import { useSetup } from "../setup/SetupContext";
 import type { Language } from "../types";
@@ -36,7 +37,14 @@ const SEARCH_INDEX = [
   { group: "Journey", title: "Explain (AI Viva)", desc: "Live voice or text examiner interview", to: "/session" },
   { group: "Passport", title: "Sample Skill Passport", desc: "Ed25519-signed credential preview", to: "/skill/demo?demo=1" },
   { group: "Connect", title: "Local Opportunities", desc: "Matched entry-level roles and skill gaps", to: "/opportunities" },
-  { group: "Diagnostics", title: "System Health & Integrations", desc: "Live / Mock / Not configured status", to: "/health" }
+  { group: "Rubric", title: "ECVE Scoring (0.60P + 0.25U + 0.15C)", desc: "Practical, Understanding, Consistency weights", to: "/results/att_demo_retail_01?demo=1" },
+  { group: "Diagnostics", title: "System Health & Integrations", desc: "Live / Mock / Not configured status", to: "/health" },
+  ...DEFAULT_CONTENT_BUNDLE.lessons.map((l) => ({
+    group: "Lesson",
+    title: l.title.en,
+    desc: l.summary.en,
+    to: "/learn"
+  }))
 ];
 
 export function AppShell({ children }: { children: ReactNode }): JSX.Element {
@@ -372,7 +380,10 @@ export function AppShell({ children }: { children: ReactNode }): JSX.Element {
           type="button"
           className="back-to-top-btn"
           aria-label="Back to top"
-          onClick={() => window.scrollTo({ top: 0, behavior: "smooth" })}
+          onClick={() => {
+            const reduced = typeof window !== "undefined" && window.matchMedia?.("(prefers-reduced-motion: reduce)").matches;
+            window.scrollTo({ top: 0, behavior: reduced ? "auto" : "smooth" });
+          }}
         >
           <ArrowUp size={18} weight="regular" aria-hidden="true" />
         </button>
