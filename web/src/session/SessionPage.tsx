@@ -5,7 +5,7 @@ import { PaperPlaneRight, SpeakerHigh } from "@phosphor-icons/react";
 import { finishSession, getConfig, sendTurn, startSession, type VoiceConnection } from "../api";
 import { localeTags, useTranslation } from "../i18n";
 import { useSetup } from "../setup/SetupContext";
-import { Button, Modal, Sheet, Skeleton } from "../shared/ui";
+import { Button, GlassBadge, GlassPanel, Modal, Sheet, Skeleton } from "../shared/ui";
 import type { Language, Session, SkillRecord, TranscriptTurn } from "../types";
 import { listenOnce, speak } from "../voice";
 
@@ -412,34 +412,36 @@ function SessionExperience(): JSX.Element {
         {showTextEntry ? " — Text chat mode" : ""}
       </div>
 
-      <div className="viva-topbar-meta">
-        <div className="viva-badges">
-          {isDemo && <span className="pf-label">{t("replayBadge")}</span>}
-          <span className="pf-chip">{t(languageKeys[session.language ?? language])}</span>
-          <span className="pf-chip pf-chip--review">{t("onlineOnlyBadge")}</span>
-          <button type="button" className="hero-plain-link" onClick={() => setFactSheetOpen(true)}>
-            Grounded in your file
-          </button>
+      <GlassPanel as="section" padding="sm" className="viva-session-header">
+        <div className="viva-topbar-meta">
+          <div className="viva-badges">
+            {isDemo && <GlassBadge>{t("replayBadge")}</GlassBadge>}
+            <GlassBadge>{t(languageKeys[session.language ?? language])}</GlassBadge>
+            <GlassBadge>{t("onlineOnlyBadge")}</GlassBadge>
+            <button type="button" className="hero-plain-link" onClick={() => setFactSheetOpen(true)}>
+              Grounded in your file
+            </button>
+          </div>
+          <span className="session-time mono">{time}</span>
         </div>
-        <span className="session-time mono">{time}</span>
-      </div>
 
-      {durationWarning && (
-        <p className="rule-feedback rule-feedback--warn" role="status">
-          {t("durationWarning", { time: durationTime })}
-        </p>
-      )}
+        {durationWarning && (
+          <p className="rule-feedback rule-feedback--warn" role="status">
+            {t("durationWarning", { time: durationTime })}
+          </p>
+        )}
 
-      {/* Provisional Confidence Meter: 2px horizontal rule with square marker */}
-      <div className="provisional-meter" aria-label={`Provisional score ${confidenceVal}%, not final`}>
-        <div className="provisional-meter-head">
-          <span className="fineprint">Provisional score, not final</span>
-          <strong className="mono">{confidenceVal}%</strong>
+        {/* Provisional Confidence Meter */}
+        <div className="provisional-meter" aria-label={`Provisional score ${confidenceVal}%, not final`}>
+          <div className="provisional-meter-head">
+            <span className="fineprint">Provisional score, not final</span>
+            <strong className="mono">{confidenceVal}%</strong>
+          </div>
+          <div className="provisional-rule">
+            <span className="provisional-marker" style={{ left: `${confidenceVal}%` }} />
+          </div>
         </div>
-        <div className="provisional-rule">
-          <span className="provisional-marker" style={{ left: `${confidenceVal}%` }} />
-        </div>
-      </div>
+      </GlassPanel>
 
       {!showTextEntry ? (
         <section className="viva-voice-stage viva-voice-dark" aria-label={t("sessionTitle")}>
@@ -502,7 +504,7 @@ function SessionExperience(): JSX.Element {
           <div className="viva-voice-controls">
             {showMockSpeech && (
               <Button
-                variant="dark"
+                variant="primary"
                 size="lg"
                 className="viva-mic-pill"
                 onMouseDown={handleMockSpeak}

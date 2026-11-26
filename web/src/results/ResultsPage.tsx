@@ -11,7 +11,9 @@ import { Sparkline } from "../shared/Sparkline";
 import {
   Button,
   Card,
-  CurrentRow,
+  GlassBadge,
+  GlassCard,
+  GlassPanel,
   RuledRow,
   Skeleton,
   StatusMark,
@@ -158,17 +160,20 @@ export function ResultsPage(): JSX.Element {
           {t("resultsEyebrow")}
         </p>
 
-        <section className="results-hero-left" aria-label={t("totalLabel")}>
-          <div style={{ marginBottom: "12px" }}>
-            <StatusMark tone={tone} label={ecve.outcome} />
+        <GlassPanel as="section" className="results-hero-panel" aria-label={t("totalLabel")}>
+          <div className="card-header-row">
+            <GlassBadge>
+              <StatusMark tone={tone} label={ecve.outcome} />
+            </GlassBadge>
+            <span className="pf-label">Composite = 0.60P + 0.25U + 0.15C</span>
           </div>
-          <h1 className="pf-page-title">{ecve.outcome}</h1>
+          <h1 className="pf-page-title" style={{ marginTop: "12px" }}>{ecve.outcome}</h1>
           <div className="results-composite-line tabular-nums">
-            <span className="pf-page-title">{ecve.composite}</span>
+            <span className="pf-page-title" style={{ color: "var(--accent-hover)" }}>{ecve.composite}</span>
             <span className="fineprint">/ 100</span>
           </div>
           <p className="pf-lead" style={{ marginTop: "16px", marginBottom: 0 }}>{t("resultIntro")}</p>
-        </section>
+        </GlassPanel>
 
         {ecve.outcome === "Pending Human Review" && (
           <Card as="section" variant="lavender" className="rule-feedback" role="status">
@@ -204,23 +209,26 @@ export function ResultsPage(): JSX.Element {
             </div>
           </div>
 
-          <div className="ruled-table">
+          <div className="ecve-cards-grid">
             {pillars.map((pillar) => {
               const isDeciding = pillar.key === weakestKey;
-              const left = (
-                <div>
-                  <strong>{pillar.label}</strong> <span className="fineprint">({pillar.weight})</span>
-                  <div className="pillar-track" aria-hidden="true" style={{ marginTop: "8px", minWidth: "160px" }}>
+              return (
+                <GlassCard
+                  key={pillar.key}
+                  as="article"
+                  className={isDeciding ? "pillar-deciding-card" : ""}
+                >
+                  <div className="card-header-row">
+                    <span className="pf-label">{pillar.key} · {pillar.weight}</span>
+                    {isDeciding && <GlassBadge>Deciding factor</GlassBadge>}
+                  </div>
+                  <strong style={{ display: "block", marginTop: "6px" }}>{pillar.label}</strong>
+                  <div className="ecve-big-num tabular-nums">{pillar.score}%</div>
+                  <div className="pillar-track" aria-hidden="true">
                     <div className="pillar-fill" style={{ width: `${pillar.score}%` }} />
                   </div>
-                  <p className="fineprint" style={{ margin: "6px 0 0" }}>{pillar.reason}</p>
-                </div>
-              );
-              const right = <strong className="numeral-md tabular-nums">{pillar.score}%</strong>;
-              return isDeciding ? (
-                <CurrentRow key={pillar.key} label={left} value={right} />
-              ) : (
-                <RuledRow key={pillar.key} label={left} value={right} />
+                  <p className="fineprint" style={{ marginTop: "12px", marginBottom: 0 }}>{pillar.reason}</p>
+                </GlassCard>
               );
             })}
           </div>
@@ -256,7 +264,7 @@ export function ResultsPage(): JSX.Element {
         <div className="cta-stack" style={{ marginTop: "24px" }}>
           {ecve.outcome === "Demonstrated" && (
             <Button
-              variant="dark"
+              variant="primary"
               size="lg"
               fullWidth
               disabled={creating}

@@ -20,55 +20,63 @@
   border-top: 1px solid var(--border);
 }
 
-/* Viva Session */
+/* Viva Session (Warm cream in light mode, deep charcoal in dark mode) */
 .viva-shell { display: grid; gap: var(--space-16); }
-.viva-topbar-meta { display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: var(--space-8); margin-bottom: var(--space-16); }
+
+.viva-session-header {
+  display: grid;
+  gap: var(--space-12);
+  margin-bottom: var(--space-24);
+}
+
+.viva-topbar-meta { display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: var(--space-8); }
 .viva-badges { display: flex; flex-wrap: wrap; align-items: center; gap: var(--space-8); }
-.session-time { color: var(--text-secondary); font-size: 15px; }
+.session-time {
+  padding: 6px 12px;
+  border-radius: var(--radius-pill);
+  border: 1px solid var(--glass-border);
+  background: var(--glass-bg);
+  color: var(--text-primary);
+  font-size: 14px;
+  font-weight: 700;
+}
 
 /* Provisional Meter */
-.provisional-meter { display: grid; gap: 8px; margin-bottom: var(--space-16); }
+.provisional-meter { display: grid; gap: 8px; }
 .provisional-meter-head { display: flex; justify-content: space-between; align-items: center; }
 .provisional-rule { position: relative; height: 6px; border-radius: var(--radius-pill); background: var(--bg-secondary); }
 .provisional-marker { position: absolute; top: -3px; width: 12px; height: 12px; border-radius: var(--radius-pill); background: var(--accent); transform: translateX(-50%); transition: left 0.4s ease; }
 
-/* Voice Stage (Focused Charcoal Editorial Panel) */
+/* Voice Stage (Theme-adaptive Glass Workspace) */
 .viva-voice-dark {
   display: grid;
   gap: var(--space-24);
   padding: var(--space-32);
   border-radius: var(--radius-xl);
-  border: 1px solid #343B32;
-  background: #1B1F1A;
-  color: #F5F3EC;
-  box-shadow: var(--shadow-card);
+  border: 1px solid var(--glass-border);
+  background: var(--glass-bg);
+  backdrop-filter: blur(var(--glass-blur)) saturate(145%);
+  -webkit-backdrop-filter: blur(var(--glass-blur)) saturate(145%);
+  color: var(--text-primary);
+  box-shadow: var(--glass-shadow), var(--glass-highlight);
 }
 
-.viva-voice-dark .pf-btn--secondary {
-  border-color: #343B32;
-  background: #222720;
-  color: #F5F3EC;
+@supports not ((backdrop-filter: blur(1px)) or (-webkit-backdrop-filter: blur(1px))) {
+  .viva-voice-dark {
+    background: var(--glass-fallback);
+  }
 }
 
-.viva-voice-dark .pf-btn--secondary:hover:not(:disabled) {
-  background: #282D26;
-  border-color: #B1B5AB;
-}
-
-.viva-voice-dark .hero-plain-link {
-  color: #F5F3EC;
-}
-
-.viva-question-wrap { display: grid; gap: var(--space-12); justify-items: start; }
+.viva-question-wrap { display: grid; gap: var(--space-12); justify-items: center; text-align: center; }
 .viva-question-dm {
   margin: 0;
   font-family: var(--font-display);
-  font-size: clamp(1.4rem, 3vw, 1.9rem);
+  font-size: clamp(1.45rem, 3.2vw, 2.1rem);
   font-weight: 700;
   line-height: 1.25;
   letter-spacing: -0.02em;
-  color: #F5F3EC;
-  text-align: left;
+  color: var(--text-primary);
+  max-width: 34ch;
 }
 
 .viva-repeat-btn {
@@ -76,25 +84,29 @@
   align-items: center;
   gap: 8px;
   min-height: var(--tap-min);
-  padding: 0;
-  border: 0;
-  background: transparent;
-  color: #B1B5AB;
-  font-size: 14px;
+  padding: 6px 14px;
+  border-radius: var(--radius-pill);
+  border: 1px solid var(--border);
+  background: var(--surface);
+  color: var(--text-secondary);
+  font-size: 13px;
   font-weight: 600;
 }
 
-.viva-repeat-btn:hover { color: #42D982; }
+.viva-repeat-btn:hover { color: var(--text-primary); border-color: var(--text-secondary); }
 
-/* Waveform Panel */
+/* Glass Waveform Panel */
 .waveform-panel {
   display: grid;
   justify-items: center;
   gap: var(--space-12);
   padding: var(--space-24) var(--space-16);
   border-radius: var(--radius-lg);
-  border: 1px solid #343B32;
-  background: #121411;
+  border: 1px solid var(--glass-border);
+  background: var(--glass-bg-strong);
+  backdrop-filter: blur(16px) saturate(140%);
+  -webkit-backdrop-filter: blur(16px) saturate(140%);
+  box-shadow: var(--glass-highlight);
 }
 
 .waveform-bars {
@@ -110,7 +122,7 @@
   width: 3px;
   height: 44px;
   border-radius: var(--radius-pill);
-  background: #42D982;
+  background: var(--accent);
   transform-origin: center;
   transform: scaleY(0.14);
 }
@@ -119,7 +131,7 @@
 .waveform--thinking .waveform-bar {
   height: 3px;
   transform: scaleY(1);
-  opacity: 0.4;
+  opacity: 0.45;
 }
 
 .waveform--listening .waveform-bar {
@@ -147,13 +159,13 @@
   width: 100%;
   height: 4px;
   border-radius: var(--radius-pill);
-  background: #343B32;
+  background: var(--bg-secondary);
 }
 
 .waveform-static-fill {
   height: 100%;
   border-radius: var(--radius-pill);
-  background: #42D982;
+  background: var(--accent);
 }
 
 @media (prefers-reduced-motion: reduce) {
@@ -161,32 +173,56 @@
   .waveform-static-fallback { display: block; }
 }
 
-/* Transcript Panel */
+/* Transcript Panel (Opaque enough for crisp reading) */
 .viva-transcript-panel {
   width: 100%;
   padding: var(--space-16);
   border-radius: var(--radius-lg);
-  border: 1px solid #343B32;
-  background: #121411;
+  border: 1px solid var(--border);
+  background: var(--surface);
 }
 
 .viva-glass-header { display: flex; align-items: center; justify-content: space-between; gap: var(--space-8); margin-bottom: var(--space-12); }
-.viva-glass-header h2 { margin: 0; font-size: 16px; color: #F5F3EC; }
+.viva-glass-header h2 { margin: 0; font-size: 15px; color: var(--text-primary); }
 .viva-glass-scroll { height: 180px; overflow-y: auto; display: grid; align-content: start; gap: var(--space-8); }
 .viva-line { margin: 0; font-size: 15px; line-height: 1.55; }
-.viva-line.is-agent { color: #F5F3EC; }
-.viva-line.is-candidate { color: #67E59B; }
+.viva-line.is-agent { color: var(--text-primary); }
+.viva-line.is-candidate { color: var(--success); font-weight: 500; }
 
-.viva-voice-controls { display: grid; gap: var(--space-12); justify-items: start; }
+.viva-voice-controls { display: grid; gap: var(--space-12); justify-items: center; }
 .viva-mic-pill { min-width: min(100%, 260px); }
-.viva-secondary-controls { display: flex; flex-wrap: wrap; align-items: center; gap: var(--space-16); }
+.viva-secondary-controls { display: flex; flex-wrap: wrap; align-items: center; justify-content: center; gap: var(--space-16); }
 
-/* Text Chat Mode */
+/* Text Chat Mode (Glass Agent Bubbles + Solid Candidate Bubbles) */
 .viva-chat-stage { display: grid; gap: var(--space-16); }
-.viva-chat-scroll { height: 380px; overflow-y: auto; display: flex; flex-direction: column; gap: var(--space-12); padding: var(--space-16); border-radius: var(--radius-lg); border: 1px solid var(--border); background: var(--surface); }
+.viva-chat-scroll {
+  height: 380px;
+  overflow-y: auto;
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-12);
+  padding: var(--space-16);
+  border-radius: var(--radius-lg);
+  border: 1px solid var(--glass-border);
+  background: var(--glass-bg-soft);
+  backdrop-filter: blur(14px);
+  -webkit-backdrop-filter: blur(14px);
+}
 .chat-bubble { max-width: 82%; padding: var(--space-12) var(--space-16); border-radius: var(--radius-md); }
-.chat-bubble--agent { align-self: flex-start; background: var(--surface-muted); color: var(--text-primary); border: 1px solid var(--border); }
-.chat-bubble--candidate { align-self: flex-end; background: var(--text-primary); color: var(--surface); }
+.chat-bubble--agent {
+  align-self: flex-start;
+  background: var(--glass-bg-strong);
+  backdrop-filter: blur(16px);
+  -webkit-backdrop-filter: blur(16px);
+  color: var(--text-primary);
+  border: 1px solid var(--glass-border);
+  box-shadow: var(--shadow-sm);
+}
+.chat-bubble--candidate {
+  align-self: flex-end;
+  background: var(--text-primary);
+  color: var(--surface);
+}
 .chat-bubble-author { display: block; font-size: 12px; text-transform: uppercase; letter-spacing: 0.06em; margin-bottom: 4px; opacity: 0.8; }
 .chat-bubble-text { margin: 0; font-size: 16px; line-height: 1.55; }
 .chat-bubble-footer { display: flex; align-items: center; justify-content: space-between; gap: var(--space-12); margin-top: 6px; font-size: 12px; opacity: 0.8; }

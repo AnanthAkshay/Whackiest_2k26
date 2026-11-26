@@ -4,7 +4,7 @@ import { ChatText, Microphone } from "@phosphor-icons/react";
 import { getSkills } from "../api";
 import { useTranslation } from "../i18n";
 import { JourneyNav } from "../shared/JourneyNav";
-import { Accordion, Button, Card, OptionButton, RuledRow, StatusMark } from "../shared/ui";
+import { Accordion, Button, GlassBadge, GlassCard, GlassPanel, OptionButton, RuledRow, StatusMark } from "../shared/ui";
 import { useSetup } from "./SetupContext";
 import type { AgentLevel, Language } from "../types";
 
@@ -131,9 +131,12 @@ export function SetupFlow(): JSX.Element {
 
         <div className="form-with-summary-grid">
           <div className="form-main-col">
-            <Card as="section" className="setup-card">
+            <GlassPanel as="section" className="setup-card">
               <div className="setup-section">
-                <h2 className="setup-section-title">{t("languageTitle")}</h2>
+                <div className="card-header-row">
+                  <h2 className="setup-section-title">{t("languageTitle")}</h2>
+                  <GlassBadge>{isDemo ? "Mock Provider" : "ElevenLabs + Bedrock"}</GlassBadge>
+                </div>
                 <div className="setup-lang-grid" role="radiogroup" aria-label={t("languageTitle")}>
                   {LANGUAGE_ROWS.map((row) => {
                     const selected = language === row.code;
@@ -227,7 +230,7 @@ export function SetupFlow(): JSX.Element {
               )}
 
               <Button
-                variant="dark"
+                variant="primary"
                 size="lg"
                 fullWidth
                 disabled={loadingSkills || micStatus === "checking"}
@@ -235,14 +238,14 @@ export function SetupFlow(): JSX.Element {
               >
                 {inputMode === "text" ? t("startTextMode") : t("start")}
               </Button>
-            </Card>
+            </GlassPanel>
           </div>
 
           <aside className="summary-col" aria-label="Summary">
-            <Card className="summary-panel summary-desktop-only">
+            <GlassCard className="summary-panel summary-desktop-only">
               <span className="pf-label">SUMMARY</span>
               <div style={{ marginTop: "12px" }}>{summaryRows}</div>
-            </Card>
+            </GlassCard>
             <div className="summary-mobile-only">
               <Accordion title="SUMMARY">{summaryRows}</Accordion>
             </div>

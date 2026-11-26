@@ -7,8 +7,9 @@ import { useSetup } from "../setup/SetupContext";
 import { ScoreList } from "../shared/ScoreList";
 import {
   Button,
-  Card,
   CopyButton,
+  GlassCard,
+  GlassPanel,
   Modal,
   RuledRow,
   Skeleton,
@@ -270,7 +271,7 @@ export function SkillPage(): JSX.Element {
         </article>
 
         {/* Verification Block */}
-        <Card as="section" className="crypto-proof-card">
+        <GlassPanel as="section" className="crypto-proof-card">
           <StatusMark tone="ok" label={t("recordMatchesDatabase")} />
 
           <p className="fineprint">{t("whatVerificationMeansBody")}</p>
@@ -297,10 +298,10 @@ export function SkillPage(): JSX.Element {
             </TextLink>
             <span className="fineprint">{clientConfig.passportPublicDomain || "Local development URL"}</span>
           </div>
-        </Card>
+        </GlassPanel>
 
         {/* Actions */}
-        <Card as="section" className="passport-actions-card no-print">
+        <GlassCard as="section" className="passport-actions-card no-print">
           <Toggle
             checked={Boolean(record.shared)}
             onChange={(val) => void handleToggleShare(val)}
@@ -316,7 +317,7 @@ export function SkillPage(): JSX.Element {
               WITHDRAW
             </Button>
           </div>
-        </Card>
+        </GlassCard>
 
         <ScoreList record={record} />
 
