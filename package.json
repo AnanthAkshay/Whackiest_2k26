@@ -29,6 +29,7 @@
     "deploy": "npm run deploy:build && npm run deploy:infra && npm run deploy:web"
   },
   "devDependencies": {
-    "concurrently": "^9.1.2"
+    "concurrently": "^9.1.2",
+    "playwright": "^1.65.1"
   }
 }
