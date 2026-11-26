@@ -1,0 +1,295 @@
+/* Skiper UI Adapted Interaction Patterns — Apple Minimalism + Glass + Evidence */
+
+/* 1. Dynamic Island (Skiper 02) */
+.sk-island-wrap {
+  display: flex;
+  justify-content: center;
+  margin-bottom: var(--space-16);
+}
+
+.sk-island {
+  display: inline-flex;
+  flex-direction: column;
+  gap: 8px;
+  min-width: 240px;
+  max-width: min(100%, 460px);
+  padding: 10px 18px;
+  border-radius: var(--radius-pill);
+  border: 1px solid rgba(255, 255, 255, 0.14);
+  background: #111318;
+  color: #F4F6F9;
+  box-shadow: 0 12px 32px rgba(11, 13, 16, 0.26), inset 0 1px 0 rgba(255, 255, 255, 0.10);
+  transition: border-radius 0.28s cubic-bezier(0.22, 1, 0.36, 1), padding 0.28s cubic-bezier(0.22, 1, 0.36, 1), box-shadow 0.24s ease;
+  cursor: pointer;
+  text-align: left;
+}
+
+.sk-island.is-expanded {
+  border-radius: var(--radius-lg);
+  padding: 14px 20px;
+  width: 100%;
+}
+
+.sk-island-top {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  width: 100%;
+}
+
+.sk-island-lead {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 13px;
+  font-weight: 700;
+  min-width: 0;
+}
+
+.sk-island-dot {
+  width: 8px;
+  height: 8px;
+  border-radius: 9999px;
+  flex-shrink: 0;
+  background: #42D982;
+}
+
+.sk-island-dot.is-warn { background: #F2C46D; }
+.sk-island-dot.is-bad { background: #F17B7B; }
+.sk-island-dot.is-pulse {
+  animation: skPulse 1.6s ease-in-out infinite;
+}
+
+@keyframes skPulse {
+  0%, 100% { transform: scale(1); opacity: 1; }
+  50% { transform: scale(1.35); opacity: 0.65; }
+}
+
+.sk-island-meta {
+  font-family: var(--font-mono);
+  font-size: 12px;
+  color: #B1B5AB;
+  white-space: nowrap;
+}
+
+.sk-island-body {
+  padding-top: 8px;
+  border-top: 1px solid #343B32;
+  font-size: 13px;
+  color: #B1B5AB;
+  line-height: 1.5;
+}
+
+/* 2. Vercel Tooltip (Skiper 43) */
+.sk-tooltip-anchor {
+  position: relative;
+  display: inline-flex;
+  align-items: center;
+}
+
+.sk-tooltip-trigger {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  min-height: 36px;
+  padding: 4px 10px;
+  border-radius: var(--radius-pill);
+  border: 1px solid var(--border);
+  background: var(--surface);
+  color: var(--text-secondary);
+  font-size: 12px;
+  font-weight: 600;
+  transition: color 0.18s ease, border-color 0.18s ease, background-color 0.18s ease;
+}
+
+.sk-tooltip-trigger:hover,
+.sk-tooltip-trigger:focus-visible {
+  color: var(--text-primary);
+  border-color: var(--text-secondary);
+  background: var(--surface-muted);
+}
+
+.sk-tooltip-popover {
+  position: absolute;
+  bottom: calc(100% + 8px);
+  left: 50%;
+  transform: translateX(-50%) translateY(4px);
+  z-index: 50;
+  width: min(280px, 80vw);
+  padding: 10px 14px;
+  border-radius: var(--radius-md);
+  border: 1px solid var(--glass-border);
+  background: var(--glass-bg-strong);
+  backdrop-filter: blur(var(--glass-blur)) saturate(145%);
+  -webkit-backdrop-filter: blur(var(--glass-blur)) saturate(145%);
+  box-shadow: var(--glass-shadow), var(--glass-highlight);
+  color: var(--text-primary);
+  font-size: 13px;
+  line-height: 1.45;
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity 0.18s ease, transform 0.18s ease;
+}
+
+.sk-tooltip-anchor:hover .sk-tooltip-popover,
+.sk-tooltip-anchor:focus-within .sk-tooltip-popover,
+.sk-tooltip-popover.is-open {
+  opacity: 1;
+  transform: translateX(-50%) translateY(0);
+  pointer-events: auto;
+}
+
+/* 3. Minimal Card Expand (Skiper 23) */
+.sk-expand-card {
+  border-radius: var(--radius-lg);
+  border: 1px solid var(--border);
+  background: var(--surface);
+  overflow: hidden;
+  transition: border-color 0.2s ease, box-shadow 0.2s ease;
+}
+
+.sk-expand-card.is-open {
+  border-color: var(--text-secondary);
+  box-shadow: var(--shadow-card);
+}
+
+.sk-expand-btn {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--space-12);
+  width: 100%;
+  min-height: 52px;
+  padding: 14px 18px;
+  border: 0;
+  background: transparent;
+  color: var(--text-primary);
+  text-align: left;
+  font-weight: 600;
+}
+
+.sk-expand-chevron {
+  transition: transform 0.22s cubic-bezier(0.22, 1, 0.36, 1);
+  flex-shrink: 0;
+}
+
+.sk-expand-card.is-open .sk-expand-chevron {
+  transform: rotate(180deg);
+}
+
+.sk-expand-panel {
+  display: grid;
+  grid-template-rows: 0fr;
+  transition: grid-template-rows 0.26s cubic-bezier(0.22, 1, 0.36, 1);
+}
+
+.sk-expand-card.is-open .sk-expand-panel {
+  grid-template-rows: 1fr;
+}
+
+.sk-expand-inner {
+  overflow: hidden;
+}
+
+.sk-expand-content {
+  padding: 0 18px 16px;
+  border-top: 1px solid var(--border);
+  padding-top: 12px;
+}
+
+/* 4. AI Input (Skiper 81-85) */
+.sk-ai-input-wrap {
+  display: grid;
+  gap: 8px;
+  padding: 12px 14px;
+  border-radius: var(--radius-xl);
+  border: 1px solid var(--glass-border);
+  background: var(--glass-bg-strong);
+  backdrop-filter: blur(var(--glass-blur)) saturate(145%);
+  -webkit-backdrop-filter: blur(var(--glass-blur)) saturate(145%);
+  box-shadow: var(--glass-shadow), var(--glass-highlight);
+}
+
+.sk-ai-input-wrap:focus-within {
+  border-color: var(--accent);
+}
+
+.sk-ai-textarea {
+  width: 100%;
+  min-height: 44px;
+  max-height: 160px;
+  padding: 4px 6px;
+  border: 0;
+  background: transparent;
+  color: var(--text-primary);
+  font-size: 16px;
+  line-height: 1.5;
+  resize: none;
+  outline: none;
+}
+
+.sk-ai-input-bar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+}
+
+/* 5. SVG Follow Scroll (Skiper 19) */
+.sk-svg-scroll-wrap {
+  width: 100%;
+  margin: 8px 0 4px;
+}
+
+.sk-svg-scroll-svg {
+  display: block;
+  width: 100%;
+  height: 18px;
+}
+
+/* 6. Scroll Images Reveal (Skiper 32-34) */
+.sk-reveal-grid {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: var(--space-16);
+}
+
+@media (min-width: 768px) {
+  .sk-reveal-grid {
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+  }
+}
+
+.sk-reveal-item {
+  opacity: 0;
+  transform: translateY(16px);
+  transition: opacity 0.48s cubic-bezier(0.22, 1, 0.36, 1), transform 0.48s cubic-bezier(0.22, 1, 0.36, 1);
+  transition-delay: calc(var(--reveal-i, 0) * 90ms);
+}
+
+.sk-reveal-item.is-visible {
+  opacity: 1;
+  transform: translateY(0);
+}
+
+@supports not ((backdrop-filter: blur(1px)) or (-webkit-backdrop-filter: blur(1px))) {
+  .sk-tooltip-popover,
+  .sk-ai-input-wrap {
+    background: var(--glass-fallback);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .sk-island-dot.is-pulse { animation: none !important; }
+  .sk-reveal-item {
+    opacity: 1 !important;
+    transform: none !important;
+    transition: none !important;
+  }
+  .sk-expand-panel,
+  .sk-island,
+  .sk-tooltip-popover {
+    transition: none !important;
+  }
+}
