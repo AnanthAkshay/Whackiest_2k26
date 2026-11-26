@@ -1,0 +1,88 @@
+/* Animmaster-Inspired Independent Recreations — WebGL, Magnetic, Parallax, SVG Seal, Route Transition */
+
+/* 1. WebGL Shader Canvas */
+.am-shader-canvas {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  pointer-events: none;
+  z-index: 0;
+  opacity: 0.55;
+}
+
+:root[data-theme="dark"] .am-shader-canvas {
+  opacity: 0.45;
+}
+
+/* 2. Magnetic Wrapper */
+.am-magnetic {
+  display: inline-flex;
+  transition: transform 0.22s cubic-bezier(0.22, 1, 0.36, 1);
+  will-change: transform;
+}
+
+/* 3. Scroll Parallax */
+.am-parallax {
+  will-change: transform;
+  transition: transform 0.08s linear;
+}
+
+/* 4. Cinematic Route Transition */
+.am-route-enter {
+  animation: amRouteIn 0.26s cubic-bezier(0.22, 1, 0.36, 1) both;
+}
+
+@keyframes amRouteIn {
+  from {
+    opacity: 0;
+    transform: translateY(10px) scale(0.995);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+  }
+}
+
+/* 5. SVG Verification Seal */
+.am-seal-svg {
+  display: block;
+  flex-shrink: 0;
+}
+
+.am-seal-ring {
+  stroke-dasharray: 126;
+  stroke-dashoffset: 126;
+  animation: amSealDraw 0.9s cubic-bezier(0.22, 1, 0.36, 1) 0.1s forwards;
+}
+
+.am-seal-check {
+  stroke-dasharray: 32;
+  stroke-dashoffset: 32;
+  animation: amSealDraw 0.5s cubic-bezier(0.22, 1, 0.36, 1) 0.55s forwards;
+}
+
+@keyframes amSealDraw {
+  to {
+    stroke-dashoffset: 0;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .am-shader-canvas {
+    display: none !important;
+  }
+  .am-magnetic,
+  .am-parallax {
+    transform: none !important;
+    transition: none !important;
+  }
+  .am-route-enter {
+    animation: none !important;
+  }
+  .am-seal-ring,
+  .am-seal-check {
+    stroke-dashoffset: 0 !important;
+    animation: none !important;
+  }
+}
