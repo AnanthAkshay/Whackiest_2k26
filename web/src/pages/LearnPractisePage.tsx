@@ -1,5 +1,6 @@
 import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
+import { Check, CloudCheck, Clock } from "lucide-react";
 import {
   DEFAULT_CONTENT_BUNDLE,
   loadCuratedContent,
@@ -16,6 +17,7 @@ import {
 } from "../offline/offlineStore";
 import { useSetup } from "../setup/SetupContext";
 import { JourneyNav } from "../shared/JourneyNav";
+import { Badge, Button, Card, Chip, ProgressRing } from "../shared/ui";
 
 function TrybQrSvg(): JSX.Element {
   return (
@@ -144,9 +146,9 @@ export function LearnPractisePage(): JSX.Element {
       <JourneyNav activeStage="learn" />
 
       <div className="offline-status-bar" role="status" aria-live="polite">
-        <span className={"sample-pill " + (isOnline ? "" : "offline-pill")}>
+        <Chip tone={isOnline ? "lavender" : "bad"}>
           {isOnline ? t("networkOnline") : t("networkOffline")}
-        </span>
+        </Chip>
         <span className={`sync-badge sync-badge--${syncSummary.overallStatus}`}>
           {syncSummary.overallStatus === "pending"
             ? t("syncPending", { count: syncSummary.pendingCount })
@@ -167,27 +169,46 @@ export function LearnPractisePage(): JSX.Element {
       <h1>{t("learnTitle")}</h1>
       <p className="lede">{t("learnBody")}</p>
 
-      <section className="card-list" aria-label={t("learnCardsLabel")}>
+      <section className="lesson-stack" aria-label={t("learnCardsLabel")}>
         {bundle.lessons.map((lesson) => {
           const completed = offlineState.completedLessonIds.includes(lesson.id);
           return (
-            <article key={lesson.id} className="info-card">
-              <div className="card-header-row">
-                <strong>{lesson.title[language] ?? lesson.title.en}</strong>
-                <span className="time-pill">{lesson.minutes} min</span>
+            <Card as="article" key={lesson.id} className="lesson-card" padding="sm">
+              <div className="lesson-card-head">
+                <div className="lesson-card-meta">
+                  <Chip tone="lavender">
+                    <Clock size={12} strokeWidth={2} aria-hidden="true" />
+                    <span>{lesson.minutes} min</span>
+                  </Chip>
+                  <Badge tone="ok" className="offline-cached-badge">
+                    <CloudCheck size={12} strokeWidth={2.2} aria-hidden="true" />
+                    <span>Available offline</span>
+                  </Badge>
+                </div>
+                <ProgressRing
+                  value={completed ? 100 : 0}
+                  size={48}
+                  strokeWidth={5}
+                  tone={completed ? "ok" : "violet"}
+                  label={lesson.title[language] ?? lesson.title.en}
+                />
               </div>
-              <p>{lesson.summary[language] ?? lesson.summary.en}</p>
-              <code className="code-example">{lesson.example}</code>
-              <div className="lesson-actions-row">
-                <button
-                  type="button"
-                  className={completed ? "secondary lesson-done-btn" : "secondary"}
-                  onClick={() => void handleCompleteLesson(lesson.id)}
-                >
-                  {completed ? `✓ ${t("lessonCompleted")}` : t("markLessonDone")}
-                </button>
+
+              <div className="lesson-card-body">
+                <h2 className="lesson-card-title">{lesson.title[language] ?? lesson.title.en}</h2>
+                <p className="lesson-body-text">{lesson.summary[language] ?? lesson.summary.en}</p>
+                <code className="code-example">{lesson.example}</code>
+                <div className="lesson-actions-row">
+                  <Button
+                    variant={completed ? "secondary" : "primary"}
+                    onClick={() => void handleCompleteLesson(lesson.id)}
+                  >
+                    {completed && <Check size={16} strokeWidth={2.2} aria-hidden="true" />}
+                    <span>{completed ? t("lessonCompleted") : t("markLessonDone")}</span>
+                  </Button>
+                </div>
               </div>
-            </article>
+            </Card>
           );
         })}
       </section>
@@ -195,15 +216,15 @@ export function LearnPractisePage(): JSX.Element {
       <p className="fineprint basis">{bundle.sourceNote}</p>
 
       <section className="practice-section" aria-label={t("formativePracticeTitle")}>
-        <span className="sample-pill">{t("formativeNotCredentialBadge")}</span>
-        <h2>{t("formativePracticeTitle")}</h2>
+        <Chip tone="lavender">{t("formativeNotCredentialBadge")}</Chip>
+        <h2 style={{ marginTop: "12px" }}>{t("formativePracticeTitle")}</h2>
         <p className="fineprint">{t("formativePracticeSubtitle")}</p>
 
         <div className="card-list">
           {bundle.practiceDrills.map((drill) => {
             const saved = offlineState.practiceAnswers[drill.id];
             return (
-              <article key={drill.id} className="info-card">
+              <Card as="article" key={drill.id}>
                 <strong>{drill.title[language] ?? drill.title.en}</strong>
                 <p>{drill.prompt[language] ?? drill.prompt.en}</p>
                 <div className="drill-options">
@@ -228,7 +249,7 @@ export function LearnPractisePage(): JSX.Element {
                     {drill.explanation[language] ?? drill.explanation.en}
                   </p>
                 )}
-              </article>
+              </Card>
             );
           })}
         </div>
@@ -236,8 +257,8 @@ export function LearnPractisePage(): JSX.Element {
 
       <section className="external-practice-card" aria-label={t("trybTitle")}>
         <div className="external-practice-text">
-          <span className="sample-pill">{t("externalActivityBadge")}</span>
-          <h2>{t("trybTitle")}</h2>
+          <Chip tone="lavender">{t("externalActivityBadge")}</Chip>
+          <h2 style={{ marginTop: "10px" }}>{t("trybTitle")}</h2>
           {trybUrl ? (
             <>
               <p>{t("trybBody")}</p>
@@ -271,17 +292,19 @@ export function LearnPractisePage(): JSX.Element {
         )}
       </section>
 
-      <button
-        type="button"
-        className="primary large-button"
+      <Button
+        variant="primary"
+        size="lg"
+        fullWidth
+        className="cta-spacer"
         onClick={() => navigate("/challenge")}
       >
         {t("continueToChallenge")}
-      </button>
+      </Button>
 
-      <button type="button" className="text-button" onClick={() => navigate("/role")}>
+      <Button variant="ghost" fullWidth onClick={() => navigate("/role")}>
         {t("back")}
-      </button>
+      </Button>
     </main>
   );
 }

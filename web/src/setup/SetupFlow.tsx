@@ -1,197 +1,275 @@
 import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
+import { Check, MessageSquare, Mic, MicOff, ShieldAlert } from "lucide-react";
 import { getSkills } from "../api";
 import { useTranslation } from "../i18n";
+import { JourneyNav } from "../shared/JourneyNav";
+import { Badge, Button, Card } from "../shared/ui";
 import { useSetup } from "./SetupContext";
-import type { AgentLevel, Language, SkillSummary } from "../types";
+import type { AgentLevel, Language } from "../types";
 
-type SetupStep = "skill" | "language" | "level" | "consent";
+type MicStatus = "waiting" | "checking" | "granted" | "denied";
 
-const languageKeys: Record<Language, "languageEnglish" | "languageHindi" | "languageKannada"> = {
-  en: "languageEnglish",
-  hi: "languageHindi",
-  kn: "languageKannada"
-};
+const LANGUAGE_CARDS: { code: Language; title: string; subtitle: string }[] = [
+  { code: "en", title: "English", subtitle: "Standard workplace English" },
+  { code: "hi", title: "हिन्दी", subtitle: "सरल हिन्दी और रोज़मर्रा के शब्द" },
+  { code: "kn", title: "ಕನ್ನಡ", subtitle: "ಸರಳ ಕನ್ನಡ ಮತ್ತು ದೈನಂದಿನ ಪದಗಳು" }
+];
 
-const levelCards: { value: AgentLevel; title: "levelNewTitle" | "levelSomeTitle" | "levelToughTitle"; body: "levelNewBody" | "levelSomeBody" | "levelToughBody" }[] = [
-  { value: "new", title: "levelNewTitle", body: "levelNewBody" },
-  { value: "some", title: "levelSomeTitle", body: "levelSomeBody" },
-  { value: "tough", title: "levelToughTitle", body: "levelToughBody" }
+const LEVEL_OPTIONS: { value: AgentLevel; titleKey: "levelNewTitle" | "levelSomeTitle" | "levelToughTitle" }[] = [
+  { value: "new", titleKey: "levelNewTitle" },
+  { value: "some", titleKey: "levelSomeTitle" },
+  { value: "tough", titleKey: "levelToughTitle" }
 ];
 
 export function SetupFlow(): JSX.Element {
   const { skill, language, level, inputMode, chooseSkill, chooseLanguage, chooseLevel, chooseInputMode } = useSetup();
   const { t } = useTranslation();
   const navigate = useNavigate();
-  const [step, setStep] = useState<SetupStep>(skill ? "language" : "skill");
-  const [skills, setSkills] = useState<SkillSummary[]>([]);
-  const [loading, setLoading] = useState(true);
-  const [loadError, setLoadError] = useState(false);
-  const [microphoneDenied, setMicrophoneDenied] = useState(false);
-  const [requestingMicrophone, setRequestingMicrophone] = useState(false);
-  const isDemo = new URLSearchParams(window.location.search).get("demo") === "1";
 
-  async function loadSkills(): Promise<void> {
-    setLoading(true);
+  const [micStatus, setMicStatus] = useState<MicStatus>("waiting");
+  const [loadingSkills, setLoadingSkills] = useState(!skill);
+  const [loadError, setLoadError] = useState(false);
+  const isDemo = typeof window !== "undefined" && new URLSearchParams(window.location.search).get("demo") === "1";
+
+  async function ensureDefaults(): Promise<void> {
+    setLoadingSkills(true);
     setLoadError(false);
     try {
-      setSkills(await getSkills());
+      const list = await getSkills();
+      if (!skill && list.length > 0) {
+        chooseSkill(list[0]);
+      }
+      if (!level) {
+        chooseLevel("new");
+      }
     } catch {
       setLoadError(true);
     } finally {
-      setLoading(false);
+      setLoadingSkills(false);
     }
   }
 
-  useEffect(() => { void loadSkills(); }, []);
+  useEffect(() => {
+    if (!skill || !level) {
+      void ensureDefaults();
+    } else {
+      setLoadingSkills(false);
+    }
+  }, []);
 
-  function goBack(): void {
-    setMicrophoneDenied(false);
-    setStep(step === "consent" ? "level" : step === "level" ? "language" : "skill");
-  }
-
-  async function startWithMicrophone(): Promise<void> {
-    setRequestingMicrophone(true);
-    setMicrophoneDenied(false);
+  async function checkMicrophone(): Promise<boolean> {
+    setMicStatus("checking");
     try {
-      if (!navigator.mediaDevices?.getUserMedia) throw new Error("Microphone is not supported.");
+      if (typeof navigator === "undefined" || !navigator.mediaDevices?.getUserMedia) {
+        setMicStatus("denied");
+        return false;
+      }
       const stream = await navigator.mediaDevices.getUserMedia({ audio: true });
       stream.getTracks().forEach((track) => track.stop());
-      chooseInputMode("voice");
-      navigate("/session" + (isDemo ? "?demo=1" : ""));
+      setMicStatus("granted");
+      return true;
     } catch {
-      setMicrophoneDenied(true);
-    } finally {
-      setRequestingMicrophone(false);
+      setMicStatus("denied");
+      return false;
     }
   }
 
-  function startTextSession(): void {
+  async function handleStartViva(): Promise<void> {
+    if (inputMode === "text") {
+      navigate("/session" + (isDemo ? "?demo=1" : ""));
+      return;
+    }
+    if (micStatus === "granted") {
+      chooseInputMode("voice");
+      navigate("/session" + (isDemo ? "?demo=1" : ""));
+      return;
+    }
+    const ok = await checkMicrophone();
+    if (ok) {
+      chooseInputMode("voice");
+      navigate("/session" + (isDemo ? "?demo=1" : ""));
+    }
+  }
+
+  function handleFallbackToText(): void {
     chooseInputMode("text");
     navigate("/session" + (isDemo ? "?demo=1" : ""));
   }
 
-  function useTextFallback(): void {
-    startTextSession();
-  }
-
-  return <main className="shell setup-shell">
-    {isDemo && (
-      <div className="demo-top-banner">
-        <span className="replay-badge">{t("replayBadge")}</span>
-        <button className="primary demo-start-btn" onClick={() => navigate("/session?demo=1")}>{t("startDemoReplay")}</button>
-      </div>
-    )}
-    <header className="home-header">
-      <p className="brand">{t("appName")}</p>
-      <p className="tagline">{t("tagline")}</p>
-      {step === "skill" && (
-        <>
-          <nav className="journey-pill-stack" aria-label="Prooffolio Journey">
-            <span className="journey-pill">1. Learn</span>
-            <span className="journey-pill">2. Practise</span>
-            <span className="journey-pill">3. Demonstrate</span>
-            <span className="journey-pill active">4. Explain (AI Viva)</span>
-            <span className="journey-pill">5. Verify</span>
-            <span className="journey-pill">6. Connect</span>
-          </nav>
-          <div className="platform-banner">
-            <strong>{t("platformBannerTitle")}</strong>
-            <p>{t("platformBannerBody")}</p>
-          </div>
-        </>
-      )}
-    </header>
-    <p className="step">{t("step", { current: step === "skill" ? 1 : step === "language" ? 2 : step === "level" ? 3 : 4 })}</p>
-    {step === "skill" && (
-      <SkillStep
-        skills={skills}
-        loading={loading}
-        failed={loadError}
-        retry={loadSkills}
-        inputMode={inputMode}
-        onToggleTextMode={() => chooseInputMode(inputMode === "text" ? "voice" : "text")}
-        onChoose={(nextSkill) => { chooseSkill(nextSkill); setStep("language"); }}
-      />
-    )}
-    {step === "language" && <section><p className="eyebrow">{t("languageEyebrow")}</p><h1>{t("languageTitle")}</h1><p className="lede">{t("languageBody")}</p><div className="tap-stack">{(Object.keys(languageKeys) as Language[]).map((nextLanguage) => <button className="tap-card" key={nextLanguage} onClick={() => { chooseLanguage(nextLanguage); setStep("level"); }}>{t(languageKeys[nextLanguage])}</button>)}</div><BackButton onClick={goBack} /></section>}
-    {step === "level" && <section><p className="eyebrow">{t("levelEyebrow")}</p><h1>{t("levelTitle")}</h1><p className="lede">{t("levelBody")}</p><div className="tap-stack">{levelCards.map((card) => <button className="tap-card level-card" key={card.value} onClick={() => { chooseLevel(card.value); setStep("consent"); }}><strong>{t(card.title)}</strong><span>{t(card.body)}</span></button>)}</div><BackButton onClick={goBack} /></section>}
-    {step === "consent" && (
-      <section>
-        <p className="eyebrow">{inputMode === "text" ? t("textMode") : t("consentEyebrow")}</p>
-        <h1>{inputMode === "text" ? t("textModeReadyTitle") : t("consentTitle")}</h1>
-        <p className="lede">{skill?.skill}</p>
-        <p className="consent">{inputMode === "text" ? t("textModeReadyBody") : t("consentBody")}</p>
-        {inputMode === "text" ? (
-          <button className="primary large-button" disabled={!level} onClick={startTextSession}>
-            {t("startTextMode")}
-          </button>
-        ) : (
-          <button className="primary large-button" disabled={!level || requestingMicrophone} onClick={() => void startWithMicrophone()}>
-            {requestingMicrophone ? t("micRequesting") : t("start")}
-          </button>
-        )}
-        {inputMode !== "text" && microphoneDenied && (
-          <section className="mic-help" role="alert">
-            <strong>{t("micTitle")}</strong>
-            <p>{t("micBody")}</p>
-            <button className="secondary" onClick={() => void startWithMicrophone()}>{t("tryAgain")}</button>
-            <button className="text-button" onClick={useTextFallback}>{t("useTextInstead")}</button>
-          </section>
-        )}
-        <BackButton onClick={goBack} />
-      </section>
-    )}
-  </main>;
-}
-
-function SkillStep({
-  skills,
-  loading,
-  failed,
-  retry,
-  inputMode,
-  onToggleTextMode,
-  onChoose
-}: {
-  skills: SkillSummary[];
-  loading: boolean;
-  failed: boolean;
-  retry: () => Promise<void>;
-  inputMode: "voice" | "text";
-  onToggleTextMode: () => void;
-  onChoose: (skill: SkillSummary) => void;
-}): JSX.Element {
-  const { t } = useTranslation();
-  if (loading) return <p className="loading">{t("loadingSkills")}</p>;
-  if (failed) return <section className="mic-help" role="alert"><p>{t("loadSkillsError")}</p><button className="primary" onClick={() => void retry()}>{t("retry")}</button></section>;
   return (
-    <section>
-      <div className="text-mode-entry">
-        <button
-          type="button"
-          className={"secondary text-mode-button " + (inputMode === "text" ? "text-mode-active" : "")}
-          onClick={onToggleTextMode}
-        >
-          {inputMode === "text" ? `✓ ${t("textModeActive")}` : t("textModeOption")}
-        </button>
-      </div>
-      <p className="eyebrow">{t("skillEyebrow")}</p>
-      <h1>{t("skillTitle")}</h1>
-      <p className="lede">{t("skillBody")}</p>
-      <div className="tap-stack">
-        {skills.map((availableSkill) => (
-          <button className="tap-card skill-card" key={availableSkill.skill} onClick={() => onChoose(availableSkill)}>
-            <strong>{availableSkill.skill}</strong>
-            <span>{t("selectSkill", { skill: availableSkill.skill })}</span>
-          </button>
-        ))}
-      </div>
-    </section>
-  );
-}
+    <main className="shell setup-shell">
+      <JourneyNav activeStage="explain" />
 
-function BackButton({ onClick }: { onClick: () => void }): JSX.Element {
-  const { t } = useTranslation();
-  return <button className="text-button" onClick={onClick}>{t("back")}</button>;
+      {isDemo && (
+        <div className="demo-top-banner">
+          <Badge tone="lavender">{t("replayBadge")}</Badge>
+          <Button variant="primary" className="demo-start-btn" onClick={() => navigate("/session?demo=1")}>
+            {t("startDemoReplay")}
+          </Button>
+        </div>
+      )}
+
+      <p className="eyebrow">{t("languageEyebrow")}</p>
+      <h1>{t("sessionTitle")}</h1>
+      <p className="lede">{t("languageBody")}</p>
+
+      <Card as="section" className="setup-card">
+        <div className="setup-section">
+          <h2 className="setup-section-title">{t("languageTitle")}</h2>
+          <div className="setup-lang-grid" role="radiogroup" aria-label={t("languageTitle")}>
+            {LANGUAGE_CARDS.map((card) => {
+              const selected = language === card.code;
+              return (
+                <button
+                  key={card.code}
+                  type="button"
+                  role="radio"
+                  aria-checked={selected}
+                  className={"setup-lang-card" + (selected ? " is-selected" : "")}
+                  onClick={() => chooseLanguage(card.code)}
+                >
+                  <span className="setup-lang-head">
+                    <strong>{card.title}</strong>
+                    {selected && (
+                      <span className="setup-lang-check" aria-hidden="true">
+                        <Check size={14} strokeWidth={2.5} />
+                      </span>
+                    )}
+                  </span>
+                  <span className="setup-lang-sub">{card.subtitle}</span>
+                </button>
+              );
+            })}
+          </div>
+        </div>
+
+        <div className="setup-section">
+          <div className="setup-mode-row">
+            <div>
+              <h2 className="setup-section-title" style={{ marginBottom: "2px" }}>Interview mode</h2>
+              <p className="fineprint" style={{ margin: 0 }}>Speak naturally or type your answers</p>
+            </div>
+            <div className="segmented-pill" role="group" aria-label="Voice or Text mode">
+              <button
+                type="button"
+                className={"segmented-pill-btn" + (inputMode === "voice" ? " is-active" : "")}
+                aria-pressed={inputMode === "voice"}
+                onClick={() => chooseInputMode("voice")}
+              >
+                <Mic size={15} aria-hidden="true" />
+                <span>Voice</span>
+              </button>
+              <button
+                type="button"
+                className={"segmented-pill-btn" + (inputMode === "text" ? " is-active" : "")}
+                aria-pressed={inputMode === "text"}
+                onClick={() => chooseInputMode("text")}
+              >
+                <MessageSquare size={15} aria-hidden="true" />
+                <span>Text</span>
+              </button>
+            </div>
+          </div>
+        </div>
+
+        <div className="setup-section">
+          <span className="field-label" style={{ marginTop: 0 }}>{t("levelTitle")}</span>
+          <div className="setup-level-pills">
+            {LEVEL_OPTIONS.map((opt) => (
+              <button
+                key={opt.value}
+                type="button"
+                className={"pf-stepper-pill" + ((level ?? "new") === opt.value ? " is-active" : "")}
+                onClick={() => chooseLevel(opt.value)}
+              >
+                {t(opt.titleKey)}
+              </button>
+            ))}
+          </div>
+        </div>
+
+        {inputMode === "voice" && (
+          <div className="setup-section">
+            <div className={"mic-status-box mic-status--" + micStatus} role="status" aria-live="polite">
+              {micStatus === "waiting" && (
+                <>
+                  <Mic size={18} aria-hidden="true" />
+                  <div className="mic-status-copy">
+                    <strong>Microphone check</strong>
+                    <span className="fineprint">We will ask for mic permission before starting.</span>
+                  </div>
+                  <Button variant="secondary" onClick={() => void checkMicrophone()}>
+                    Test mic
+                  </Button>
+                </>
+              )}
+              {micStatus === "checking" && (
+                <>
+                  <Mic size={18} aria-hidden="true" />
+                  <div className="mic-status-copy">
+                    <strong>{t("micRequesting")}</strong>
+                    <span className="fineprint">Please allow microphone access in your browser.</span>
+                  </div>
+                </>
+              )}
+              {micStatus === "granted" && (
+                <>
+                  <Check size={18} className="check-icon--ok" aria-hidden="true" />
+                  <div className="mic-status-copy">
+                    <strong>Microphone ready</strong>
+                    <span className="fineprint">Audio input permission granted.</span>
+                  </div>
+                </>
+              )}
+              {micStatus === "denied" && (
+                <div className="mic-denied-stack">
+                  <div className="mic-denied-head">
+                    <MicOff size={18} className="check-icon--bad" aria-hidden="true" />
+                    <strong>{t("micTitle")}</strong>
+                  </div>
+                  <p className="fineprint" style={{ margin: 0 }}>{t("micBody")}</p>
+                  <div className="mic-denied-actions">
+                    <Button variant="secondary" onClick={() => void checkMicrophone()}>
+                      {t("tryAgain")}
+                    </Button>
+                    <Button variant="primary" onClick={handleFallbackToText}>
+                      {t("useTextInstead")}
+                    </Button>
+                  </div>
+                </div>
+              )}
+            </div>
+          </div>
+        )}
+
+        {loadError && (
+          <div className="mic-help" role="alert">
+            <div className="upload-error-head">
+              <ShieldAlert size={18} aria-hidden="true" />
+              <p style={{ margin: 0 }}>{t("loadSkillsError")}</p>
+            </div>
+            <Button variant="secondary" onClick={() => void ensureDefaults()} className="cta-spacer">
+              {t("retry")}
+            </Button>
+          </div>
+        )}
+
+        <Button
+          variant="primary"
+          size="lg"
+          fullWidth
+          disabled={loadingSkills || micStatus === "checking"}
+          className="cta-spacer"
+          onClick={() => void handleStartViva()}
+        >
+          {inputMode === "text" ? t("startTextMode") : t("start")}
+        </Button>
+      </Card>
+
+      <Button variant="ghost" fullWidth onClick={() => navigate("/validation")}>
+        {t("back")}
+      </Button>
+    </main>
+  );
 }
