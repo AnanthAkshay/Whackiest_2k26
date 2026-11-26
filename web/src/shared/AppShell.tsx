@@ -12,7 +12,6 @@ import {
   Moon,
   Question,
   Sun,
-  User,
   X
 } from "@phosphor-icons/react";
 import { DEFAULT_CONTENT_BUNDLE } from "../content/lessons";
@@ -20,7 +19,7 @@ import { useTranslation } from "../i18n";
 import { useSetup } from "../setup/SetupContext";
 import type { Language } from "../types";
 import { getStoredThemePreference, persistThemePreference, type ThemePreference } from "./theme";
-import { Frame, SegmentedControl, Sheet, TextLink } from "./ui";
+import { Frame, SegmentedControl, Sheet, TextLink, buttonClasses } from "./ui";
 import { extractUtmParams, saveStoredUtm } from "./utm";
 
 const LANG_OPTIONS: { value: Language; label: string; ariaLabel: string }[] = [
@@ -190,7 +189,7 @@ export function AppShell({ children }: { children: ReactNode }): JSX.Element {
               aria-label="Dismiss announcement"
               onClick={() => setAnnouncementDismissed(true)}
             >
-              <X size={16} weight="regular" aria-hidden="true" />
+              <X size={14} weight="regular" aria-hidden="true" />
             </button>
           </div>
         </div>
@@ -199,11 +198,11 @@ export function AppShell({ children }: { children: ReactNode }): JSX.Element {
       <header className={"site-topbar" + (isScrolled ? " is-scrolled" : "")}>
         <div className="site-topbar-inner">
           <Link to={`/${demoQuery}`} className="topbar-wordmark" onClick={() => setMenuOpen(false)}>
-            <svg width="22" height="22" viewBox="0 0 24 24" fill="none" aria-hidden="true">
-              <path d="M5 20V4H13.5C16.538 4 19 6.462 19 9.5C19 12.538 16.538 15 13.5 15H5" stroke="currentColor" strokeWidth="2.4" />
+            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" aria-hidden="true">
+              <circle cx="12" cy="12" r="10.5" stroke="currentColor" strokeWidth="2" />
+              <path d="M9 17V7H13C14.933 7 16.5 8.567 16.5 10.5C16.5 12.433 14.933 14 13 14H9" stroke="currentColor" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round" />
             </svg>
-            <span className="wordmark-light">PROOF</span>
-            <span className="wordmark-bold">FOLIO</span>
+            <span className="wordmark-bold">PROOFFOLIO</span>
           </Link>
 
           <nav className="topbar-nav" aria-label={t("mainNavLabel")}>
@@ -230,7 +229,7 @@ export function AppShell({ children }: { children: ReactNode }): JSX.Element {
 
             <button
               type="button"
-              className="topbar-icon-btn"
+              className="topbar-icon-btn topbar-search-btn"
               aria-label="Search site (/)"
               title="Search (/)"
               onClick={() => setSearchOpen(true)}
@@ -249,11 +248,9 @@ export function AppShell({ children }: { children: ReactNode }): JSX.Element {
 
             <Link
               to={`/profile${demoQuery}`}
-              className="topbar-icon-btn"
-              aria-label={t("navForLearners")}
-              title={t("navForLearners")}
+              className={buttonClasses({ variant: "primary", className: "topbar-start-cta" })}
             >
-              <User size={18} weight="regular" aria-hidden="true" />
+              START NOW
             </Link>
 
             <button
@@ -412,8 +409,8 @@ export function AppShell({ children }: { children: ReactNode }): JSX.Element {
           placeholder="Search lessons, challenge, passport, opportunities..."
         />
         <ul className="site-search-results">
-          {filteredSearch.map((item) => (
-            <li key={item.to}>
+          {filteredSearch.map((item, idx) => (
+            <li key={`${item.to}-${idx}`}>
               <Link
                 to={item.to}
                 className="site-search-link"
@@ -426,7 +423,7 @@ export function AppShell({ children }: { children: ReactNode }): JSX.Element {
                   <strong>{item.title}</strong>
                   <div className="fineprint">{item.desc}</div>
                 </div>
-                <span className="eyebrow">{item.group}</span>
+                <span className="pf-label">{item.group}</span>
               </Link>
             </li>
           ))}

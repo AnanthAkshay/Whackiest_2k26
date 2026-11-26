@@ -1,0 +1,189 @@
+{
+  "schemaVersion": 2,
+  "generatedAt": "2026-11-26T20:54:50+05:30",
+  "title": "Design System: Prooffolio",
+  "extensions": {
+    "colorMeta": {
+      "review-lavender": {
+        "role": "primary",
+        "displayName": "Review Lavender",
+        "canonical": "#B9A9D4",
+        "tonalRamp": ["#211B2E", "#372E4B", "#52466F", "#6F6193", "#8E7FB5", "#B9A9D4", "#D4C9E7", "#EFEAF6"]
+      },
+      "washi-cream": {
+        "role": "neutral",
+        "displayName": "Washi Cream",
+        "canonical": "#F4F0E4",
+        "tonalRamp": ["#24221C", "#423E34", "#666153", "#8E8775", "#B8B19D", "#DDD7C6", "#F4F0E4", "#FCFBF7"]
+      },
+      "paper-surface": {
+        "role": "neutral",
+        "displayName": "Paper Surface",
+        "canonical": "#FCFAF3",
+        "tonalRamp": ["#26241F", "#47443B", "#6D685B", "#969080", "#C0BAAC", "#E3DEC9", "#F7F4E8", "#FCFAF3"]
+      },
+      "parchment-tint": {
+        "role": "neutral",
+        "displayName": "Parchment Tint",
+        "canonical": "#EDE9DC",
+        "tonalRamp": ["#23211B", "#403C32", "#625C4F", "#888171", "#B1A997", "#D5CEBD", "#EDE9DC", "#F9F7F0"]
+      },
+      "kohaku-ink": {
+        "role": "neutral",
+        "displayName": "Kōhaku Ink",
+        "canonical": "#0B0B0B",
+        "tonalRamp": ["#0B0B0B", "#1B1B1B", "#333333", "#4F4F4F", "#737373", "#9E9E9E", "#C9C9C9", "#F2F2F2"]
+      },
+      "muted-stone": {
+        "role": "neutral",
+        "displayName": "Muted Stone",
+        "canonical": "#5B574E",
+        "tonalRamp": ["#1C1B18", "#32302B", "#48453E", "#5B574E", "#7C776C", "#A19C90", "#C8C3B8", "#ECE9E2"]
+      },
+      "focus-navy": {
+        "role": "neutral",
+        "displayName": "Focus Navy",
+        "canonical": "#1B1B4B",
+        "tonalRamp": ["#0D0D26", "#1B1B4B", "#2D2D70", "#434396", "#6060B8", "#8888D1", "#B7B7E8", "#E6E6F7"]
+      }
+    },
+    "typographyMeta": {
+      "display": { "displayName": "Display", "purpose": "Page titles and primary outcome headlines." },
+      "headline": { "displayName": "Headline", "purpose": "Section headings across all 7 stages." },
+      "body": { "displayName": "Body", "purpose": "Primary reading copy (max 62ch lead)." },
+      "label": { "displayName": "Label", "purpose": "Uppercase keys and eyebrows (non-uppercase in hi/kn)." },
+      "mono": { "displayName": "Mono", "purpose": "SHA-256 hashes, Key IDs, and cell references." }
+    },
+    "shadows": [],
+    "motion": [
+      { "name": "page-enter", "value": "220ms ease-out", "purpose": "Subtle 8px vertical entrance on main content." },
+      { "name": "control-invert", "value": "150ms ease", "purpose": "Ink/cream fill inversion on buttons and options." },
+      { "name": "skeleton-pulse", "value": "1.6s ease-in-out infinite", "purpose": "Opacity pulse on loading skeletons." }
+    ],
+    "breakpoints": [
+      { "name": "mobile", "value": "360px" },
+      { "name": "tablet", "value": "768px" },
+      { "name": "desktop", "value": "900px" },
+      { "name": "max", "value": "1200px" }
+    ]
+  },
+  "components": [
+    {
+      "name": "Primary Button",
+      "kind": "button",
+      "refersTo": "button-primary",
+      "description": "2px ink-outlined paper button that inverts to ink/cream on hover.",
+      "html": "<button type=\"button\" class=\"ds-btn-primary\">START THE CHALLENGE</button>",
+      "css": ".ds-btn-primary { display: inline-flex; align-items: center; justify-content: center; min-height: 48px; padding: 12px 20px; border: 2px solid var(--line, #0B0B0B); background: var(--surface, #FCFAF3); color: var(--ink, #0B0B0B); font-family: var(--font-sans, sans-serif); font-weight: 700; font-size: 15px; border-radius: 0; cursor: pointer; transition: background-color 0.15s ease, color 0.15s ease; } .ds-btn-primary:hover { background: var(--ink, #0B0B0B); color: var(--bg, #F4F0E4); } .ds-btn-primary:focus-visible { outline: 3px solid var(--focus, #1B1B4B); outline-offset: 3px; } .ds-btn-primary:active { box-shadow: inset 0 0 0 2px var(--surface, #FCFAF3); }"
+    },
+    {
+      "name": "Dark Action Button",
+      "kind": "button",
+      "refersTo": "button-dark",
+      "description": "High-emphasis solid ink button for primary form submission.",
+      "html": "<button type=\"button\" class=\"ds-btn-dark\">ISSUE MY SKILL PASSPORT</button>",
+      "css": ".ds-btn-dark { display: inline-flex; align-items: center; justify-content: center; min-height: 48px; padding: 12px 20px; border: 2px solid var(--line, #0B0B0B); background: var(--ink, #0B0B0B); color: var(--bg, #F4F0E4); font-family: var(--font-sans, sans-serif); font-weight: 700; font-size: 15px; border-radius: 0; cursor: pointer; transition: background-color 0.15s ease, color 0.15s ease; } .ds-btn-dark:hover { background: var(--surface, #FCFAF3); color: var(--ink, #0B0B0B); } .ds-btn-dark:focus-visible { outline: 3px solid var(--focus, #1B1B4B); outline-offset: 3px; }"
+    },
+    {
+      "name": "Text Input Field",
+      "kind": "input",
+      "refersTo": "input-field",
+      "description": "56px sharp-cornered input with uppercase label above.",
+      "html": "<div class=\"ds-field\"><label class=\"ds-field-label\" for=\"ds-name\">DISPLAY HANDLE</label><input id=\"ds-name\" class=\"ds-input\" type=\"text\" placeholder=\"Ananya Kumar\" /></div>",
+      "css": ".ds-field { display: grid; gap: 6px; } .ds-field-label { font-size: 13px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.06em; color: var(--muted, #5B574E); } .ds-input { width: 100%; min-height: 56px; padding: 12px 16px; border: 2px solid var(--line, #0B0B0B); background: var(--surface, #FCFAF3); color: var(--ink, #0B0B0B); font-size: 16px; border-radius: 0; } .ds-input:focus-visible { outline: 3px solid var(--focus, #1B1B4B); outline-offset: 3px; }"
+    },
+    {
+      "name": "Editorial Card",
+      "kind": "card",
+      "refersTo": "card-surface",
+      "description": "Flat 2px ink-bordered container on Paper Surface.",
+      "html": "<article class=\"ds-card\"><strong>SUMMARY</strong><p>Retail Sales Cleanup (.xlsx)</p></article>",
+      "css": ".ds-card { padding: 24px; border: 2px solid var(--line, #0B0B0B); background: var(--surface, #FCFAF3); color: var(--ink, #0B0B0B); border-radius: 0; }"
+    },
+    {
+      "name": "Status Chip",
+      "kind": "chip",
+      "refersTo": "chip-tag",
+      "description": "Square 2px bordered tag with optional lavender review state.",
+      "html": "<span class=\"ds-chip\">Online-only</span>",
+      "css": ".ds-chip { display: inline-flex; align-items: center; gap: 6px; padding: 8px 14px; border: 2px solid var(--line, #0B0B0B); background: var(--lavender, #B9A9D4); color: #0B0B0B; font-size: 15px; font-weight: 700; border-radius: 0; }"
+    },
+    {
+      "name": "Top Navigation Bar",
+      "kind": "nav",
+      "description": "Sticky paper header with geometric P mark, underlined links, and square search button.",
+      "html": "<header class=\"ds-nav\"><span class=\"ds-brand\"><svg width=\"18\" height=\"18\" viewBox=\"0 0 24 24\" fill=\"none\" aria-hidden=\"true\"><path d=\"M5 20V4H13.5C16.538 4 19 6.462 19 9.5C19 12.538 16.538 15 13.5 15H5\" stroke=\"currentColor\" stroke-width=\"2.4\"/></svg> PROOFFOLIO</span><nav class=\"ds-links\"><a href=\"#learn\" class=\"ds-link is-current\">Learn</a><a href=\"#challenge\" class=\"ds-link\">Challenge</a></nav></header>",
+      "css": ".ds-nav { display: flex; align-items: center; justify-content: space-between; padding: 12px 24px; border-bottom: 1px solid var(--line, #0B0B0B); background: var(--surface, #FCFAF3); color: var(--ink, #0B0B0B); } .ds-brand { display: inline-flex; align-items: center; gap: 8px; font-weight: 800; letter-spacing: 0.08em; } .ds-links { display: flex; gap: 24px; } .ds-link { color: var(--ink, #0B0B0B); text-decoration: underline; text-underline-offset: 3px; font-weight: 500; } .ds-link.is-current { font-weight: 700; text-decoration-thickness: 2px; }"
+    },
+    {
+      "name": "CurrentRow (Ruled Highlight)",
+      "kind": "custom",
+      "description": "Lavender-highlighted ruled row for active stages and deciding ECVE pillars.",
+      "html": "<div class=\"ds-current-row\"><span class=\"ds-row-label\">01 · 1. Learn</span><strong class=\"ds-row-val\">Available offline</strong></div>",
+      "css": ".ds-current-row { display: flex; align-items: center; justify-content: space-between; gap: 16px; padding: 14px 16px; background: var(--lavender, #B9A9D4); color: #0B0B0B; border-top: 2px solid var(--line, #0B0B0B); border-bottom: 2px solid var(--line, #0B0B0B); } .ds-row-label { font-weight: 700; } .ds-row-val { font-weight: 700; }"
+    },
+    {
+      "name": "OptionButton Grid",
+      "kind": "button",
+      "description": "Selectable square option cells with solid-ink selected state and struck-through unavailable state.",
+      "html": "<div class=\"ds-opt-grid\"><button type=\"button\" class=\"ds-opt is-selected\" aria-pressed=\"true\">English</button><button type=\"button\" class=\"ds-opt\" aria-pressed=\"false\">हिन्दी</button><button type=\"button\" class=\"ds-opt\" disabled aria-disabled=\"true\">ಕನ್ನಡ (Offline)</button></div>",
+      "css": ".ds-opt-grid { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 8px; } .ds-opt { min-height: 48px; padding: 12px 16px; border: 2px solid var(--line, #0B0B0B); background: var(--surface, #FCFAF3); color: var(--ink, #0B0B0B); font-weight: 700; text-align: left; border-radius: 0; cursor: pointer; } .ds-opt:hover:not(:disabled) { background: var(--ink, #0B0B0B); color: var(--bg, #F4F0E4); } .ds-opt.is-selected { background: var(--ink, #0B0B0B); color: var(--bg, #F4F0E4); } .ds-opt:disabled { cursor: not-allowed; background: var(--surface-2, #EDE9DC); border-color: rgba(11, 11, 11, 0.25); color: var(--muted, #5B574E); text-decoration: line-through; }"
+    },
+    {
+      "name": "Tabs",
+      "kind": "nav",
+      "description": "Underlined text tabs sitting on a 2px ink rule.",
+      "html": "<div role=\"tablist\" class=\"ds-tabs\"><button type=\"button\" role=\"tab\" aria-selected=\"true\" class=\"ds-tab is-active\">All</button><button type=\"button\" role=\"tab\" aria-selected=\"false\" class=\"ds-tab\">Basics</button><button type=\"button\" role=\"tab\" aria-selected=\"false\" class=\"ds-tab\">Cleanup</button></div>",
+      "css": ".ds-tabs { display: flex; gap: 24px; border-bottom: 2px solid var(--line, #0B0B0B); } .ds-tab { min-height: 44px; padding: 10px 4px; border: 0; border-bottom: 4px solid transparent; margin-bottom: -2px; background: transparent; color: var(--muted, #5B574E); font-size: 16px; font-weight: 500; cursor: pointer; } .ds-tab:hover { color: var(--ink, #0B0B0B); } .ds-tab.is-active { color: var(--ink, #0B0B0B); font-weight: 700; border-bottom-color: var(--ink, #0B0B0B); }"
+    },
+    {
+      "name": "StatusMark",
+      "kind": "custom",
+      "description": "14px square geometric status indicator paired with bold status copy.",
+      "html": "<div class=\"ds-status-row\"><span class=\"ds-status\"><span class=\"ds-sq ds-sq--ok\"></span>LIVE</span><span class=\"ds-status\"><span class=\"ds-sq ds-sq--review\"></span>MOCK</span><span class=\"ds-status\"><span class=\"ds-sq ds-sq--neutral\"></span>NOT CONFIGURED</span></div>",
+      "css": ".ds-status-row { display: flex; flex-wrap: wrap; gap: 16px; } .ds-status { display: inline-flex; align-items: center; gap: 8px; font-size: 15px; font-weight: 700; color: var(--ink, #0B0B0B); } .ds-sq { width: 14px; height: 14px; border: 2px solid var(--line, #0B0B0B); display: inline-block; } .ds-sq--ok { background: var(--ink, #0B0B0B); } .ds-sq--review { background: var(--lavender, #B9A9D4); } .ds-sq--neutral { background: transparent; }"
+    }
+  ],
+  "narrative": {
+    "northStar": "The Printed Folio",
+    "overview": "Prooffolio's visual system (\"Kōhaku\") is built from warm washi-cream paper, sharp black ink, and structural 2px rules. Every screen reads like a calm, printed dossier: zero rounded corners, zero drop shadows, and zero decorative blur. Hierarchy comes from bold, tightly tracked Manrope headlines paired with ruled label-and-value rows and tabular numerals.\n\nDark #0B0B0B surfaces are reserved exclusively for high-focus moments—the landing hero, the live AI Viva voice stage, and the verifiable Skill Passport credential—where cream ink and a single Review Lavender accent establish institutional gravity. Across English, Hindi, and Kannada, the system preserves generous line height and 48px touch targets so first-time mobile users can navigate with clarity and dignity.",
+    "keyCharacteristics": [
+      "Warm paper ground (washi-cream) paired with crisp kohaku-ink outlines and zero corner radius.",
+      "Single lavender accent (review-lavender) reserved for system announcements, active/deciding rows, and Pending Human Review states.",
+      "Tabular Manrope numerals (tabular-nums) for scores, percentages, and step indices; JetBrains Mono for SHA-256 hashes, cell references, and Key IDs.",
+      "Multilingual parity across Latin, Devanagari (hi), and Kannada (kn) with line-height: 1.7 and disabled uppercase transforms for Indic scripts."
+    ],
+    "rules": [
+      {
+        "name": "The Single-Accent Rule",
+        "body": "Review Lavender is the only chromatic accent in the system; never introduce secondary brand gradients, neon highlights, or multi-hue badges.",
+        "section": "colors"
+      },
+      {
+        "name": "The Honest Status Rule",
+        "body": "Semantic tones (status-ok, status-warn, status-bad) appear only as text color, 4px left rules, or square StatusMark geometry—never as bright filled pills.",
+        "section": "colors"
+      },
+      {
+        "name": "The Indic Breathing Room Rule",
+        "body": "Whenever :lang(hi) or :lang(kn) is active, disable uppercase and positive letter-spacing on labels and raise line-height to 1.7 (1.25 on display headings) so matras and conjuncts never clip.",
+        "section": "typography"
+      },
+      {
+        "name": "The Flat-Paper Rule",
+        "body": "Never add box-shadow, backdrop-filter, or hover scale transforms to cards, buttons, or modals.",
+        "section": "elevation"
+      }
+    ],
+    "dos": [
+      "Do enforce 0px border-radius on every interactive and container element.",
+      "Do use RuledRow, CurrentRow, and StatusMark squares for structured data, stages, and verification states.",
+      "Do preserve 48px minimum control height (44px minimum touch target) across 360px mobile viewports."
+    ],
+    "donts": [
+      "Don't add drop shadows, glassmorphism (backdrop-filter), pill borders (9999px), or hover scale animations.",
+      "Don't use emojis, Lucide icons, or multi-color gradients (the single frosted \"PROOFFOLIO\" hero wordmark is the sole background-clip: text exception).",
+      "Don't apply text-transform: uppercase or positive letter-spacing to Hindi (hi) or Kannada (kn) text."
+    ]
+  }
+}

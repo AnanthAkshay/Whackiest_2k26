@@ -1,14 +1,14 @@
 @font-face {
-  font-family: "Manrope Fallback";
+  font-family: "Inter Fallback";
   src: local("Arial"), local("Helvetica Neue"), local("sans-serif");
-  size-adjust: 101%;
-  ascent-override: 98%;
+  size-adjust: 100%;
+  ascent-override: 96%;
   descent-override: 24%;
 }
 
 :root {
-  color: var(--ink);
-  background: var(--bg);
+  color: var(--text-primary);
+  background: var(--bg-primary);
   font-family: var(--font-sans);
   font-size: 16px;
   font-synthesis: none;
@@ -20,7 +20,6 @@
 *::before,
 *::after {
   box-sizing: border-box;
-  border-radius: 0 !important;
 }
 
 body {
@@ -29,8 +28,8 @@ body {
   min-width: 320px;
   min-height: 100vh;
   overflow-x: clip;
-  color: var(--ink);
-  background: var(--bg);
+  color: var(--text-primary);
+  background: var(--bg-primary);
   font-family: var(--font-sans);
   font-size: var(--body-mobile);
   font-weight: 400;
@@ -96,13 +95,24 @@ pre,
   font-variant-numeric: tabular-nums;
 }
 
+.pf-hero-title {
+  margin: 0;
+  font-family: var(--font-display);
+  font-weight: 800;
+  font-size: var(--hero-size);
+  letter-spacing: -0.04em;
+  line-height: 0.98;
+  color: var(--text-primary);
+}
+
 .pf-page-title {
   margin: 0;
   font-family: var(--font-display);
   font-weight: 800;
   font-size: var(--title-size);
   letter-spacing: -0.03em;
-  line-height: 1;
+  line-height: 1.06;
+  color: var(--text-primary);
 }
 
 .pf-section-title {
@@ -110,25 +120,26 @@ pre,
   font-family: var(--font-display);
   font-weight: 700;
   font-size: var(--section-size);
-  letter-spacing: -0.02em;
-  line-height: 1.1;
+  letter-spacing: -0.025em;
+  line-height: 1.12;
+  color: var(--text-primary);
 }
 
 .pf-lead {
-  max-width: 62ch;
+  max-width: 60ch;
+  color: var(--text-secondary);
 }
 
 .pf-label,
 .eyebrow {
   margin: 0;
-  font-size: 13px;
+  font-size: 12px;
   font-weight: 700;
   text-transform: uppercase;
-  letter-spacing: 0.06em;
-  color: var(--muted);
+  letter-spacing: 0.08em;
+  color: var(--text-secondary);
 }
 
-/* Focus-visible: 3px --focus outline, 3px offset */
 button:focus-visible,
 a:focus-visible,
 textarea:focus-visible,
@@ -136,9 +147,8 @@ input:focus-visible,
 select:focus-visible,
 summary:focus-visible,
 [tabindex]:focus-visible {
-  outline: 3px solid var(--focus);
+  outline: 2px solid var(--focus);
   outline-offset: 3px;
-  box-shadow: none;
 }
 
 .sr-only {
@@ -159,14 +169,13 @@ summary:focus-visible,
   left: var(--space-16);
   z-index: 120;
   padding: 12px var(--space-24);
-  border: 2px solid var(--line);
-  background: var(--ink);
-  color: var(--bg);
-  font-family: var(--font-sans);
+  border-radius: var(--radius-pill);
+  background: var(--text-primary);
+  color: var(--surface);
   font-weight: 700;
   font-size: 13px;
-  letter-spacing: 0.06em;
   text-transform: uppercase;
+  letter-spacing: 0.06em;
   text-decoration: none;
 }
 
@@ -174,7 +183,6 @@ summary:focus-visible,
   top: var(--space-12);
 }
 
-/* Container Frame: max-width 1200px, side padding 48px desktop / 20px mobile */
 .pf-frame {
   position: relative;
   width: 100%;
@@ -191,4 +199,11 @@ summary:focus-visible,
 
 .pf-frame-content {
   position: relative;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after {
+    animation-duration: 0.01ms !important;
+    transition-duration: 0.01ms !important;
+  }
 }

@@ -18,8 +18,19 @@ createRoot(document.getElementById("root")!).render(
 
 if (typeof navigator !== "undefined" && "serviceWorker" in navigator) {
   window.addEventListener("load", () => {
-    void navigator.serviceWorker.register("/sw.js").catch(() => {
-      // Non-blocking: app continues without service worker if blocked
-    });
+    if (import.meta.env.PROD) {
+      void navigator.serviceWorker.register("/sw.js").catch(() => {
+        // Non-blocking: app continues without service worker if blocked
+      });
+    } else {
+      void navigator.serviceWorker.getRegistrations().then((regs) => {
+        for (const reg of regs) void reg.unregister();
+      });
+      if (typeof caches !== "undefined") {
+        void caches.keys().then((keys) => {
+          for (const k of keys) void caches.delete(k);
+        });
+      }
+    }
   });
 }

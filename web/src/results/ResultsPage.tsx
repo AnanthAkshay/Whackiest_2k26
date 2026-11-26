@@ -174,7 +174,7 @@ export function ResultsPage(): JSX.Element {
           <Card as="section" variant="lavender" className="rule-feedback" role="status">
             <div>
               <StatusMark tone="review" label="Pending human review" />
-              <p className="fineprint" style={{ margin: "8px 0 0", color: "#0B0B0B" }}>
+              <p className="fineprint" style={{ margin: "8px 0 0", color: "var(--text-primary)" }}>
                 {ecve.reviewExplanation} A reviewer will inspect the evidence before finalizing your outcome.
               </p>
             </div>
