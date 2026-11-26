@@ -1,0 +1,594 @@
+/* Aceternity UI Adapted Primitives — Warm Editorial + Emerald + Glass */
+
+/* 1. Aurora Background */
+.ac-aurora-wrap {
+  position: relative;
+  overflow: hidden;
+}
+
+.ac-aurora-layer {
+  position: absolute;
+  inset: -25%;
+  pointer-events: none;
+  z-index: 0;
+  opacity: 0.7;
+  background-image:
+    radial-gradient(60% 50% at 22% 28%, rgba(16, 185, 129, 0.14) 0%, transparent 70%),
+    radial-gradient(55% 45% at 78% 24%, rgba(203, 213, 225, 0.65) 0%, transparent 72%),
+    radial-gradient(50% 45% at 62% 76%, rgba(59, 130, 246, 0.08) 0%, transparent 70%);
+  filter: blur(42px);
+  transform: translate3d(0, 0, 0);
+  animation: acAuroraDrift 18s ease-in-out infinite alternate;
+}
+
+:root[data-theme="dark"] .ac-aurora-layer {
+  opacity: 0.6;
+  background-image:
+    radial-gradient(60% 50% at 22% 28%, rgba(52, 211, 153, 0.14) 0%, transparent 70%),
+    radial-gradient(55% 45% at 78% 24%, rgba(30, 41, 59, 0.65) 0%, transparent 72%),
+    radial-gradient(50% 45% at 62% 76%, rgba(59, 130, 246, 0.09) 0%, transparent 70%);
+}
+
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"]) .ac-aurora-layer {
+    opacity: 0.6;
+    background-image:
+      radial-gradient(60% 50% at 22% 28%, rgba(52, 211, 153, 0.14) 0%, transparent 70%),
+      radial-gradient(55% 45% at 78% 24%, rgba(30, 41, 59, 0.65) 0%, transparent 72%),
+      radial-gradient(50% 45% at 62% 76%, rgba(59, 130, 246, 0.09) 0%, transparent 70%);
+  }
+}
+
+@keyframes acAuroraDrift {
+  0% { transform: translate3d(-2%, -1%, 0) scale(1); }
+  50% { transform: translate3d(2%, 2%, 0) scale(1.04); }
+  100% { transform: translate3d(-1%, 1%, 0) scale(1.01); }
+}
+
+/* 2. Spotlight */
+.ac-spotlight {
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  z-index: 0;
+  background: radial-gradient(
+    480px circle at var(--spot-x, 72%) var(--spot-y, 26%),
+    rgba(39, 199, 111, 0.10),
+    transparent 68%
+  );
+  transition: opacity 0.3s ease;
+}
+
+:root[data-theme="dark"] .ac-spotlight {
+  background: radial-gradient(
+    520px circle at var(--spot-x, 72%) var(--spot-y, 26%),
+    rgba(66, 217, 130, 0.12),
+    transparent 68%
+  );
+}
+
+/* 3. Text Generate Effect */
+.ac-text-gen-word {
+  display: inline-block;
+  opacity: 0;
+  transform: translateY(8px);
+  animation: acWordReveal 0.45s cubic-bezier(0.22, 1, 0.36, 1) forwards;
+  animation-delay: calc(var(--word-i, 0) * 55ms);
+}
+
+@keyframes acWordReveal {
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+/* 4. 3D Card Effect */
+.ac-3d-perspective {
+  perspective: 1100px;
+}
+
+.ac-3d-body {
+  position: relative;
+  transform-style: preserve-3d;
+  transition: transform 0.24s cubic-bezier(0.22, 1, 0.36, 1);
+  will-change: transform;
+}
+
+.ac-3d-item {
+  transition: transform 0.24s cubic-bezier(0.22, 1, 0.36, 1);
+  transform-style: preserve-3d;
+}
+
+/* 5. Glare Card */
+.ac-glare-card {
+  position: relative;
+  overflow: hidden;
+  border-radius: var(--radius-xl);
+}
+
+.ac-glare-overlay {
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  z-index: 3;
+  opacity: var(--glare-opacity, 0);
+  background: radial-gradient(
+    360px circle at var(--glare-x, 50%) var(--glare-y, 50%),
+    rgba(255, 255, 255, 0.26),
+    rgba(255, 255, 255, 0.06) 40%,
+    transparent 72%
+  );
+  transition: opacity 0.28s ease;
+}
+
+:root[data-theme="dark"] .ac-glare-overlay {
+  background: radial-gradient(
+    360px circle at var(--glare-x, 50%) var(--glare-y, 50%),
+    rgba(255, 255, 255, 0.14),
+    rgba(66, 217, 130, 0.06) 42%,
+    transparent 72%
+  );
+}
+
+/* 6. Moving Border */
+.ac-moving-border-wrap {
+  position: relative;
+  display: inline-flex;
+  padding: 2px;
+  border-radius: var(--radius-pill);
+  overflow: hidden;
+  background: var(--border);
+}
+
+.ac-moving-border-spin {
+  position: absolute;
+  inset: -120%;
+  background: conic-gradient(
+    from 0deg,
+    transparent 0deg 260deg,
+    var(--accent) 305deg,
+    var(--accent-hover) 340deg,
+    transparent 360deg
+  );
+  animation: acBorderSpin 4.5s linear infinite;
+  pointer-events: none;
+}
+
+.ac-moving-border-inner {
+  position: relative;
+  z-index: 1;
+  border-radius: var(--radius-pill);
+}
+
+@keyframes acBorderSpin {
+  to { transform: rotate(360deg); }
+}
+
+/* 7. Glowing Effect */
+.ac-glow-card {
+  position: relative;
+}
+
+.ac-glow-ring {
+  position: absolute;
+  inset: -1px;
+  border-radius: inherit;
+  padding: 1.5px;
+  pointer-events: none;
+  z-index: 2;
+  opacity: var(--glow-opacity, 0);
+  background: radial-gradient(
+    260px circle at var(--glow-x, 50%) var(--glow-y, 50%),
+    rgba(39, 199, 111, 0.65),
+    rgba(39, 199, 111, 0.18) 45%,
+    transparent 75%
+  );
+  -webkit-mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
+  -webkit-mask-composite: xor;
+  mask-composite: exclude;
+  transition: opacity 0.25s ease;
+}
+
+/* 8. Tracing Beam */
+.ac-tracing-beam-wrap {
+  position: relative;
+  display: grid;
+  grid-template-columns: 28px minmax(0, 1fr);
+  gap: var(--space-16);
+}
+
+@media (min-width: 768px) {
+  .ac-tracing-beam-wrap {
+    grid-template-columns: 40px minmax(0, 1fr);
+    gap: var(--space-24);
+  }
+}
+
+.ac-tracing-rail {
+  position: relative;
+  display: flex;
+  justify-content: center;
+  padding-top: 12px;
+}
+
+.ac-tracing-track {
+  position: relative;
+  width: 3px;
+  height: 100%;
+  border-radius: var(--radius-pill);
+  background: var(--border);
+  overflow: hidden;
+}
+
+.ac-tracing-fill {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: linear-gradient(180deg, var(--accent) 0%, var(--accent-hover) 100%);
+  transform-origin: top center;
+  transition: transform 0.12s ease-out;
+}
+
+.ac-tracing-dot {
+  position: sticky;
+  top: 120px;
+  width: 16px;
+  height: 16px;
+  margin-left: -6.5px;
+  border-radius: var(--radius-pill);
+  border: 2px solid var(--accent);
+  background: var(--surface);
+  box-shadow: 0 0 0 4px rgba(39, 199, 111, 0.16);
+  z-index: 2;
+}
+
+/* 9. Bento Grid */
+.ac-bento-grid {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr);
+  gap: var(--space-16);
+}
+
+@media (min-width: 768px) {
+  .ac-bento-grid {
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+  }
+  .ac-bento-span-2 {
+    grid-column: span 2;
+  }
+}
+
+/* 10. Animated Tabs */
+.ac-tabs {
+  display: inline-flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 4px;
+  padding: 4px;
+  border-radius: var(--radius-pill);
+  border: 1px solid var(--glass-border-subtle);
+  background: var(--glass-bg);
+  backdrop-filter: blur(14px);
+  -webkit-backdrop-filter: blur(14px);
+  max-width: 100%;
+}
+
+.ac-tab-btn {
+  position: relative;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+  min-height: 38px;
+  padding: 6px 14px;
+  border: 0;
+  border-radius: var(--radius-pill);
+  background: transparent;
+  color: var(--text-secondary);
+  font-size: 13px;
+  font-weight: 600;
+  transition: color 0.18s ease, background-color 0.2s ease;
+  z-index: 1;
+}
+
+.ac-tab-btn:hover {
+  color: var(--text-primary);
+}
+
+.ac-tab-btn.is-active {
+  background: var(--text-primary);
+  color: var(--surface);
+  box-shadow: var(--shadow-sm);
+}
+
+/* 11. Focus Cards */
+.ac-focus-card {
+  transition: transform 0.24s cubic-bezier(0.22, 1, 0.36, 1), opacity 0.24s ease, filter 0.24s ease;
+}
+
+.ac-focus-grid.has-focus .ac-focus-card:not(.is-focused) {
+  opacity: 0.72;
+}
+
+.ac-focus-card.is-focused {
+  transform: translateY(-3px);
+}
+
+/* 12. 3D Pin Badge */
+.ac-pin-wrap {
+  position: relative;
+  display: inline-flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+.ac-pin-pill {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 5px 12px;
+  border-radius: var(--radius-pill);
+  border: 1px solid var(--glass-border);
+  background: var(--glass-bg-strong);
+  backdrop-filter: blur(16px);
+  -webkit-backdrop-filter: blur(16px);
+  box-shadow: var(--glass-shadow);
+  font-size: 12px;
+  font-weight: 700;
+  color: var(--text-primary);
+  transform: translateY(0);
+  transition: transform 0.22s ease;
+}
+
+.ac-pin-wrap:hover .ac-pin-pill {
+  transform: translateY(-3px);
+}
+
+.ac-pin-stem {
+  width: 2px;
+  height: 12px;
+  background: linear-gradient(180deg, var(--accent), transparent);
+}
+
+.ac-pin-dot {
+  width: 6px;
+  height: 6px;
+  border-radius: var(--radius-pill);
+  background: var(--accent);
+}
+
+/* 13. Multi Step Loader */
+.ac-multi-loader {
+  display: grid;
+  gap: 10px;
+  padding: var(--space-16);
+  border-radius: var(--radius-lg);
+  border: 1px solid var(--glass-border);
+  background: var(--glass-bg-strong);
+  backdrop-filter: blur(var(--glass-blur));
+  -webkit-backdrop-filter: blur(var(--glass-blur));
+}
+
+.ac-multi-step {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  font-size: 14px;
+  color: var(--text-secondary);
+  transition: color 0.2s ease, transform 0.2s ease;
+}
+
+.ac-multi-step.is-done {
+  color: var(--success);
+  font-weight: 600;
+}
+
+.ac-multi-step.is-active {
+  color: var(--text-primary);
+  font-weight: 700;
+}
+
+/* Fallbacks & Reduced Motion */
+@supports not ((backdrop-filter: blur(1px)) or (-webkit-backdrop-filter: blur(1px))) {
+  .ac-tabs,
+  .ac-pin-pill,
+  .ac-multi-loader {
+    background: var(--glass-fallback);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .ac-aurora-layer,
+  .ac-moving-border-spin,
+  .ac-beam-path {
+    animation: none !important;
+  }
+  .ac-text-gen-word {
+    opacity: 1 !important;
+    transform: none !important;
+    animation: none !important;
+  }
+  .ac-3d-body,
+  .ac-3d-item,
+  .ac-focus-card,
+  .ac-macbook-screen {
+    transform: none !important;
+    transition: none !important;
+  }
+}
+
+/* 14. Background Beams */
+.ac-beams-wrap {
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  z-index: 0;
+  overflow: hidden;
+}
+
+.ac-beams-svg {
+  width: 100%;
+  height: 100%;
+  opacity: 0.75;
+}
+
+.ac-beam-path {
+  stroke-dasharray: 240 160;
+  animation: acBeamFlow 14s linear infinite;
+}
+
+.ac-beam-path--2 { animation-duration: 18s; animation-direction: reverse; }
+.ac-beam-path--3 { animation-duration: 22s; }
+
+@keyframes acBeamFlow {
+  to { stroke-dashoffset: -800; }
+}
+
+/* 15. Macbook Scroll Showcase */
+.ac-macbook-wrap {
+  display: grid;
+  gap: var(--space-24);
+  perspective: 1200px;
+}
+
+.ac-macbook-head {
+  text-align: center;
+  max-width: 680px;
+  margin: 0 auto;
+}
+
+.ac-macbook-stage {
+  display: grid;
+  justify-items: center;
+}
+
+.ac-macbook-screen {
+  width: 100%;
+  max-width: 960px;
+  border-radius: 22px 22px 12px 12px;
+  border: 1px solid rgba(255, 255, 255, 0.14);
+  background: #111318;
+  padding: 14px;
+  box-shadow: 0 28px 70px rgba(11, 13, 16, 0.26);
+  transform-origin: bottom center;
+  transition: transform 0.18s ease-out;
+}
+
+.ac-macbook-notch {
+  width: 88px;
+  height: 12px;
+  margin: 0 auto 10px;
+  border-radius: 0 0 10px 10px;
+  background: #121411;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.ac-macbook-cam {
+  width: 5px;
+  height: 5px;
+  border-radius: 9999px;
+  background: #343B32;
+}
+
+.ac-macbook-content {
+  border-radius: 12px;
+  background: var(--bg-primary);
+  color: var(--text-primary);
+  padding: var(--space-24);
+  overflow: hidden;
+}
+
+.ac-macbook-base {
+  width: 96%;
+  max-width: 1020px;
+  height: 14px;
+  border-radius: 0 0 14px 14px;
+  background: linear-gradient(180deg, #D8D2C7, #BEB7AA);
+  display: flex;
+  justify-content: center;
+}
+
+:root[data-theme="dark"] .ac-macbook-base {
+  background: linear-gradient(180deg, #343B32, #222720);
+}
+
+.ac-macbook-lip {
+  width: 96px;
+  height: 5px;
+  border-radius: 0 0 6px 6px;
+  background: rgba(18, 20, 17, 0.22);
+}
+
+/* 16. Evervault Card */
+.ac-evervault-wrap {
+  position: relative;
+  border-radius: var(--radius-xl);
+  overflow: hidden;
+}
+
+.ac-evervault-matrix {
+  position: absolute;
+  inset: 0;
+  padding: var(--space-16);
+  font-family: var(--font-mono);
+  font-size: 12px;
+  line-height: 1.5;
+  word-break: break-all;
+  color: var(--accent);
+  opacity: var(--ev-opacity, 0);
+  pointer-events: none;
+  z-index: 0;
+  -webkit-mask-image: radial-gradient(240px circle at var(--ev-x, 50%) var(--ev-y, 50%), #000 10%, transparent 75%);
+  mask-image: radial-gradient(240px circle at var(--ev-x, 50%) var(--ev-y, 50%), #000 10%, transparent 75%);
+  transition: opacity 0.25s ease;
+}
+
+.ac-evervault-body {
+  position: relative;
+  z-index: 1;
+}
+
+/* 17. Card Stack */
+.ac-card-stack-wrap {
+  display: grid;
+  gap: var(--space-16);
+  justify-items: start;
+}
+
+.ac-card-stack {
+  position: relative;
+  width: 100%;
+  min-height: 185px;
+}
+
+.ac-card-stack-item {
+  position: absolute;
+  inset: 0 0 auto 0;
+  padding: var(--space-24);
+  border-radius: var(--radius-lg);
+  transition: transform 0.28s cubic-bezier(0.22, 1, 0.36, 1), opacity 0.28s ease;
+}
+
+.ac-card-stack-head {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--space-8);
+  margin-bottom: 8px;
+}
+
+.ac-card-stack-title {
+  margin: 0 0 8px;
+  font-size: 1.15rem;
+  font-weight: 700;
+}
+
+.ac-card-stack-body {
+  color: var(--text-secondary);
+  font-size: 15px;
+}
