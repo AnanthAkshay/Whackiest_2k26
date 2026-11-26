@@ -1,5 +1,6 @@
 import { Link } from "react-router-dom";
 import { useTranslation } from "../i18n";
+import { Stepper } from "./ui";
 
 export type JourneyStageKey =
   | "welcome"
@@ -34,24 +35,19 @@ export function JourneyNav({ activeStage }: { activeStage: JourneyStageKey }): J
           {t("navOpportunities")}
         </Link>
       </div>
-      <nav className="journey-pill-stack" aria-label={t("journeyNavLabel")}>
-        {STAGES.map((stage) => {
-          const isCurrent =
+      <Stepper
+        variant="pills"
+        ariaLabel={t("journeyNavLabel")}
+        items={STAGES.map((stage) => ({
+          key: stage.key,
+          label: stage.label,
+          to: stage.to,
+          active:
             stage.key === activeStage ||
             (stage.key === "demonstrate" && activeStage === "validation") ||
-            (stage.key === "explain" && activeStage === "results");
-          return (
-            <Link
-              key={stage.key}
-              to={stage.to}
-              className={"journey-pill" + (isCurrent ? " active" : "")}
-              aria-current={isCurrent ? "step" : undefined}
-            >
-              {stage.label}
-            </Link>
-          );
-        })}
-      </nav>
+            (stage.key === "explain" && activeStage === "results")
+        }))}
+      />
     </header>
   );
 }
