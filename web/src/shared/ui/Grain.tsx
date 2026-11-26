@@ -1,8 +1,3 @@
-export function Grain({ fixed = false }: { fixed?: boolean }): JSX.Element {
-  return (
-    <div
-      className={"pf-grain" + (fixed ? " pf-grain--fixed" : "")}
-      aria-hidden="true"
-    />
-  );
+export function Grain(_props: { fixed?: boolean }): JSX.Element | null {
+  return null;
 }

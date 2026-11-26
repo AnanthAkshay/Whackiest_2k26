@@ -1,22 +1,14 @@
 @font-face {
-  font-family: "DM Sans Fallback";
+  font-family: "Manrope Fallback";
   src: local("Arial"), local("Helvetica Neue"), local("sans-serif");
-  size-adjust: 100%;
-  ascent-override: 93%;
+  size-adjust: 101%;
+  ascent-override: 98%;
   descent-override: 24%;
-}
-
-@font-face {
-  font-family: "Lato Fallback";
-  src: local("Arial"), local("Helvetica Neue"), local("sans-serif");
-  size-adjust: 97%;
-  ascent-override: 96%;
-  descent-override: 22%;
 }
 
 :root {
   color: var(--ink);
-  background: var(--page-from);
+  background: var(--bg);
   font-family: var(--font-sans);
   font-size: 16px;
   font-synthesis: none;
@@ -28,6 +20,7 @@
 *::before,
 *::after {
   box-sizing: border-box;
+  border-radius: 0 !important;
 }
 
 body {
@@ -37,25 +30,40 @@ body {
   min-height: 100vh;
   overflow-x: clip;
   color: var(--ink);
-  background: linear-gradient(180deg, var(--page-from) 0%, var(--page-to) 100%);
+  background: var(--bg);
   font-family: var(--font-sans);
-  font-size: 1rem;
+  font-size: var(--body-mobile);
   font-weight: 400;
   line-height: var(--leading-body);
+}
+
+@media (min-width: 768px) {
+  body {
+    font-size: var(--body-desktop);
+  }
 }
 
 :lang(hi),
 :lang(kn),
 :lang(hi) *,
 :lang(kn) * {
-  line-height: 1.6;
+  line-height: 1.7;
 }
 
 :lang(hi) h1,
 :lang(kn) h1,
-:lang(hi) .hero-headline,
-:lang(kn) .hero-headline {
+:lang(hi) .pf-page-title,
+:lang(kn) .pf-page-title {
   line-height: 1.25;
+}
+
+:lang(hi) .pf-label,
+:lang(kn) .pf-label,
+:lang(hi) .eyebrow,
+:lang(kn) .eyebrow {
+  text-transform: none;
+  letter-spacing: 0;
+  line-height: 1.7;
 }
 
 #root {
@@ -81,7 +89,46 @@ pre,
   font-family: var(--font-mono);
 }
 
-/* Focus-visible: 2px ink outline, 3px offset, plus 1px white inner ring */
+.tabular-nums,
+.pf-numeral {
+  font-family: var(--font-numeral);
+  font-weight: 800;
+  font-variant-numeric: tabular-nums;
+}
+
+.pf-page-title {
+  margin: 0;
+  font-family: var(--font-display);
+  font-weight: 800;
+  font-size: var(--title-size);
+  letter-spacing: -0.03em;
+  line-height: 1;
+}
+
+.pf-section-title {
+  margin: 0;
+  font-family: var(--font-display);
+  font-weight: 700;
+  font-size: var(--section-size);
+  letter-spacing: -0.02em;
+  line-height: 1.1;
+}
+
+.pf-lead {
+  max-width: 62ch;
+}
+
+.pf-label,
+.eyebrow {
+  margin: 0;
+  font-size: 13px;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+  color: var(--muted);
+}
+
+/* Focus-visible: 3px --focus outline, 3px offset */
 button:focus-visible,
 a:focus-visible,
 textarea:focus-visible,
@@ -89,9 +136,9 @@ input:focus-visible,
 select:focus-visible,
 summary:focus-visible,
 [tabindex]:focus-visible {
-  outline: 2px solid var(--ink);
+  outline: 3px solid var(--focus);
   outline-offset: 3px;
-  box-shadow: 0 0 0 1px var(--pure-white);
+  box-shadow: none;
 }
 
 .sr-only {
@@ -108,96 +155,40 @@ summary:focus-visible,
 
 .skip-to-content {
   position: fixed;
-  top: -100px;
+  top: -120px;
   left: var(--space-16);
   z-index: 120;
-  padding: 10px var(--space-16);
-  border-radius: var(--r-control);
+  padding: 12px var(--space-24);
+  border: 2px solid var(--line);
   background: var(--ink);
-  color: var(--pure-white);
+  color: var(--bg);
   font-family: var(--font-sans);
   font-weight: 700;
-  font-size: 0.8125rem;
-  letter-spacing: 0.08em;
+  font-size: 13px;
+  letter-spacing: 0.06em;
   text-transform: uppercase;
   text-decoration: none;
-  transition: top 0.15s ease;
 }
 
 .skip-to-content:focus {
   top: var(--space-12);
 }
 
-/* Grain layer */
-.pf-grain {
-  position: absolute;
-  inset: 0;
-  pointer-events: none;
-  z-index: 0;
-  opacity: var(--grain-opacity);
-  mix-blend-mode: var(--grain-blend);
-  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='160' height='160' viewBox='0 0 160 160'%3E%3Cfilter id='g'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.8' numOctaves='2' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='160' height='160' filter='url(%23g)' opacity='1'/%3E%3C/svg%3E");
-  background-repeat: repeat;
-}
-
-.pf-grain--fixed {
-  position: fixed;
-}
-
-/* Outer Frame */
+/* Container Frame: max-width 1200px, side padding 48px desktop / 20px mobile */
 .pf-frame {
   position: relative;
-  width: calc(100% - 24px);
+  width: 100%;
   max-width: var(--layout-max);
-  margin: var(--space-12) auto;
-  border-radius: var(--r-frame);
-  background: linear-gradient(180deg, var(--frame-top) 0%, var(--frame-bottom) 100%);
-  border: 1px solid var(--line);
-  box-shadow: var(--frame-inset);
-  overflow-x: clip;
+  margin: 0 auto;
+  padding: 0 var(--gutter-mobile);
 }
 
 @media (min-width: 768px) {
   .pf-frame {
-    width: calc(100% - 48px);
-    margin: var(--space-24) auto;
+    padding: 0 var(--gutter-desktop);
   }
-}
-
-.pf-frame-pattern {
-  position: absolute;
-  top: 0;
-  left: 0;
-  right: 0;
-  height: 240px;
-  pointer-events: none;
-  z-index: 0;
-  background-image: url("../assets/pattern.svg");
-  background-repeat: repeat;
-  background-size: 64px 64px;
-  -webkit-mask-image: linear-gradient(180deg, rgba(0, 0, 0, 1) 0%, rgba(0, 0, 0, 0) 100%);
-  mask-image: linear-gradient(180deg, rgba(0, 0, 0, 1) 0%, rgba(0, 0, 0, 0) 100%);
 }
 
 .pf-frame-content {
   position: relative;
-  z-index: 1;
-}
-
-/* Ghost Numeral Utility (landing hero, error/empty states, behind results score only) */
-.ghost-numeral {
-  position: absolute;
-  top: -0.1em;
-  right: 0.04em;
-  z-index: 0;
-  font-family: var(--font-numeral);
-  font-size: clamp(14rem, 40vw, 34rem);
-  font-weight: 600;
-  line-height: 0.85;
-  color: var(--ink);
-  opacity: 0.06;
-  pointer-events: none;
-  user-select: none;
-  -webkit-mask-image: linear-gradient(180deg, rgba(0, 0, 0, 1) 35%, rgba(0, 0, 0, 0) 100%);
-  mask-image: linear-gradient(180deg, rgba(0, 0, 0, 1) 35%, rgba(0, 0, 0, 0) 100%);
 }

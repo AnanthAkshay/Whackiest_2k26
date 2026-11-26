@@ -1,17 +1,21 @@
-import { Check, Minus, Warning, X } from "@phosphor-icons/react";
-
 export type StatusTone = "ok" | "warn" | "bad" | "review" | "neutral";
 
 export function StatusMark({
   tone = "neutral",
-  size = 16
+  label,
 }: {
   tone?: StatusTone;
   size?: number;
+  label?: string;
 }): JSX.Element {
-  const cls = `pf-status-mark pf-status-mark--${tone}`;
-  if (tone === "ok") return <Check size={size} weight="regular" className={cls} aria-hidden="true" />;
-  if (tone === "warn") return <Warning size={size} weight="regular" className={cls} aria-hidden="true" />;
-  if (tone === "bad") return <X size={size} weight="regular" className={cls} aria-hidden="true" />;
-  return <Minus size={size} weight="regular" className={cls} aria-hidden="true" />;
+  const sqClass = `pf-status-square pf-status-square--${tone}`;
+  if (!label) {
+    return <span className={sqClass} aria-hidden="true" />;
+  }
+  return (
+    <span className="pf-status-mark-wrap">
+      <span className={sqClass} aria-hidden="true" />
+      <span>{label}</span>
+    </span>
+  );
 }

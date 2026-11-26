@@ -1,40 +1,38 @@
 :root {
   color-scheme: light dark;
 
-  /* Monochrome Reference Palette */
-  --page-from: #E8E8E8;
-  --page-to: #F3F3F3;
-  --frame-top: #C8C8C8;
-  --frame-bottom: #F6F6F6;
-  --ink: #151515;
-  --muted: #4A4A4A;
-  --line: rgba(21, 21, 21, 0.10);
-  --line-strong: rgba(21, 21, 21, 0.22);
+  /* Kōhaku Editorial Palette — Paper & Ink */
+  --bg: #F4F0E4;
+  --surface: #FCFAF3;
+  --surface-2: #EDE9DC;
+  --ink: #0B0B0B;
+  --muted: #5B574E;
+  --line: #0B0B0B;
+  --line-soft: rgba(11, 11, 11, 0.25);
+  --lavender: #B9A9D4;
+  --focus: #1B1B4B;
 
-  /* Desaturated Semantic Tones (text + 3px left rule only) */
-  --ok: #2E6B4F;
-  --warn: #9A6A14;
-  --bad: #A33F2E;
-  --review: #46526B;
+  /* Dark Section Surfaces (Hero, Passport, Viva Session) */
+  --dark-bg: #0B0B0B;
+  --dark-ink: #F4F0E4;
+  --dark-muted: #B8B3A6;
+  --dark-line: rgba(244, 240, 228, 0.28);
 
-  /* Surfaces & Credential Accents */
-  --silver: #B8B8B8;
-  --graphite: #2A2A2A;
-  --surface-card: rgba(255, 255, 255, 0.35);
-  --surface-solid: #F6F6F6;
-  --pure-white: #FFFFFF;
-  --btn-white-hover: #F0F0F0;
-  --grain-opacity: 0.35;
-  --grain-blend: multiply;
+  /* Semantic Status Tones (AA on --bg & --surface) */
+  --ok: #1F5B3F;
+  --warn: #7A520B;
+  --bad: #932D22;
+  --review: #3C315B;
 
-  /* Radii by Role */
-  --r-frame: 28px;
-  --r-card: 14px;
-  --r-control: 8px;
-  --r-chip: 6px;
+  /* Zero Radius Everywhere */
+  --r-none: 0px;
+  --r-frame: 0px;
+  --r-card: 0px;
+  --r-control: 0px;
+  --r-chip: 0px;
 
-  /* Only inset highlight allowed on frame top edge; no drop shadows */
-  --frame-inset: inset 0 1px 0 rgba(255, 255, 255, 0.6);
+  /* No Drop Shadows */
+  --shadow-none: none;
 
   /* Spacing Scale (4/8 base) */
   --space-4: 4px;
@@ -45,114 +43,106 @@
   --space-32: 32px;
   --space-48: 48px;
   --space-64: 64px;
-
-  /* Typography */
-  --font-display: "DM Sans", "Noto Sans Devanagari", "Noto Sans Kannada", "DM Sans Fallback", ui-sans-serif, system-ui, sans-serif;
-  --font-sans: "Lato", "Noto Sans Devanagari", "Noto Sans Kannada", "Lato Fallback", ui-sans-serif, system-ui, sans-serif;
-  --font-numeral: "Chakra Petch", "Noto Sans Devanagari", "Noto Sans Kannada", ui-sans-serif, system-ui, sans-serif;
-  --font-mono: "JetBrains Mono", ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
-
-  --headline-size: clamp(2.2rem, 6vw, 4rem);
-  --headline-tracking: -0.04em;
-  --headline-leading: 1.02;
-  --leading-body: 1.55;
+  --space-96: 96px;
 
   /* Layout & Touch Targets */
-  --layout-max: 1120px;
+  --layout-max: 1200px;
+  --gutter-desktop: 48px;
+  --gutter-mobile: 20px;
   --tap-min: 44px;
+  --control-height: 48px;
+  --input-height: 56px;
 
-  /* Transition aliases for Phase B-F pages */
-  --bg: var(--frame-bottom);
-  --surface: var(--surface-card);
-  --surface-subtle: var(--surface-solid);
-  --lav-100: var(--surface-card);
-  --lav-300: var(--line-strong);
-  --lav-500: var(--ink);
-  --violet: var(--ink);
-  --ok-bg: transparent;
+  /* Typography */
+  --font-sans: "Manrope", "Noto Sans Devanagari", "Noto Sans Kannada", "Manrope Fallback", ui-sans-serif, system-ui, -apple-system, sans-serif;
+  --font-display: var(--font-sans);
+  --font-numeral: var(--font-sans);
+  --font-mono: "JetBrains Mono", ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
+
+  --title-size: clamp(3rem, 9vw, 7rem);
+  --section-size: clamp(1.75rem, 4vw, 2.75rem);
+  --body-desktop: 20px;
+  --body-mobile: 18px;
+  --leading-body: 1.6;
+
+  /* Compatibility Aliases for Existing Pages */
+  --pure-white: #FCFAF3;
+  --surface-solid: var(--surface);
+  --surface-card: var(--surface);
+  --surface-subtle: var(--surface-2);
+  --line-strong: var(--line);
+  --cream-ink: #F4F0E4;
   --ok-ink: var(--ok);
-  --warn-bg: transparent;
   --warn-ink: var(--warn);
-  --bad-bg: transparent;
   --bad-ink: var(--bad);
-  --review-bg: transparent;
   --review-ink: var(--review);
-  --btn-primary-bg: var(--ink);
-  --btn-primary-ink: var(--pure-white);
-  --btn-secondary-bg: transparent;
-  --btn-secondary-ink: var(--ink);
-  --dock-bg: var(--surface-solid);
+  --ok-bright: #8FD3AF;
+  --muted-light: #B8B3A6;
+  --topbar-bg: var(--surface);
+  --dock-bg: var(--surface);
   --dock-ink: var(--ink);
   --dock-muted: var(--muted);
-  --surface-light: var(--pure-white);
-  --cream-ink: #EDEDED;
-  --dark-ink: #151515;
-  --muted-light: var(--silver);
-  --ok-bright: #68B891;
-  --topbar-bg: var(--frame-top);
-  --focus-ring: var(--ink);
-  --radius-sm: var(--r-chip);
-  --radius-md: var(--r-card);
-  --radius-lg: var(--r-card);
-  --radius-pill: var(--r-control);
+  --btn-primary-bg: var(--surface);
+  --btn-primary-ink: var(--ink);
+  --btn-dark-bg: var(--ink);
+  --btn-dark-ink: var(--bg);
+  --radius-sm: 0px;
+  --radius-md: 0px;
+  --radius-lg: 0px;
+  --radius-pill: 0px;
   --shadow-sm: none;
   --shadow-soft: none;
   --shadow-float: none;
   --space-1: var(--space-4);
   --space-2: var(--space-8);
   --space-3: var(--space-12);
-  --space-4: var(--space-16);
   --space-6: var(--space-24);
-  --space-8: var(--space-32);
-  --space-12: var(--space-48);
-  --tracking-tight: var(--headline-tracking);
-  --display-size: var(--headline-size);
 }
 
 @media (prefers-color-scheme: dark) {
   :root:not([data-theme="light"]) {
-    --page-from: #111111;
-    --page-to: #111111;
-    --frame-top: #2B2B2B;
-    --frame-bottom: #161616;
-    --ink: #EDEDED;
-    --muted: #B5B5B5;
-    --line: rgba(237, 237, 237, 0.12);
-    --line-strong: rgba(237, 237, 237, 0.26);
-
-    --ok: #68B891;
-    --warn: #D9A441;
-    --bad: #DF7B6A;
-    --review: #92A4C7;
-
-    --surface-card: rgba(255, 255, 255, 0.04);
-    --surface-solid: #1B1B1B;
-    --btn-white-hover: #E6E6E6;
-    --grain-opacity: 0.14;
-    --grain-blend: screen;
-    --frame-inset: inset 0 1px 0 rgba(255, 255, 255, 0.12);
+    --bg: #14130F;
+    --surface: #1B1A15;
+    --surface-2: #25231D;
+    --ink: #F4F0E4;
+    --muted: #B8B3A6;
+    --line: #F4F0E4;
+    --line-soft: rgba(244, 240, 228, 0.25);
+    --lavender: #B9A9D4;
+    --focus: #B9A9D4;
+    --ok: #8FD3AF;
+    --warn: #E2BE74;
+    --bad: #EB9A90;
+    --review: #C7BBE0;
+    --pure-white: #1B1A15;
+    --btn-primary-bg: var(--surface);
+    --btn-primary-ink: var(--ink);
+    --btn-dark-bg: var(--ink);
+    --btn-dark-ink: var(--bg);
   }
 }
 
 :root[data-theme="dark"] {
-  --page-from: #111111;
-  --page-to: #111111;
-  --frame-top: #2B2B2B;
-  --frame-bottom: #161616;
-  --ink: #EDEDED;
-  --muted: #B5B5B5;
-  --line: rgba(237, 237, 237, 0.12);
-  --line-strong: rgba(237, 237, 237, 0.26);
+  --bg: #14130F;
+  --surface: #1B1A15;
+  --surface-2: #25231D;
+  --ink: #F4F0E4;
+  --muted: #B8B3A6;
+  --line: #F4F0E4;
+  --line-soft: rgba(244, 240, 228, 0.25);
+  --lavender: #B9A9D4;
+  --focus: #B9A9D4;
+  --ok: #8FD3AF;
+  --warn: #E2BE74;
+  --bad: #EB9A90;
+  --review: #C7BBE0;
+  --pure-white: #1B1A15;
+  --btn-primary-bg: var(--surface);
+  --btn-primary-ink: var(--ink);
+  --btn-dark-bg: var(--ink);
+  --btn-dark-ink: var(--bg);
+}
 
-  --ok: #68B891;
-  --warn: #D9A441;
-  --bad: #DF7B6A;
-  --review: #92A4C7;
-
-  --surface-card: rgba(255, 255, 255, 0.04);
-  --surface-solid: #1B1B1B;
-  --btn-white-hover: #E6E6E6;
-  --grain-opacity: 0.14;
-  --grain-blend: screen;
-  --frame-inset: inset 0 1px 0 rgba(255, 255, 255, 0.12);
+:root[data-theme="light"] {
+  color-scheme: light;
 }
