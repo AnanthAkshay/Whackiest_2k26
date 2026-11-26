@@ -406,6 +406,7 @@ function SessionExperience(): JSX.Element {
 
   return (
     <main className="shell viva-shell">
+      <div className="pf-frame">
       <div className="sr-only" aria-live="polite" aria-atomic="true">
         {stateLabel}
         {showTextEntry ? " — Text chat mode" : ""}
@@ -413,7 +414,7 @@ function SessionExperience(): JSX.Element {
 
       <div className="viva-topbar-meta">
         <div className="viva-badges">
-          {isDemo && <span className="eyebrow">{t("replayBadge")}</span>}
+          {isDemo && <span className="pf-label">{t("replayBadge")}</span>}
           <span className="pf-chip">{t(languageKeys[session.language ?? language])}</span>
           <span className="pf-chip pf-chip--review">{t("onlineOnlyBadge")}</span>
           <button type="button" className="hero-plain-link" onClick={() => setFactSheetOpen(true)}>
@@ -429,7 +430,7 @@ function SessionExperience(): JSX.Element {
         </p>
       )}
 
-      {/* Provisional Confidence Meter: 2px horizontal rule with marker */}
+      {/* Provisional Confidence Meter: 2px horizontal rule with square marker */}
       <div className="provisional-meter" aria-label={`Provisional score ${confidenceVal}%, not final`}>
         <div className="provisional-meter-head">
           <span className="fineprint">Provisional score, not final</span>
@@ -441,7 +442,7 @@ function SessionExperience(): JSX.Element {
       </div>
 
       {!showTextEntry ? (
-        <section className="viva-voice-stage" aria-label={t("sessionTitle")}>
+        <section className="viva-voice-stage viva-voice-dark" aria-label={t("sessionTitle")}>
           {agentText && (
             <div className="viva-question-wrap">
               <h1 className="viva-question-dm">{agentText}</h1>
@@ -681,6 +682,7 @@ function SessionExperience(): JSX.Element {
           </Button>
         </div>
       </Modal>
+      </div>
     </main>
   );
 }

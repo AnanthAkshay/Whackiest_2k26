@@ -4,7 +4,7 @@ import { ChatText, Microphone } from "@phosphor-icons/react";
 import { getSkills } from "../api";
 import { useTranslation } from "../i18n";
 import { JourneyNav } from "../shared/JourneyNav";
-import { Button, Card, SegmentedControl, StatusMark } from "../shared/ui";
+import { Accordion, Button, Card, OptionButton, RuledRow, StatusMark } from "../shared/ui";
 import { useSetup } from "./SetupContext";
 import type { AgentLevel, Language } from "../types";
 
@@ -22,8 +22,13 @@ const LEVEL_OPTIONS: { value: AgentLevel; titleKey: "levelNewTitle" | "levelSome
   { value: "tough", titleKey: "levelToughTitle" }
 ];
 
+function formatShaPreview(sha: string): string {
+  if (sha.length <= 16) return sha;
+  return `${sha.slice(0, 8)}...${sha.slice(-6)}`;
+}
+
 export function SetupFlow(): JSX.Element {
-  const { skill, language, level, inputMode, chooseSkill, chooseLanguage, chooseLevel, chooseInputMode } = useSetup();
+  const { skill, language, level, inputMode, validationReport, chooseSkill, chooseLanguage, chooseLevel, chooseInputMode } = useSetup();
   const { t } = useTranslation();
   const navigate = useNavigate();
 
@@ -90,156 +95,164 @@ export function SetupFlow(): JSX.Element {
     }
   }
 
+  const langLabel = LANGUAGE_ROWS.find((r) => r.code === language)?.title ?? "English";
+  const summaryRows = (
+    <>
+      <RuledRow label="Language" value={langLabel} />
+      <RuledRow label="Mode" value={inputMode === "voice" ? "Voice" : "Text"} />
+      <RuledRow
+        label="Artifact SHA-256"
+        value={validationReport?.sha256 ? <code className="mono">{formatShaPreview(validationReport.sha256)}</code> : "Demo / Pending"}
+      />
+      <RuledRow
+        label="Questions grounded in"
+        value={validationReport?.fileName ?? "Retail Sales Cleanup (.xlsx)"}
+      />
+    </>
+  );
+
   return (
     <main className="shell setup-shell">
-      <JourneyNav activeStage="explain" />
+      <div className="pf-frame">
+        <JourneyNav activeStage="explain" />
 
-      {isDemo && (
-        <div className="demo-top-banner">
-          <span className="eyebrow">{t("replayBadge")}</span>
-          <Button variant="dark" className="demo-start-btn" onClick={() => navigate("/session?demo=1")}>
-            {t("startDemoReplay")}
-          </Button>
-        </div>
-      )}
-
-      <p className="eyebrow">{t("languageEyebrow")}</p>
-      <h1>{t("sessionTitle")}</h1>
-      <p className="lede">{t("languageBody")}</p>
-
-      <Card as="section" className="setup-card">
-        <div className="setup-section">
-          <h2 className="setup-section-title">{t("languageTitle")}</h2>
-          <div className="setup-lang-grid" role="radiogroup" aria-label={t("languageTitle")}>
-            {LANGUAGE_ROWS.map((row) => {
-              const selected = language === row.code;
-              return (
-                <button
-                  key={row.code}
-                  type="button"
-                  role="radio"
-                  aria-checked={selected}
-                  lang={row.code}
-                  className={"setup-lang-row" + (selected ? " is-selected" : "")}
-                  onClick={() => chooseLanguage(row.code)}
-                >
-                  <span className={"setup-radio-dot" + (selected ? " is-selected" : "")} aria-hidden="true" />
-                  <div>
-                    <strong className="setup-lang-script">{row.title}</strong>
-                    <span className="setup-lang-sub">{row.subtitle}</span>
-                  </div>
-                </button>
-              );
-            })}
-          </div>
-        </div>
-
-        <div className="setup-section setup-mode-row">
-          <div>
-            <h2 className="setup-section-title" style={{ marginBottom: "2px" }}>Mode</h2>
-            <p className="fineprint" style={{ margin: 0 }}>Voice interview or typed chat</p>
-          </div>
-          <SegmentedControl
-            ariaLabel="Voice or Text mode"
-            value={inputMode}
-            onChange={(m) => chooseInputMode(m)}
-            options={[
-              {
-                value: "voice",
-                label: (
-                  <>
-                    <Microphone size={15} weight="regular" aria-hidden="true" />
-                    <span>Voice</span>
-                  </>
-                )
-              },
-              {
-                value: "text",
-                label: (
-                  <>
-                    <ChatText size={15} weight="regular" aria-hidden="true" />
-                    <span>Text</span>
-                  </>
-                )
-              }
-            ]}
-          />
-        </div>
-
-        <div className="setup-section">
-          <span className="field-label" style={{ marginTop: 0 }}>{t("levelTitle")}</span>
-          <div className="setup-level-pills">
-            {LEVEL_OPTIONS.map((opt) => (
-              <button
-                key={opt.value}
-                type="button"
-                className={"pf-stepper-pill" + ((level ?? "new") === opt.value ? " is-active" : "")}
-                onClick={() => chooseLevel(opt.value)}
-              >
-                {t(opt.titleKey)}
-              </button>
-            ))}
-          </div>
-        </div>
-
-        <div className="setup-section">
-          <div className="mic-status-line" role="status" aria-live="polite">
-            {micStatus === "waiting" && (
-              <>
-                <StatusMark tone="neutral" size={16} />
-                <span className="fineprint">Microphone permission not checked yet.</span>
-                <Button variant="secondary" onClick={() => void checkMicrophone()}>
-                  Test mic
-                </Button>
-              </>
-            )}
-            {micStatus === "checking" && (
-              <>
-                <StatusMark tone="review" size={16} />
-                <span className="fineprint">{t("micRequesting")}</span>
-              </>
-            )}
-            {micStatus === "granted" && (
-              <>
-                <StatusMark tone="ok" size={16} />
-                <span className="status-text--ok">Microphone ready.</span>
-              </>
-            )}
-            {micStatus === "denied" && (
-              <>
-                <StatusMark tone="warn" size={16} />
-                <span className="status-text--warn">
-                  Microphone unavailable — switched to Text mode automatically.
-                </span>
-              </>
-            )}
-          </div>
-        </div>
-
-        {loadError && (
-          <div className="rule-feedback rule-feedback--bad" role="alert">
-            <StatusMark tone="bad" size={16} />
-            <span>{t("loadSkillsError")}</span>
-            <Button variant="secondary" onClick={() => void ensureDefaults()}>
-              {t("retry")}
+        {isDemo && (
+          <div className="demo-top-banner">
+            <span className="pf-label">{t("replayBadge")}</span>
+            <Button variant="dark" className="demo-start-btn" onClick={() => navigate("/session?demo=1")}>
+              {t("startDemoReplay")}
             </Button>
           </div>
         )}
 
-        <Button
-          variant="dark"
-          size="lg"
-          fullWidth
-          disabled={loadingSkills || micStatus === "checking"}
-          onClick={() => void handleStartViva()}
-        >
-          {inputMode === "text" ? t("startTextMode") : t("start")}
-        </Button>
-      </Card>
+        <p className="pf-label">{t("languageEyebrow")}</p>
+        <h1 className="pf-page-title" style={{ marginTop: "8px" }}>{t("sessionTitle")}</h1>
+        <p className="pf-lead" style={{ marginTop: "16px" }}>{t("languageBody")}</p>
 
-      <Button variant="ghost" fullWidth onClick={() => navigate("/validation")}>
-        {t("back")}
-      </Button>
+        <div className="form-with-summary-grid">
+          <div className="form-main-col">
+            <Card as="section" className="setup-card">
+              <div className="setup-section">
+                <h2 className="setup-section-title">{t("languageTitle")}</h2>
+                <div className="setup-lang-grid" role="radiogroup" aria-label={t("languageTitle")}>
+                  {LANGUAGE_ROWS.map((row) => {
+                    const selected = language === row.code;
+                    return (
+                      <OptionButton
+                        key={row.code}
+                        role="radio"
+                        aria-checked={selected}
+                        lang={row.code}
+                        selected={selected}
+                        onClick={() => chooseLanguage(row.code)}
+                      >
+                        <strong className="setup-lang-script">{row.title}</strong>
+                        <span className="setup-lang-sub">{row.subtitle}</span>
+                      </OptionButton>
+                    );
+                  })}
+                </div>
+              </div>
+
+              <div className="setup-section">
+                <h2 className="setup-section-title">Mode</h2>
+                <div className="setup-mode-grid" role="group" aria-label="Voice or Text mode">
+                  <OptionButton
+                    selected={inputMode === "voice"}
+                    onClick={() => chooseInputMode("voice")}
+                  >
+                    <span style={{ display: "inline-flex", alignItems: "center", gap: "8px" }}>
+                      <Microphone size={16} weight="regular" aria-hidden="true" />
+                      <span>Voice</span>
+                    </span>
+                  </OptionButton>
+                  <OptionButton
+                    selected={inputMode === "text"}
+                    onClick={() => chooseInputMode("text")}
+                  >
+                    <span style={{ display: "inline-flex", alignItems: "center", gap: "8px" }}>
+                      <ChatText size={16} weight="regular" aria-hidden="true" />
+                      <span>Text</span>
+                    </span>
+                  </OptionButton>
+                </div>
+              </div>
+
+              <div className="setup-section">
+                <span className="pf-label" style={{ display: "block", marginBottom: "8px" }}>{t("levelTitle")}</span>
+                <div className="setup-level-pills">
+                  {LEVEL_OPTIONS.map((opt) => (
+                    <button
+                      key={opt.value}
+                      type="button"
+                      className={"pf-stepper-pill" + ((level ?? "new") === opt.value ? " is-active" : "")}
+                      onClick={() => chooseLevel(opt.value)}
+                    >
+                      {t(opt.titleKey)}
+                    </button>
+                  ))}
+                </div>
+              </div>
+
+              <div className="setup-section">
+                <div className="mic-status-line" role="status" aria-live="polite">
+                  {micStatus === "waiting" && (
+                    <>
+                      <StatusMark tone="neutral" label="Microphone permission not checked yet." />
+                      <Button variant="secondary" onClick={() => void checkMicrophone()}>
+                        Test mic
+                      </Button>
+                    </>
+                  )}
+                  {micStatus === "checking" && (
+                    <StatusMark tone="review" label={t("micRequesting")} />
+                  )}
+                  {micStatus === "granted" && (
+                    <StatusMark tone="ok" label="Microphone ready." />
+                  )}
+                  {micStatus === "denied" && (
+                    <StatusMark tone="warn" label="Microphone unavailable — switched to Text mode automatically." />
+                  )}
+                </div>
+              </div>
+
+              {loadError && (
+                <div className="rule-feedback rule-feedback--bad" role="alert">
+                  <StatusMark tone="bad" />
+                  <span>{t("loadSkillsError")}</span>
+                  <Button variant="secondary" onClick={() => void ensureDefaults()}>
+                    {t("retry")}
+                  </Button>
+                </div>
+              )}
+
+              <Button
+                variant="dark"
+                size="lg"
+                fullWidth
+                disabled={loadingSkills || micStatus === "checking"}
+                onClick={() => void handleStartViva()}
+              >
+                {inputMode === "text" ? t("startTextMode") : t("start")}
+              </Button>
+            </Card>
+          </div>
+
+          <aside className="summary-col" aria-label="Summary">
+            <Card className="summary-panel summary-desktop-only">
+              <span className="pf-label">SUMMARY</span>
+              <div style={{ marginTop: "12px" }}>{summaryRows}</div>
+            </Card>
+            <div className="summary-mobile-only">
+              <Accordion title="SUMMARY">{summaryRows}</Accordion>
+            </div>
+          </aside>
+        </div>
+
+        <Button variant="ghost" fullWidth onClick={() => navigate("/validation")} style={{ marginTop: "24px" }}>
+          {t("back")}
+        </Button>
+      </div>
     </main>
   );
 }
