@@ -1,13 +1,12 @@
 import { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
-import { ExternalLink } from "lucide-react";
 import {
   clientConfig,
   getClientIntegrations,
   type ClientIntegrationItem
 } from "../config/integrations";
 import { JourneyNav } from "../shared/JourneyNav";
-import { Badge, Card, type BadgeTone } from "../shared/ui";
+import { Badge, Card, IconExternalLink, type BadgeTone } from "../shared/ui";
 
 function badgeToneForStatus(status: string): { tone: BadgeTone; isLive: boolean } {
   if (/live|active|configured/i.test(status) && !/not configured/i.test(status)) {
@@ -75,7 +74,7 @@ export function IntegrationsPage(): JSX.Element {
                   className="secondary link-button"
                 >
                   Open External Link ({item.status})
-                  <ExternalLink size={14} style={{ marginLeft: "6px" }} aria-hidden="true" />
+                  <IconExternalLink size={14} style={{ marginLeft: "6px" }} />
                 </a>
               )}
             </Card>

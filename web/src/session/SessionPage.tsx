@@ -1,11 +1,10 @@
 import { ConversationProvider, type MessagePayload, useConversation } from "@elevenlabs/react";
 import { useCallback, useEffect, useRef, useState } from "react";
 import { useNavigate } from "react-router-dom";
-import { FileSpreadsheet, MessageSquare, Mic, Send, Volume2 } from "lucide-react";
 import { finishSession, getConfig, sendTurn, startSession, type VoiceConnection } from "../api";
 import { localeTags, useTranslation } from "../i18n";
 import { useSetup } from "../setup/SetupContext";
-import { Badge, Button, Sheet } from "../shared/ui";
+import { Badge, Button, IconMessage, IconMic, IconSend, IconSheet, IconVolume, Sheet } from "../shared/ui";
 import type { Language, Session, SkillRecord, TranscriptTurn } from "../types";
 import { listenOnce, speak } from "../voice";
 
@@ -422,7 +421,7 @@ function SessionExperience(): JSX.Element {
             className="grounded-chip"
             onClick={() => setFactSheetOpen(true)}
           >
-            <FileSpreadsheet size={13} aria-hidden="true" />
+            <IconSheet size={13} />
             <span>Grounded in your file</span>
           </button>
         </div>
@@ -474,7 +473,7 @@ function SessionExperience(): JSX.Element {
                 aria-label={t("repeatQuestion")}
                 title={t("repeatQuestion")}
               >
-                <Volume2 size={16} aria-hidden="true" />
+                <IconVolume size={16} />
                 <span>{t("repeatQuestion")}</span>
               </button>
             </div>
@@ -525,7 +524,7 @@ function SessionExperience(): JSX.Element {
                 onMouseDown={handleMockSpeak}
                 onClick={handleMockSpeak}
               >
-                <Mic size={20} aria-hidden="true" />
+                <IconMic size={20} />
                 <span>{isRecordingMock ? t("agentListening") : t("speakExplanation")}</span>
               </Button>
             )}
@@ -545,7 +544,7 @@ function SessionExperience(): JSX.Element {
                     chooseInputMode("text");
                   }}
                 >
-                  <MessageSquare size={16} aria-hidden="true" />
+                  <IconMessage size={16} />
                   <span>Switch to text</span>
                 </Button>
               )}
@@ -650,7 +649,7 @@ function SessionExperience(): JSX.Element {
                 onClick={() => void submitText(draft)}
                 aria-label={t("sendText")}
               >
-                <Send size={18} aria-hidden="true" />
+                <IconSend size={18} />
               </Button>
             </div>
           )}
@@ -665,7 +664,7 @@ function SessionExperience(): JSX.Element {
                   chooseInputMode("voice");
                 }}
               >
-                <Mic size={16} aria-hidden="true" />
+                <IconMic size={16} />
                 <span>{t("useVoiceInstead")}</span>
               </Button>
             )}

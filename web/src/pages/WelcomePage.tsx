@@ -1,71 +1,74 @@
 import { useEffect, useRef, useState, type CSSProperties } from "react";
 import { useNavigate } from "react-router-dom";
-import {
-  BookOpen,
-  Briefcase,
-  FileSpreadsheet,
-  Fingerprint,
-  GitCompareArrows,
-  MessageSquare,
-  Mic,
-  ShieldCheck,
-  Sparkles,
-  WifiOff
-} from "lucide-react";
 import { useTranslation } from "../i18n";
 import { useSetup } from "../setup/SetupContext";
-import { Badge, Button, Chip, ProgressRing } from "../shared/ui";
+import {
+  Badge,
+  Button,
+  Chip,
+  IconBook,
+  IconBriefcase,
+  IconClock,
+  IconCompare,
+  IconFingerprint,
+  IconMessage,
+  IconMic,
+  IconSheet,
+  IconShield,
+  IconWifiOff,
+  ProgressRing
+} from "../shared/ui";
 
 const JOURNEY_STAGES = [
   {
     num: "01",
     key: "1. Learn",
     outcome: "Practical micro-lessons for real office work.",
-    icon: BookOpen
+    icon: IconBook
   },
   {
     num: "02",
     key: "2. Practise",
     outcome: "Low-stakes drills at your own pace.",
-    icon: Sparkles
+    icon: IconClock
   },
   {
     num: "03",
     key: "3. Demonstrate",
     outcome: "Clean and upload a realistic .xlsx workbook.",
-    icon: FileSpreadsheet
+    icon: IconSheet
   },
   {
     num: "04",
     key: "4. Explain",
     outcome: "Talk with the AI Examiner in EN, HI, or KN.",
-    icon: Mic
+    icon: IconMic
   },
   {
     num: "05",
     key: "5. Cross-Verify",
     outcome: "Match spoken reasoning to spreadsheet facts.",
-    icon: GitCompareArrows
+    icon: IconCompare
   },
   {
     num: "06",
     key: "6. Verify",
     outcome: "Earn an Ed25519-signed Skill Passport.",
-    icon: ShieldCheck
+    icon: IconShield
   },
   {
     num: "07",
     key: "7. Connect",
     outcome: "Discover transparent local job matches.",
-    icon: Briefcase
+    icon: IconBriefcase
   }
 ];
 
 const TRUST_CHIPS = [
-  { label: "Ed25519-signed", icon: ShieldCheck },
-  { label: "SHA-256 bound", icon: Fingerprint },
-  { label: "Works offline", icon: WifiOff },
-  { label: "Voice or text", icon: MessageSquare }
+  { label: "Ed25519-signed", icon: IconShield },
+  { label: "SHA-256 bound", icon: IconFingerprint },
+  { label: "Works offline", icon: IconWifiOff },
+  { label: "Voice or text", icon: IconMessage }
 ];
 
 export function WelcomePage(): JSX.Element {

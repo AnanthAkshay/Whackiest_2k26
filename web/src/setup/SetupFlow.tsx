@@ -1,10 +1,9 @@
 import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
-import { Check, MessageSquare, Mic, MicOff, ShieldAlert } from "lucide-react";
 import { getSkills } from "../api";
 import { useTranslation } from "../i18n";
 import { JourneyNav } from "../shared/JourneyNav";
-import { Badge, Button, Card } from "../shared/ui";
+import { Badge, Button, Card, IconAlert, IconCheck, IconMessage, IconMic, IconMicOff } from "../shared/ui";
 import { useSetup } from "./SetupContext";
 import type { AgentLevel, Language } from "../types";
 
@@ -133,7 +132,7 @@ export function SetupFlow(): JSX.Element {
                     <strong>{card.title}</strong>
                     {selected && (
                       <span className="setup-lang-check" aria-hidden="true">
-                        <Check size={14} strokeWidth={2.5} />
+                        <IconCheck size={14} />
                       </span>
                     )}
                   </span>
@@ -157,7 +156,7 @@ export function SetupFlow(): JSX.Element {
                 aria-pressed={inputMode === "voice"}
                 onClick={() => chooseInputMode("voice")}
               >
-                <Mic size={15} aria-hidden="true" />
+                <IconMic size={15} />
                 <span>Voice</span>
               </button>
               <button
@@ -166,7 +165,7 @@ export function SetupFlow(): JSX.Element {
                 aria-pressed={inputMode === "text"}
                 onClick={() => chooseInputMode("text")}
               >
-                <MessageSquare size={15} aria-hidden="true" />
+                <IconMessage size={15} />
                 <span>Text</span>
               </button>
             </div>
@@ -194,7 +193,7 @@ export function SetupFlow(): JSX.Element {
             <div className={"mic-status-box mic-status--" + micStatus} role="status" aria-live="polite">
               {micStatus === "waiting" && (
                 <>
-                  <Mic size={18} aria-hidden="true" />
+                  <IconMic size={18} />
                   <div className="mic-status-copy">
                     <strong>Microphone check</strong>
                     <span className="fineprint">We will ask for mic permission before starting.</span>
@@ -206,7 +205,7 @@ export function SetupFlow(): JSX.Element {
               )}
               {micStatus === "checking" && (
                 <>
-                  <Mic size={18} aria-hidden="true" />
+                  <IconMic size={18} />
                   <div className="mic-status-copy">
                     <strong>{t("micRequesting")}</strong>
                     <span className="fineprint">Please allow microphone access in your browser.</span>
@@ -215,7 +214,7 @@ export function SetupFlow(): JSX.Element {
               )}
               {micStatus === "granted" && (
                 <>
-                  <Check size={18} className="check-icon--ok" aria-hidden="true" />
+                  <IconCheck size={18} className="check-icon--ok" />
                   <div className="mic-status-copy">
                     <strong>Microphone ready</strong>
                     <span className="fineprint">Audio input permission granted.</span>
@@ -225,7 +224,7 @@ export function SetupFlow(): JSX.Element {
               {micStatus === "denied" && (
                 <div className="mic-denied-stack">
                   <div className="mic-denied-head">
-                    <MicOff size={18} className="check-icon--bad" aria-hidden="true" />
+                    <IconMicOff size={18} className="check-icon--bad" />
                     <strong>{t("micTitle")}</strong>
                   </div>
                   <p className="fineprint" style={{ margin: 0 }}>{t("micBody")}</p>
@@ -246,7 +245,7 @@ export function SetupFlow(): JSX.Element {
         {loadError && (
           <div className="mic-help" role="alert">
             <div className="upload-error-head">
-              <ShieldAlert size={18} aria-hidden="true" />
+              <IconAlert size={18} />
               <p style={{ margin: 0 }}>{t("loadSkillsError")}</p>
             </div>
             <Button variant="secondary" onClick={() => void ensureDefaults()} className="cta-spacer">

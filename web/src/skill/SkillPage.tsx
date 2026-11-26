@@ -1,12 +1,26 @@
 import { useCallback, useEffect, useState } from "react";
 import { Link, useNavigate, useParams } from "react-router-dom";
-import { Check, Copy, Download, ExternalLink, Lock, Share2, ShieldCheck, Trash2 } from "lucide-react";
 import { deleteCredential, getCredential, shareCredential } from "../api";
 import { clientConfig } from "../config/integrations";
 import { localeTags, useTranslation } from "../i18n";
 import { useSetup } from "../setup/SetupContext";
 import { ScoreList } from "../shared/ScoreList";
-import { Badge, Button, Card, Sheet, Skeleton, Toast } from "../shared/ui";
+import {
+  Badge,
+  Button,
+  Card,
+  IconCheck,
+  IconCopy,
+  IconDownload,
+  IconExternalLink,
+  IconLock,
+  IconShare,
+  IconShield,
+  IconTrash,
+  Sheet,
+  Skeleton,
+  Toast
+} from "../shared/ui";
 import type { SkillRecord } from "../types";
 
 function PassportQrTile({ url }: { url: string }): JSX.Element {
@@ -259,7 +273,7 @@ export function SkillPage(): JSX.Element {
           <div className="passport-card-top">
             <span className="passport-issuer-eyebrow">PROOFFOLIO SKILL PASSPORT</span>
             <Badge tone="ok" className="passport-verified-pill">
-              <ShieldCheck size={14} aria-hidden="true" />
+              <IconShield size={14} />
               <span>{t("recordMatchesDatabase")}</span>
             </Badge>
           </div>
@@ -316,7 +330,7 @@ export function SkillPage(): JSX.Element {
               onClick={() => void copyText(artifactSha, "SHA-256 copied")}
               aria-label="Copy artifact SHA-256"
             >
-              <Copy size={14} aria-hidden="true" />
+              <IconCopy size={14} />
               <span>Copy</span>
             </button>
           </div>
@@ -332,7 +346,7 @@ export function SkillPage(): JSX.Element {
               onClick={() => void copyText(jwsKid, "Key ID copied")}
               aria-label="Copy JWS key ID"
             >
-              <Copy size={14} aria-hidden="true" />
+              <IconCopy size={14} />
               <span>Copy</span>
             </button>
           </div>
@@ -346,7 +360,7 @@ export function SkillPage(): JSX.Element {
             className="verify-jwks-link"
           >
             <span>Verify independently</span>
-            <ExternalLink size={14} aria-hidden="true" />
+            <IconExternalLink size={14} />
           </a>
           <span className="fineprint">
             {clientConfig.passportPublicDomain || "Local development URL"}
@@ -357,7 +371,7 @@ export function SkillPage(): JSX.Element {
       {/* Actions */}
       <Card as="section" className="passport-actions-card no-print">
         <div className="passport-privacy-row">
-          <Lock size={16} aria-hidden="true" />
+          <IconLock size={16} />
           <div>
             <strong>{record.shared ? t("statusActivePublic") : t("statusActivePrivate")}</strong>
             <p className="fineprint" style={{ margin: "2px 0 0" }}>
@@ -368,19 +382,19 @@ export function SkillPage(): JSX.Element {
 
         <div className="passport-action-buttons">
           <Button variant="primary" onClick={() => void handleToggleShare()}>
-            <Share2 size={16} aria-hidden="true" />
+            <IconShare size={16} />
             <span>{record.shared ? t("nativeShare") : t("makePublic")}</span>
           </Button>
           <Button variant="secondary" onClick={() => void handleCopyLink()}>
-            <Check size={16} aria-hidden="true" />
+            <IconCheck size={16} />
             <span>{t("copyLink")}</span>
           </Button>
           <Button variant="secondary" onClick={handleDownloadImage}>
-            <Download size={16} aria-hidden="true" />
+            <IconDownload size={16} />
             <span>Download image</span>
           </Button>
           <Button variant="ghost" className="withdraw-btn" onClick={() => setWithdrawOpen(true)}>
-            <Trash2 size={16} aria-hidden="true" />
+            <IconTrash size={16} />
             <span>{t("deletePage")}</span>
           </Button>
         </div>

@@ -1,155 +1,158 @@
 :root {
   color-scheme: light dark;
 
-  /* Core Palette */
-  --bg: #FAF6EE;
-  --surface: #FFFDF8;
-  --surface-subtle: #F4EFE4;
-  --ink: #14110F;
-  --muted: #6B645B;
-  --line: #E9E2D3;
+  /* Monochrome Reference Palette */
+  --page-from: #E8E8E8;
+  --page-to: #F3F3F3;
+  --frame-top: #C8C8C8;
+  --frame-bottom: #F6F6F6;
+  --ink: #151515;
+  --muted: #4A4A4A;
+  --line: rgba(21, 21, 21, 0.10);
+  --line-strong: rgba(21, 21, 21, 0.22);
 
-  /* Lavender & Brand Accents */
-  --lav-100: #EFE9FF;
-  --lav-300: #D9CCFF;
-  --lav-500: #B9A7FF;
-  --violet: #5B3FD6;
-  --gold: #D4B26A;
+  /* Desaturated Semantic Tones (text + 3px left rule only) */
+  --ok: #2E6B4F;
+  --warn: #9A6A14;
+  --bad: #A33F2E;
+  --review: #46526B;
 
-  /* Semantic Indicators */
-  --ok: #2F8F6B;
-  --warn: #E0A33A;
-  --bad: #E26D5A;
-  --review: #6C7A9C;
+  /* Surfaces & Credential Accents */
+  --silver: #B8B8B8;
+  --graphite: #2A2A2A;
+  --surface-card: rgba(255, 255, 255, 0.35);
+  --surface-solid: #F6F6F6;
+  --pure-white: #FFFFFF;
+  --btn-white-hover: #F0F0F0;
+  --grain-opacity: 0.35;
+  --grain-blend: multiply;
 
-  /* WCAG AA Accessible Semantic Surface + Ink Pairs */
-  --ok-bg: #E3F3EC;
-  --ok-ink: #195941;
-  --warn-bg: #FDF2DA;
-  --warn-ink: #6E4909;
-  --bad-bg: #FDEAE6;
-  --bad-ink: #942B1B;
-  --review-bg: #EAEFF8;
-  --review-ink: #35425E;
+  /* Radii by Role */
+  --r-frame: 28px;
+  --r-card: 14px;
+  --r-control: 8px;
+  --r-chip: 6px;
 
-  /* Button & Interactive Tokens */
-  --btn-primary-bg: #14110F;
-  --btn-primary-ink: #FFFDF8;
-  --btn-secondary-bg: #FAF6EE;
-  --btn-secondary-ink: #14110F;
-  --dock-bg: #14110F;
-  --dock-ink: #FFFDF8;
-  --dock-muted: rgba(250, 246, 238, 0.68);
-  --surface-light: #FFFDF8;
-  --cream-ink: #FAF6EE;
-  --dark-ink: #14110F;
-  --muted-light: #B8AFA3;
-  --gold-deep: #B88E3D;
-  --gold-bright: #F2DC9B;
-  --ok-bright: #7FE0BA;
-  --topbar-bg: rgba(250, 246, 238, 0.86);
-  --glow-opacity: 0.55;
-  --noise-opacity: 0.03;
+  /* Only inset highlight allowed on frame top edge; no drop shadows */
+  --frame-inset: inset 0 1px 0 rgba(255, 255, 255, 0.6);
 
-  /* Focus Ring */
-  --focus-ring: #B9A7FF;
-
-  /* Radii (14 / 22 / 32 / 999px) */
-  --radius-sm: 14px;
-  --radius-md: 22px;
-  --radius-lg: 32px;
-  --radius-pill: 999px;
-
-  /* Shadows (Soft Layered) */
-  --shadow-sm: 0 1px 2px rgba(20, 17, 15, 0.04);
-  --shadow-soft: 0 1px 2px rgba(20, 17, 15, 0.04), 0 12px 32px -12px rgba(91, 63, 214, 0.18);
-  --shadow-float: 0 2px 6px rgba(20, 17, 15, 0.05), 0 20px 44px -14px rgba(91, 63, 214, 0.22);
+  /* Spacing Scale (4/8 base) */
+  --space-4: 4px;
+  --space-8: 8px;
+  --space-12: 12px;
+  --space-16: 16px;
+  --space-24: 24px;
+  --space-32: 32px;
+  --space-48: 48px;
+  --space-64: 64px;
 
   /* Typography */
-  --font-display: "Instrument Serif", "Noto Sans Devanagari", "Noto Sans Kannada", Georgia, serif;
-  --font-sans: "Plus Jakarta Sans", "Noto Sans Devanagari", "Noto Sans Kannada", ui-sans-serif, system-ui, -apple-system, sans-serif;
+  --font-display: "DM Sans", "Noto Sans Devanagari", "Noto Sans Kannada", "DM Sans Fallback", ui-sans-serif, system-ui, sans-serif;
+  --font-sans: "Lato", "Noto Sans Devanagari", "Noto Sans Kannada", "Lato Fallback", ui-sans-serif, system-ui, sans-serif;
+  --font-numeral: "Chakra Petch", "Noto Sans Devanagari", "Noto Sans Kannada", ui-sans-serif, system-ui, sans-serif;
   --font-mono: "JetBrains Mono", ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
 
-  --display-size: clamp(2rem, 6vw, 3.5rem);
-  --tracking-tight: -0.02em;
+  --headline-size: clamp(2.2rem, 6vw, 4rem);
+  --headline-tracking: -0.04em;
+  --headline-leading: 1.02;
   --leading-body: 1.55;
-
-  /* Spacing Scale (4 / 8 / 12 / 16 / 24 / 32 / 48) */
-  --space-1: 4px;
-  --space-2: 8px;
-  --space-3: 12px;
-  --space-4: 16px;
-  --space-6: 24px;
-  --space-8: 32px;
-  --space-12: 48px;
 
   /* Layout & Touch Targets */
   --layout-max: 1120px;
   --tap-min: 44px;
 
-  /* Legacy Aliases (for seamless compatibility) */
-  --bg-cream: var(--bg);
-  --surface-white: var(--surface);
-  --surface-tint: var(--surface-subtle);
-  --text-primary: var(--ink);
-  --text-muted: var(--muted);
-  --border-hairline: var(--line);
-  --accent-lavender: var(--lav-100);
-  --accent-lavender-strong: var(--lav-300);
-  --success-bg: var(--ok-bg);
-  --success-text: var(--ok-ink);
-  --error-bg: var(--bad-bg);
-  --error-text: var(--bad-ink);
-  --info-bg: var(--review-bg);
-  --info-text: var(--review-ink);
-  --radius-card: var(--radius-md);
-  --radius-hero: var(--radius-lg);
-  --shadow-card: var(--shadow-soft);
-  --meter-high: var(--ok);
-  --meter-mid: var(--warn);
-  --meter-low: var(--bad);
-  --space-5: 20px;
-  --space-10: 40px;
-  --space-16: 64px;
+  /* Transition aliases for Phase B-F pages */
+  --bg: var(--frame-bottom);
+  --surface: var(--surface-card);
+  --surface-subtle: var(--surface-solid);
+  --lav-100: var(--surface-card);
+  --lav-300: var(--line-strong);
+  --lav-500: var(--ink);
+  --violet: var(--ink);
+  --ok-bg: transparent;
+  --ok-ink: var(--ok);
+  --warn-bg: transparent;
+  --warn-ink: var(--warn);
+  --bad-bg: transparent;
+  --bad-ink: var(--bad);
+  --review-bg: transparent;
+  --review-ink: var(--review);
+  --btn-primary-bg: var(--ink);
+  --btn-primary-ink: var(--pure-white);
+  --btn-secondary-bg: transparent;
+  --btn-secondary-ink: var(--ink);
+  --dock-bg: var(--surface-solid);
+  --dock-ink: var(--ink);
+  --dock-muted: var(--muted);
+  --surface-light: var(--pure-white);
+  --cream-ink: #EDEDED;
+  --dark-ink: var(--graphite);
+  --muted-light: var(--silver);
+  --ok-bright: #68B891;
+  --topbar-bg: var(--frame-top);
+  --focus-ring: var(--ink);
+  --radius-sm: var(--r-chip);
+  --radius-md: var(--r-card);
+  --radius-lg: var(--r-card);
+  --radius-pill: var(--r-control);
+  --shadow-sm: none;
+  --shadow-soft: none;
+  --shadow-float: none;
+  --space-1: var(--space-4);
+  --space-2: var(--space-8);
+  --space-3: var(--space-12);
+  --space-4: var(--space-16);
+  --space-6: var(--space-24);
+  --space-8: var(--space-32);
+  --space-12: var(--space-48);
+  --tracking-tight: var(--headline-tracking);
+  --display-size: var(--headline-size);
 }
 
 @media (prefers-color-scheme: dark) {
-  :root {
-    --bg: #14110F;
-    --surface: #1C1814;
-    --surface-subtle: #25201B;
-    --ink: #FAF6EE;
-    --muted: #B8AFA3;
-    --line: #312B25;
+  :root:not([data-theme="light"]) {
+    --page-from: #111111;
+    --page-to: #111111;
+    --frame-top: #2B2B2B;
+    --frame-bottom: #161616;
+    --ink: #EDEDED;
+    --muted: #B5B5B5;
+    --line: rgba(237, 237, 237, 0.12);
+    --line-strong: rgba(237, 237, 237, 0.26);
 
-    --lav-100: #292240;
-    --lav-300: #3E3363;
-    --lav-500: #B9A7FF;
-    --violet: #9D8BFF;
-    --gold: #D4B26A;
+    --ok: #68B891;
+    --warn: #D9A441;
+    --bad: #DF7B6A;
+    --review: #92A4C7;
 
-    --ok-bg: rgba(47, 143, 107, 0.2);
-    --ok-ink: #7FE0BA;
-    --warn-bg: rgba(224, 163, 58, 0.2);
-    --warn-ink: #F5C976;
-    --bad-bg: rgba(226, 109, 90, 0.2);
-    --bad-ink: #F7A091;
-    --review-bg: rgba(108, 122, 156, 0.24);
-    --review-ink: #C9D3EB;
-
-    --btn-primary-bg: #FAF6EE;
-    --btn-primary-ink: #14110F;
-    --btn-secondary-bg: #1C1814;
-    --btn-secondary-ink: #FAF6EE;
-    --dock-bg: #25201B;
-    --dock-ink: #FAF6EE;
-    --dock-muted: rgba(250, 246, 238, 0.72);
-    --topbar-bg: rgba(20, 17, 15, 0.86);
-    --glow-opacity: 0.26;
-    --noise-opacity: 0.035;
-
-    --shadow-sm: 0 1px 2px rgba(0, 0, 0, 0.28);
-    --shadow-soft: 0 1px 2px rgba(0, 0, 0, 0.28), 0 12px 32px -12px rgba(185, 167, 255, 0.14);
-    --shadow-float: 0 4px 12px rgba(0, 0, 0, 0.36), 0 20px 44px -14px rgba(185, 167, 255, 0.18);
+    --surface-card: rgba(255, 255, 255, 0.04);
+    --surface-solid: #1B1B1B;
+    --btn-white-hover: #E6E6E6;
+    --grain-opacity: 0.14;
+    --grain-blend: screen;
+    --frame-inset: inset 0 1px 0 rgba(255, 255, 255, 0.12);
   }
+}
+
+:root[data-theme="dark"] {
+  --page-from: #111111;
+  --page-to: #111111;
+  --frame-top: #2B2B2B;
+  --frame-bottom: #161616;
+  --ink: #EDEDED;
+  --muted: #B5B5B5;
+  --line: rgba(237, 237, 237, 0.12);
+  --line-strong: rgba(237, 237, 237, 0.26);
+
+  --ok: #68B891;
+  --warn: #D9A441;
+  --bad: #DF7B6A;
+  --review: #92A4C7;
+
+  --surface-card: rgba(255, 255, 255, 0.04);
+  --surface-solid: #1B1B1B;
+  --btn-white-hover: #E6E6E6;
+  --grain-opacity: 0.14;
+  --grain-blend: screen;
+  --frame-inset: inset 0 1px 0 rgba(255, 255, 255, 0.12);
 }

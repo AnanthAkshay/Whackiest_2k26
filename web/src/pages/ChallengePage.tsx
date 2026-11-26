@@ -1,20 +1,22 @@
 import { useRef, useState, type ChangeEvent, type DragEvent } from "react";
 import { useNavigate } from "react-router-dom";
-import {
-  AlertCircle,
-  Check,
-  CheckCircle2,
-  Copy,
-  FileSpreadsheet,
-  Loader2,
-  UploadCloud
-} from "lucide-react";
 import { getStarterWorkbookUrl, startChallengeAttempt, uploadChallengeArtifact } from "../api";
 import { useTranslation } from "../i18n";
 import { createMockValidationReport, MVP_CHALLENGE } from "../mock/demoData";
 import { useSetup } from "../setup/SetupContext";
 import { JourneyNav } from "../shared/JourneyNav";
-import { Badge, Button, Card, buttonClasses } from "../shared/ui";
+import {
+  Badge,
+  Button,
+  Card,
+  IconAlert,
+  IconCheck,
+  IconClock,
+  IconCopy,
+  IconSheet,
+  IconUpload,
+  buttonClasses
+} from "../shared/ui";
 
 const MAX_BYTES = MVP_CHALLENGE.maxSizeMb * 1024 * 1024;
 
@@ -241,7 +243,7 @@ export function ChallengePage(): JSX.Element {
           className={buttonClasses({ variant: "secondary", className: "brief-download-btn" })}
           download="retail_sales_starter.xlsx"
         >
-          <FileSpreadsheet size={18} strokeWidth={1.9} aria-hidden="true" />
+          <IconSheet size={18} />
           <span>Download starter workbook</span>
         </a>
       </Card>
@@ -272,7 +274,7 @@ export function ChallengePage(): JSX.Element {
             onChange={handleFileChange}
           />
           <span className="dropzone-icon-wrap" aria-hidden="true">
-            <UploadCloud size={28} strokeWidth={1.8} />
+            <IconUpload size={26} />
           </span>
           <p className="dropzone-title">Drop your .xlsx here or tap to browse</p>
           <p className="fineprint">{t("dropzonePrompt")}</p>
@@ -310,7 +312,7 @@ export function ChallengePage(): JSX.Element {
               <ul className="validating-checklist" aria-label="Safety and integrity checks">
                 {VALIDATING_STEPS.map((label, idx) => (
                   <li key={label} className="validating-step" style={{ animationDelay: `${idx * 90}ms` }}>
-                    <Loader2 size={14} className="spin-icon" aria-hidden="true" />
+                    <IconClock size={14} className="spin-icon" />
                     <span>{label}</span>
                   </li>
                 ))}
@@ -326,7 +328,7 @@ export function ChallengePage(): JSX.Element {
         {phase === "success" && (
           <Card as="div" className="upload-state-card upload-success-morph" role="status" aria-live="polite">
             <div className="upload-success-head">
-              <CheckCircle2 size={24} className="upload-success-icon" aria-hidden="true" />
+              <IconCheck size={22} className="upload-success-icon" />
               <strong>Workbook verified &amp; fingerprinted</strong>
             </div>
             {verifiedSha && (
@@ -337,7 +339,7 @@ export function ChallengePage(): JSX.Element {
                 title={verifiedSha}
               >
                 <code className="mono">{formatShaPreview(verifiedSha)}</code>
-                {shaCopied ? <Check size={14} aria-hidden="true" /> : <Copy size={14} aria-hidden="true" />}
+                {shaCopied ? <IconCheck size={14} /> : <IconCopy size={14} />}
               </button>
             )}
           </Card>
@@ -346,7 +348,7 @@ export function ChallengePage(): JSX.Element {
         {phase === "error" && error && (
           <Card as="div" variant="error" className="upload-state-card upload-error-shake" role="alert">
             <div className="upload-error-head">
-              <AlertCircle size={20} aria-hidden="true" />
+              <IconAlert size={20} />
               <p className="error" style={{ margin: 0 }}>{error}</p>
             </div>
             <Button variant="secondary" onClick={handleRetry} className="cta-spacer">

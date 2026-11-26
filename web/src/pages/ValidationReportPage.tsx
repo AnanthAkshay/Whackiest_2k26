@@ -1,11 +1,20 @@
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
-import { AlertTriangle, Check, CheckCircle2, ChevronDown, Copy, XCircle } from "lucide-react";
 import { useTranslation } from "../i18n";
 import { createMockValidationReport } from "../mock/demoData";
 import { useSetup } from "../setup/SetupContext";
 import { JourneyNav } from "../shared/JourneyNav";
-import { Badge, Button, Card, ProgressRing } from "../shared/ui";
+import {
+  Badge,
+  Button,
+  Card,
+  IconAlert,
+  IconCheck,
+  IconChevronDown,
+  IconCopy,
+  IconWarn,
+  ProgressRing
+} from "../shared/ui";
 import type { ValidationCheckStatus } from "../types";
 
 function formatShaPreview(sha: string): string {
@@ -50,12 +59,12 @@ export function ValidationReportPage(): JSX.Element {
 
   function statusIcon(status: ValidationCheckStatus): JSX.Element {
     if (status === "pass") {
-      return <CheckCircle2 size={18} className="check-icon--ok" aria-hidden="true" />;
+      return <IconCheck size={18} className="check-icon--ok" />;
     }
     if (status === "issue") {
-      return <XCircle size={18} className="check-icon--bad" aria-hidden="true" />;
+      return <IconAlert size={18} className="check-icon--bad" />;
     }
-    return <AlertTriangle size={18} className="check-icon--warn" aria-hidden="true" />;
+    return <IconWarn size={18} className="check-icon--warn" />;
   }
 
   function toggleRow(id: string): void {
@@ -101,7 +110,7 @@ export function ValidationReportPage(): JSX.Element {
                 aria-label="Copy SHA-256 fingerprint"
               >
                 <code className="mono">{formatShaPreview(validationReport.sha256)}</code>
-                {shaCopied ? <Check size={14} aria-hidden="true" /> : <Copy size={14} aria-hidden="true" />}
+                {shaCopied ? <IconCheck size={14} /> : <IconCopy size={14} />}
               </button>
             </div>
           </div>
@@ -134,10 +143,9 @@ export function ValidationReportPage(): JSX.Element {
                   </span>
                   <span className="check-row-right">
                     <Badge tone={tone}>{statusBadgeLabel(chk.status)}</Badge>
-                    <ChevronDown
+                    <IconChevronDown
                       size={16}
                       className={"check-row-chevron" + (isOpen ? " is-open" : "")}
-                      aria-hidden="true"
                     />
                   </span>
                 </button>

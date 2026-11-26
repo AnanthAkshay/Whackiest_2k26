@@ -78,10 +78,7 @@
 .viva-orb-state--listening { background: var(--ok-bg); color: var(--ok-ink); }
 .viva-orb-state--thinking { background: var(--warn-bg); color: var(--warn-ink); }
 
-.viva-glass-transcript { width: 100%; padding: var(--space-4); border: 1px solid var(--line); border-radius: var(--radius-md); background: rgba(250, 246, 238, 0.7); backdrop-filter: blur(16px); box-shadow: var(--shadow-soft); text-align: left; }
-@media (prefers-color-scheme: dark) {
-  .viva-glass-transcript { background: rgba(28, 24, 20, 0.72); }
-}
+.viva-glass-transcript { width: 100%; padding: var(--space-4); border: 1px solid var(--line); border-radius: var(--radius-md); background: var(--surface); box-shadow: var(--shadow-sm); text-align: left; }
 .viva-glass-header { display: flex; align-items: center; justify-content: space-between; gap: var(--space-2); margin-bottom: var(--space-2); }
 .viva-glass-header h2 { margin: 0; font-size: 0.92rem; }
 .viva-glass-scroll { height: 170px; overflow-y: auto; display: grid; align-content: start; gap: var(--space-2); padding-right: var(--space-1); }

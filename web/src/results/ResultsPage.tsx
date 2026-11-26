@@ -1,6 +1,5 @@
 import { useEffect, useState } from "react";
 import { Link, useNavigate, useParams } from "react-router-dom";
-import { ChevronDown, Info } from "lucide-react";
 import { createCredential, getSkillRecord } from "../api";
 import { useTranslation } from "../i18n";
 import { computeECVEResult } from "../mock/demoData";
@@ -8,7 +7,7 @@ import { useSetup } from "../setup/SetupContext";
 import { JourneyNav } from "../shared/JourneyNav";
 import { ScoreList } from "../shared/ScoreList";
 import { Sparkline } from "../shared/Sparkline";
-import { Badge, Button, Card, Skeleton, type BadgeTone } from "../shared/ui";
+import { Badge, Button, Card, IconChevronDown, IconInfo, Skeleton, type BadgeTone } from "../shared/ui";
 import type { ECVEOutcome, SkillRecord } from "../types";
 
 const OUTCOME_COLOR: Record<ECVEOutcome, string> = {
@@ -250,7 +249,7 @@ export function ResultsPage(): JSX.Element {
               aria-label="Explain ECVE weights"
               onClick={() => setWeightsOpen((open) => !open)}
             >
-              <Info size={16} aria-hidden="true" />
+              <IconInfo size={16} />
               <span>Weights</span>
             </button>
             {weightsOpen && (
@@ -291,10 +290,9 @@ export function ResultsPage(): JSX.Element {
           onClick={() => setAccordionOpen((open) => !open)}
         >
           <strong>How we scored this</strong>
-          <ChevronDown
+          <IconChevronDown
             size={18}
             className={"check-row-chevron" + (accordionOpen ? " is-open" : "")}
-            aria-hidden="true"
           />
         </button>
 

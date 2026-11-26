@@ -1,10 +1,20 @@
 import { useState } from "react";
 import { Link } from "react-router-dom";
-import { ExternalLink, Globe, MapPin, ShieldCheck, Sparkles } from "lucide-react";
 import { useTranslation } from "../i18n";
 import { getDevnovateUrl, MVP_ROLES, SAMPLE_OPPORTUNITIES } from "../mock/demoData";
 import { JourneyNav } from "../shared/JourneyNav";
-import { Badge, Button, Card, Chip, ProgressRing } from "../shared/ui";
+import {
+  Badge,
+  Button,
+  Card,
+  Chip,
+  IconClock,
+  IconExternalLink,
+  IconGlobe,
+  IconMapPin,
+  IconShield,
+  ProgressRing
+} from "../shared/ui";
 import type { OpportunityItem } from "../types";
 
 function computeMatchDetails(opp: OpportunityItem): {
@@ -23,22 +33,11 @@ function computeMatchDetails(opp: OpportunityItem): {
   };
 }
 
-function EmptyOpportunitiesIllustration(): JSX.Element {
+function EmptyOpportunitiesNotice(): JSX.Element {
   return (
-    <svg width="160" height="110" viewBox="0 0 160 110" fill="none" aria-hidden="true" className="empty-blob-svg">
-      <path
-        d="M24 62C12 38 34 14 66 16C98 18 134 26 142 54C150 82 118 98 84 96C50 94 36 86 24 62Z"
-        fill="var(--lav-100)"
-      />
-      <path
-        d="M44 58C38 42 52 28 74 30C96 32 114 42 116 58C118 74 98 84 76 82C54 80 50 74 44 58Z"
-        fill="var(--bg)"
-        stroke="var(--lav-300)"
-        strokeWidth="1.5"
-      />
-      <circle cx="78" cy="56" r="14" fill="var(--lav-300)" />
-      <path d="M72 56L76 60L84 52" stroke="var(--violet)" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round" />
-    </svg>
+    <p className="eyebrow" style={{ margin: 0 }}>
+      No matching listings
+    </p>
   );
 }
 
@@ -94,7 +93,7 @@ export function OpportunitiesPage(): JSX.Element {
       {/* Calm Human-Agency Notice */}
       <Card as="section" variant="lavender" className="human-agency-card" padding="sm">
         <div className="human-agency-row">
-          <ShieldCheck size={20} className="human-agency-icon" aria-hidden="true" />
+          <IconShield size={20} className="human-agency-icon" />
           <div>
             <strong>We never auto-apply or auto-reject. You decide.</strong>
             <p className="fineprint" style={{ margin: "2px 0 0" }}>{t("humanAgencyNotice")}</p>
@@ -109,7 +108,7 @@ export function OpportunitiesPage(): JSX.Element {
           className={"pf-stepper-pill" + (quickFilter === "nearby" ? " is-active" : "")}
           onClick={() => setQuickFilter((f) => (f === "nearby" ? "all" : "nearby"))}
         >
-          <MapPin size={14} aria-hidden="true" />
+          <IconMapPin size={14} />
           <span style={{ marginLeft: "6px" }}>Nearby</span>
         </button>
         <button
@@ -117,7 +116,7 @@ export function OpportunitiesPage(): JSX.Element {
           className={"pf-stepper-pill" + (quickFilter === "entry" ? " is-active" : "")}
           onClick={() => setQuickFilter((f) => (f === "entry" ? "all" : "entry"))}
         >
-          <Sparkles size={14} aria-hidden="true" />
+          <IconClock size={14} />
           <span style={{ marginLeft: "6px" }}>Entry-level</span>
         </button>
         <button
@@ -125,7 +124,7 @@ export function OpportunitiesPage(): JSX.Element {
           className={"pf-stepper-pill" + (quickFilter === "language" ? " is-active" : "")}
           onClick={() => setQuickFilter((f) => (f === "language" ? "all" : "language"))}
         >
-          <Globe size={14} aria-hidden="true" />
+          <IconGlobe size={14} />
           <span style={{ marginLeft: "6px" }}>Language</span>
         </button>
       </div>
@@ -172,7 +171,7 @@ export function OpportunitiesPage(): JSX.Element {
 
       {filtered.length === 0 ? (
         <Card as="section" className="empty-state opp-empty-card" role="status">
-          <EmptyOpportunitiesIllustration />
+          <EmptyOpportunitiesNotice />
           <strong>{t("opportunitiesEmptyTitle")}</strong>
           <p className="fineprint" style={{ maxWidth: "40ch", margin: "4px auto 12px" }}>
             {t("opportunitiesEmptyBody")} Earn a <strong>Demonstrated</strong> outcome in your challenge to unlock more verified matches.
@@ -231,7 +230,7 @@ export function OpportunitiesPage(): JSX.Element {
 
                 <div className="opp-location-row">
                   <Chip tone="neutral">
-                    <MapPin size={12} aria-hidden="true" />
+                    <IconMapPin size={12} />
                     <span>{opp.city}, {opp.district} ({opp.pincode})</span>
                   </Chip>
                   <span className="fineprint">Updated {opp.postedDate}</span>
@@ -255,7 +254,7 @@ export function OpportunitiesPage(): JSX.Element {
                           title={`Weight: ${s.weight}`}
                           onClick={() => setActiveWeightId(showWeight ? null : chipKey)}
                         >
-                          <span>✓ {s.label}</span>
+                          <span>{s.label}</span>
                           <span className={"opp-weight-tag" + (showWeight ? " is-visible" : "")}>
                             w:{s.weight}
                           </span>
@@ -280,7 +279,7 @@ export function OpportunitiesPage(): JSX.Element {
                             title={`Weight: ${s.weight}`}
                             onClick={() => setActiveWeightId(showWeight ? null : chipKey)}
                           >
-                            <span>○ {s.label}</span>
+                            <span>{s.label}</span>
                             <span className={"opp-weight-tag" + (showWeight ? " is-visible" : "")}>
                               w:{s.weight}
                             </span>
@@ -306,7 +305,7 @@ export function OpportunitiesPage(): JSX.Element {
           <p className="fineprint">Optional external portfolio and opportunity link.</p>
           <a href={devnovateUrl} target="_blank" rel="noopener noreferrer" className="secondary link-button">
             Open Devnovate Profile
-            <ExternalLink size={15} style={{ marginLeft: "6px" }} aria-hidden="true" />
+            <IconExternalLink size={15} style={{ marginLeft: "6px" }} />
           </a>
         </Card>
       )}

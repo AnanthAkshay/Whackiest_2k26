@@ -1,6 +1,5 @@
 import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
-import { Check, CloudCheck, Clock } from "lucide-react";
 import {
   DEFAULT_CONTENT_BUNDLE,
   loadCuratedContent,
@@ -17,7 +16,7 @@ import {
 } from "../offline/offlineStore";
 import { useSetup } from "../setup/SetupContext";
 import { JourneyNav } from "../shared/JourneyNav";
-import { Badge, Button, Card, Chip, ProgressRing } from "../shared/ui";
+import { Badge, Button, Card, Chip, IconCheck, IconClock, IconCloudCheck, ProgressRing } from "../shared/ui";
 
 function TrybQrSvg(): JSX.Element {
   return (
@@ -177,11 +176,11 @@ export function LearnPractisePage(): JSX.Element {
               <div className="lesson-card-head">
                 <div className="lesson-card-meta">
                   <Chip tone="lavender">
-                    <Clock size={12} strokeWidth={2} aria-hidden="true" />
+                    <IconClock size={12} />
                     <span>{lesson.minutes} min</span>
                   </Chip>
                   <Badge tone="ok" className="offline-cached-badge">
-                    <CloudCheck size={12} strokeWidth={2.2} aria-hidden="true" />
+                    <IconCloudCheck size={12} />
                     <span>Available offline</span>
                   </Badge>
                 </div>
@@ -203,7 +202,7 @@ export function LearnPractisePage(): JSX.Element {
                     variant={completed ? "secondary" : "primary"}
                     onClick={() => void handleCompleteLesson(lesson.id)}
                   >
-                    {completed && <Check size={16} strokeWidth={2.2} aria-hidden="true" />}
+                    {completed && <IconCheck size={16} />}
                     <span>{completed ? t("lessonCompleted") : t("markLessonDone")}</span>
                   </Button>
                 </div>
