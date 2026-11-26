@@ -1,17 +1,17 @@
 import { lazy, Suspense } from "react";
 import { BrowserRouter, Route, Routes } from "react-router-dom";
-import { ChallengePage } from "./pages/ChallengePage";
-import { IntegrationsPage } from "./pages/IntegrationsPage";
-import { LearnPractisePage } from "./pages/LearnPractisePage";
-import { OpportunitiesPage } from "./pages/OpportunitiesPage";
-import { ProfileSetupPage } from "./pages/ProfileSetupPage";
-import { RoleSelectionPage } from "./pages/RoleSelectionPage";
-import { ValidationReportPage } from "./pages/ValidationReportPage";
 import { WelcomePage } from "./pages/WelcomePage";
 import { SetupProvider } from "./setup/SetupContext";
 import { AppShell } from "./shared/AppShell";
 import { Skeleton } from "./shared/ui";
 
+const ProfileSetupPage = lazy(() => import("./pages/ProfileSetupPage").then((m) => ({ default: m.ProfileSetupPage })));
+const RoleSelectionPage = lazy(() => import("./pages/RoleSelectionPage").then((m) => ({ default: m.RoleSelectionPage })));
+const LearnPractisePage = lazy(() => import("./pages/LearnPractisePage").then((m) => ({ default: m.LearnPractisePage })));
+const ChallengePage = lazy(() => import("./pages/ChallengePage").then((m) => ({ default: m.ChallengePage })));
+const ValidationReportPage = lazy(() => import("./pages/ValidationReportPage").then((m) => ({ default: m.ValidationReportPage })));
+const OpportunitiesPage = lazy(() => import("./pages/OpportunitiesPage").then((m) => ({ default: m.OpportunitiesPage })));
+const IntegrationsPage = lazy(() => import("./pages/IntegrationsPage").then((m) => ({ default: m.IntegrationsPage })));
 const SessionPage = lazy(() => import("./session/SessionPage").then((m) => ({ default: m.SessionPage })));
 const ResultsPage = lazy(() => import("./results/ResultsPage").then((m) => ({ default: m.ResultsPage })));
 const SkillPage = lazy(() => import("./skill/SkillPage").then((m) => ({ default: m.SkillPage })));
@@ -22,10 +22,12 @@ const SetupFlow = lazy(() => import("./setup/SetupFlow").then((m) => ({ default:
 function RouteFallback(): JSX.Element {
   return (
     <main className="shell">
-      <div className="form-stack">
-        <Skeleton variant="title" />
-        <Skeleton variant="card" />
-        <Skeleton variant="card" />
+      <div className="pf-frame">
+        <div className="form-stack">
+          <Skeleton variant="title" />
+          <Skeleton variant="card" />
+          <Skeleton variant="card" />
+        </div>
       </div>
     </main>
   );
