@@ -6,7 +6,17 @@ import { useTranslation } from "../i18n";
 import { createMockValidationReport, MVP_CHALLENGE } from "../mock/demoData";
 import { useSetup } from "../setup/SetupContext";
 import { JourneyNav } from "../shared/JourneyNav";
-import { Button, Card, CopyButton, Skeleton, StatusMark, buttonClasses } from "../shared/ui";
+import {
+  Accordion,
+  Button,
+  Card,
+  CopyButton,
+  InfoNote,
+  RuledRow,
+  Skeleton,
+  StatusMark,
+  buttonClasses
+} from "../shared/ui";
 
 const MAX_BYTES = MVP_CHALLENGE.maxSizeMb * 1024 * 1024;
 type UploadPhase = "idle" | "uploading" | "validating" | "success" | "error";
@@ -24,7 +34,7 @@ function formatShaPreview(sha: string): string {
 }
 
 export function ChallengePage(): JSX.Element {
-  const { setValidationReport } = useSetup();
+  const { setValidationReport, language, inputMode, validationReport } = useSetup();
   const { t } = useTranslation();
   const navigate = useNavigate();
 
@@ -175,170 +185,220 @@ export function ChallengePage(): JSX.Element {
   }
 
   const isBusy = phase === "uploading" || phase === "validating";
+  const activeSha = verifiedSha || validationReport?.sha256 || "";
+
+  const summaryRows = (
+    <>
+      <RuledRow label="Role" value="Data Entry Operator" />
+      <RuledRow label="Language" value={language.toUpperCase()} />
+      <RuledRow label="Mode" value={inputMode === "voice" ? "Voice" : "Text"} />
+      <RuledRow label="Starter workbook" value="retail_sales_starter.xlsx" />
+      <RuledRow
+        label="Upload status"
+        value={
+          phase === "success"
+            ? "Verified"
+            : phase === "uploading"
+            ? "Uploading"
+            : phase === "validating"
+            ? "Validating"
+            : phase === "error"
+            ? "Needs attention"
+            : "Waiting for .xlsx"
+        }
+      />
+      <RuledRow
+        label="SHA-256"
+        value={activeSha ? <code className="mono">{formatShaPreview(activeSha)}</code> : "—"}
+      />
+      <RuledRow
+        label="Outcome so far"
+        value={validationReport ? `${validationReport.practicalScore} / 100` : "Not checked yet"}
+      />
+    </>
+  );
 
   return (
     <main className="shell">
-      <JourneyNav activeStage="demonstrate" />
+      <div className="pf-frame">
+        <JourneyNav activeStage="demonstrate" />
 
-      <p className="eyebrow">{t("challengeEyebrow")}</p>
-      <h1>{MVP_CHALLENGE.title}</h1>
-      <p className="lede">{MVP_CHALLENGE.instructions}</p>
+        <p className="pf-label">STEP 3 OF 7: DEMONSTRATE</p>
+        <p className="eyebrow" style={{ marginTop: "4px" }}>{t("challengeEyebrow")}</p>
+        <h1 className="pf-page-title" style={{ marginTop: "8px" }}>{MVP_CHALLENGE.title}</h1>
+        <p className="pf-lead" style={{ marginTop: "16px" }}>{MVP_CHALLENGE.instructions}</p>
 
-      <Card as="section" className="brief-panel">
-        <div className="card-header-row">
-          <span className="eyebrow">Brief</span>
-          <span className="fineprint">
-            v{MVP_CHALLENGE.version} / Rubric v{MVP_CHALLENGE.rubricVersion}
-          </span>
-        </div>
-
-        <div className="spec-grid">
-          <div>
-            <span className="spec-label">{t("acceptedFormatLabel")}</span>
-            <strong>{MVP_CHALLENGE.acceptedFormat}</strong>
-          </div>
-          <div>
-            <span className="spec-label">{t("maxSizeLabel")}</span>
-            <strong>{MVP_CHALLENGE.maxSizeMb} MB</strong>
-          </div>
-        </div>
-
-        <h2 style={{ marginTop: "16px" }}>{t("estimatedStepsLabel")}</h2>
-        <ol className="brief-ruled-steps">
-          {MVP_CHALLENGE.estimatedSteps.map((step, idx) => (
-            <li key={step} className="brief-ruled-step">
-              <span className="stage-numeral">{String(idx + 1).padStart(2, "0")}</span>
-              <span>{step}</span>
-            </li>
-          ))}
-        </ol>
-
-        <a
-          href={getStarterWorkbookUrl()}
-          className={buttonClasses({ variant: "secondary", className: "cta-spacer" })}
-          download="retail_sales_starter.xlsx"
-        >
-          DOWNLOAD STARTER WORKBOOK
-        </a>
-      </Card>
-
-      <section className="upload-section" aria-label={t("uploadSectionTitle")}>
-        <div className="card-header-row">
-          <h2>{t("uploadSectionTitle")}</h2>
-          <span className="pf-chip pf-chip--review">{t("onlineOnlyBadge")}</span>
-        </div>
-        <p className="fineprint">{t("onlineOnlyValidationNote")}</p>
-        <p className="fineprint mock-disclosure">{t("mockUploadNotice")}</p>
-
-        <div
-          className={"dropzone-monochrome" + (dragOver ? " is-dragover" : "")}
-          onDragOver={(e) => {
-            e.preventDefault();
-            setDragOver(true);
-          }}
-          onDragLeave={() => setDragOver(false)}
-          onDrop={handleDrop}
-        >
-          <input
-            ref={fileInputRef}
-            type="file"
-            accept=".xlsx,application/vnd.openxmlformats-officedocument.spreadsheetml.sheet"
-            className="sr-only"
-            id="challenge-file-input"
-            onChange={handleFileChange}
-          />
-          <FileXls size={28} weight="regular" aria-hidden="true" />
-          <p className="dropzone-title">Drop your .xlsx here, or browse</p>
-          <label
-            htmlFor="challenge-file-input"
-            className={buttonClasses({ variant: "primary" })}
-            role="button"
-            tabIndex={0}
-          >
-            {t("chooseXlsxFile")}
-          </label>
-        </div>
-
-        <Button
-          variant="secondary"
-          fullWidth
-          disabled={isBusy}
-          className="cta-spacer"
-          onClick={() => startSimulatedCheck("retail_sales_cleaned_demo.xlsx", 42500)}
-        >
-          {t("loadDemoXlsx")}
-        </Button>
-
-        {phase === "uploading" && selectedFile && (
-          <Card as="div" className="cta-spacer" role="status" aria-live="polite">
-            <div className="meter-heading">
-              <span>{t("uploadingFile", { file: selectedFile.name })}</span>
-              <strong className="mono">{progress}%</strong>
-            </div>
-            <div className="upload-line-track" role="progressbar" aria-valuenow={progress} aria-valuemin={0} aria-valuemax={100}>
-              <span className="upload-line-fill" style={{ width: `${progress}%` }} />
-            </div>
-            <div className="form-stack" style={{ marginTop: "12px" }}>
-              <Skeleton variant="text" />
-              <Skeleton variant="text" />
-            </div>
-            <Button variant="ghost" onClick={handleCancel}>
-              {t("cancelUpload")}
-            </Button>
-          </Card>
-        )}
-
-        {phase === "validating" && (
-          <Card as="div" className="cta-spacer" role="status" aria-live="polite">
-            <p className="eyebrow" style={{ marginBottom: "8px" }}>Validating workbook</p>
-            <ul className="ruled-list">
-              {VALIDATING_STEPS.map((label, idx) => {
-                const done = idx < resolvedCount;
-                return (
-                  <li key={label} className="ruled-row validating-row">
-                    <span>{label}</span>
-                    {done ? <StatusMark tone="ok" size={16} /> : <Skeleton variant="text" width={80} />}
-                  </li>
-                );
-              })}
-            </ul>
-            <Button variant="ghost" onClick={handleCancel}>
-              {t("cancelUpload")}
-            </Button>
-          </Card>
-        )}
-
-        {phase === "success" && (
-          <Card as="div" className="cta-spacer rule-feedback--ok" role="status" aria-live="polite">
-            <div className="rule-feedback">
-              <StatusMark tone="ok" size={18} />
-              <span>Workbook verified and fingerprinted.</span>
-            </div>
-            {verifiedSha && (
-              <div className="sha-chip-row">
-                <code className="mono">{formatShaPreview(verifiedSha)}</code>
-                <CopyButton text={verifiedSha} ariaLabel="Copy SHA-256" />
+        <div className="form-with-summary-grid">
+          <div className="form-main-col">
+            <Card as="section" className="brief-panel">
+              <div className="card-header-row">
+                <span className="pf-label">Brief</span>
+                <span className="fineprint">
+                  v{MVP_CHALLENGE.version} / Rubric v{MVP_CHALLENGE.rubricVersion}
+                </span>
               </div>
-            )}
-          </Card>
-        )}
 
-        {phase === "error" && error && (
-          <Card as="div" variant="error" className="cta-spacer" role="alert">
-            <div className="rule-feedback">
-              <StatusMark tone="bad" size={18} />
-              <span>{error}</span>
+              <div className="spec-grid">
+                <div>
+                  <span className="spec-label">{t("acceptedFormatLabel")}</span>
+                  <strong>{MVP_CHALLENGE.acceptedFormat}</strong>
+                </div>
+                <div>
+                  <span className="spec-label">{t("maxSizeLabel")}</span>
+                  <strong>{MVP_CHALLENGE.maxSizeMb} MB</strong>
+                </div>
+              </div>
+
+              <h2 style={{ marginTop: "16px" }}>{t("estimatedStepsLabel")}</h2>
+              <ol className="brief-ruled-steps">
+                {MVP_CHALLENGE.estimatedSteps.map((step, idx) => (
+                  <li key={step} className="brief-ruled-step">
+                    <span className="stage-numeral tabular-nums">{String(idx + 1).padStart(2, "0")}</span>
+                    <span>{step}</span>
+                  </li>
+                ))}
+              </ol>
+
+              <a
+                href={getStarterWorkbookUrl()}
+                className={buttonClasses({ variant: "secondary", className: "cta-spacer" })}
+                download="retail_sales_starter.xlsx"
+              >
+                DOWNLOAD STARTER WORKBOOK
+              </a>
+            </Card>
+
+            <section className="upload-section" aria-label={t("uploadSectionTitle")}>
+              <div className="card-header-row">
+                <h2>{t("uploadSectionTitle")}</h2>
+                <span className="pf-chip pf-chip--review">{t("onlineOnlyBadge")}</span>
+              </div>
+              <InfoNote>{t("onlineOnlyValidationNote")}</InfoNote>
+              <p className="fineprint mock-disclosure">{t("mockUploadNotice")}</p>
+
+              <div
+                className={"dropzone-monochrome" + (dragOver ? " is-dragover" : "")}
+                onDragOver={(e) => {
+                  e.preventDefault();
+                  setDragOver(true);
+                }}
+                onDragLeave={() => setDragOver(false)}
+                onDrop={handleDrop}
+              >
+                <input
+                  ref={fileInputRef}
+                  type="file"
+                  accept=".xlsx,application/vnd.openxmlformats-officedocument.spreadsheetml.sheet"
+                  className="sr-only"
+                  id="challenge-file-input"
+                  onChange={handleFileChange}
+                />
+                <FileXls size={28} weight="regular" aria-hidden="true" />
+                <p className="dropzone-title">Drop your .xlsx here, or browse</p>
+                <label
+                  htmlFor="challenge-file-input"
+                  className={buttonClasses({ variant: "primary" })}
+                  role="button"
+                  tabIndex={0}
+                >
+                  {t("chooseXlsxFile")}
+                </label>
+              </div>
+
+              <Button
+                variant="secondary"
+                fullWidth
+                disabled={isBusy}
+                className="cta-spacer"
+                onClick={() => startSimulatedCheck("retail_sales_cleaned_demo.xlsx", 42500)}
+              >
+                {t("loadDemoXlsx")}
+              </Button>
+
+              {phase === "uploading" && selectedFile && (
+                <Card as="div" className="cta-spacer" role="status" aria-live="polite">
+                  <div className="meter-heading">
+                    <span>{t("uploadingFile", { file: selectedFile.name })}</span>
+                    <strong className="mono">{progress}%</strong>
+                  </div>
+                  <div className="upload-line-track" role="progressbar" aria-valuenow={progress} aria-valuemin={0} aria-valuemax={100}>
+                    <span className="upload-line-fill" style={{ width: `${progress}%` }} />
+                  </div>
+                  <div className="form-stack" style={{ marginTop: "12px" }}>
+                    <Skeleton variant="text" />
+                    <Skeleton variant="text" />
+                  </div>
+                  <Button variant="ghost" onClick={handleCancel}>
+                    {t("cancelUpload")}
+                  </Button>
+                </Card>
+              )}
+
+              {phase === "validating" && (
+                <Card as="div" className="cta-spacer" role="status" aria-live="polite">
+                  <p className="pf-label" style={{ marginBottom: "8px" }}>Validating workbook</p>
+                  <ul className="ruled-list">
+                    {VALIDATING_STEPS.map((label, idx) => {
+                      const done = idx < resolvedCount;
+                      return (
+                        <li key={label} className="ruled-row validating-row">
+                          <span>{label}</span>
+                          {done ? <StatusMark tone="ok" /> : <Skeleton variant="text" width={80} />}
+                        </li>
+                      );
+                    })}
+                  </ul>
+                  <Button variant="ghost" onClick={handleCancel}>
+                    {t("cancelUpload")}
+                  </Button>
+                </Card>
+              )}
+
+              {phase === "success" && (
+                <Card as="div" className="cta-spacer rule-feedback--ok" role="status" aria-live="polite">
+                  <div className="rule-feedback">
+                    <StatusMark tone="ok" label="Workbook verified and fingerprinted." />
+                  </div>
+                  {verifiedSha && (
+                    <div className="sha-chip-row" style={{ marginTop: "12px" }}>
+                      <code className="mono">{formatShaPreview(verifiedSha)}</code>
+                      <CopyButton text={verifiedSha} ariaLabel="Copy SHA-256" />
+                    </div>
+                  )}
+                </Card>
+              )}
+
+              {phase === "error" && error && (
+                <Card as="div" variant="error" className="cta-spacer" role="alert">
+                  <div className="rule-feedback">
+                    <StatusMark tone="bad" />
+                    <span>{error}</span>
+                  </div>
+                  <Button variant="secondary" onClick={handleRetry} className="cta-spacer">
+                    {t("retry")}
+                  </Button>
+                </Card>
+              )}
+            </section>
+          </div>
+
+          <aside className="summary-col" aria-label="Summary">
+            <Card className="summary-panel summary-desktop-only">
+              <span className="pf-label">SUMMARY</span>
+              <div style={{ marginTop: "12px" }}>{summaryRows}</div>
+            </Card>
+            <div className="summary-mobile-only">
+              <Accordion title="SUMMARY">
+                {summaryRows}
+              </Accordion>
             </div>
-            <Button variant="secondary" onClick={handleRetry} className="cta-spacer">
-              {t("retry")}
-            </Button>
-          </Card>
-        )}
-      </section>
+          </aside>
+        </div>
 
-      <Button variant="ghost" fullWidth onClick={() => navigate("/learn")}>
-        {t("back")}
-      </Button>
+        <Button variant="ghost" fullWidth onClick={() => navigate("/learn")} style={{ marginTop: "24px" }}>
+          {t("back")}
+        </Button>
+      </div>
     </main>
   );
 }
