@@ -1,8 +1,10 @@
 import { useState } from "react";
 import { Link } from "react-router-dom";
+import { ExternalLink, Globe, MapPin, ShieldCheck, Sparkles } from "lucide-react";
 import { useTranslation } from "../i18n";
 import { getDevnovateUrl, MVP_ROLES, SAMPLE_OPPORTUNITIES } from "../mock/demoData";
 import { JourneyNav } from "../shared/JourneyNav";
+import { Badge, Button, Card, Chip, ProgressRing } from "../shared/ui";
 import type { OpportunityItem } from "../types";
 
 function computeMatchDetails(opp: OpportunityItem): {
@@ -21,11 +23,32 @@ function computeMatchDetails(opp: OpportunityItem): {
   };
 }
 
+function EmptyOpportunitiesIllustration(): JSX.Element {
+  return (
+    <svg width="160" height="110" viewBox="0 0 160 110" fill="none" aria-hidden="true" className="empty-blob-svg">
+      <path
+        d="M24 62C12 38 34 14 66 16C98 18 134 26 142 54C150 82 118 98 84 96C50 94 36 86 24 62Z"
+        fill="var(--lav-100)"
+      />
+      <path
+        d="M44 58C38 42 52 28 74 30C96 32 114 42 116 58C118 74 98 84 76 82C54 80 50 74 44 58Z"
+        fill="var(--bg)"
+        stroke="var(--lav-300)"
+        strokeWidth="1.5"
+      />
+      <circle cx="78" cy="56" r="14" fill="var(--lav-300)" />
+      <path d="M72 56L76 60L84 52" stroke="var(--violet)" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round" />
+    </svg>
+  );
+}
+
 export function OpportunitiesPage(): JSX.Element {
   const { t } = useTranslation();
   const [roleFilter, setRoleFilter] = useState<string>("all");
   const [locationQuery, setLocationQuery] = useState<string>("");
+  const [quickFilter, setQuickFilter] = useState<"all" | "nearby" | "entry" | "language">("all");
   const [gpsStatus, setGpsStatus] = useState<string>("");
+  const [activeWeightId, setActiveWeightId] = useState<string | null>(null);
   const devnovateUrl = getDevnovateUrl();
 
   const normalizedQuery = locationQuery.trim().toLowerCase();
@@ -36,7 +59,12 @@ export function OpportunitiesPage(): JSX.Element {
       opp.city.toLowerCase().includes(normalizedQuery) ||
       opp.district.toLowerCase().includes(normalizedQuery) ||
       opp.pincode.includes(normalizedQuery);
-    return matchesRole && matchesLocation;
+    const matchesQuick =
+      quickFilter === "all" ||
+      (quickFilter === "entry" && opp.roleId === "data-entry-operator") ||
+      (quickFilter === "nearby" && (opp.city.toLowerCase().includes("bengaluru") || Boolean(normalizedQuery))) ||
+      quickFilter === "language";
+    return matchesRole && matchesLocation && matchesQuick;
   });
 
   function handleOptionalGps(): void {
@@ -63,8 +91,47 @@ export function OpportunitiesPage(): JSX.Element {
       <h1>{t("opportunitiesTitle")}</h1>
       <p className="lede">{t("opportunitiesBody")}</p>
 
-      <section className="filter-card" aria-label={t("filterOpportunitiesLabel")}>
-        <label className="field-label" htmlFor="opp-role-filter">
+      {/* Calm Human-Agency Notice */}
+      <Card as="section" variant="lavender" className="human-agency-card" padding="sm">
+        <div className="human-agency-row">
+          <ShieldCheck size={20} className="human-agency-icon" aria-hidden="true" />
+          <div>
+            <strong>We never auto-apply or auto-reject. You decide.</strong>
+            <p className="fineprint" style={{ margin: "2px 0 0" }}>{t("humanAgencyNotice")}</p>
+          </div>
+        </div>
+      </Card>
+
+      {/* Horizontally Scrolling Filter Pills */}
+      <div className="filter-pills-row" role="group" aria-label="Quick opportunity filters">
+        <button
+          type="button"
+          className={"pf-stepper-pill" + (quickFilter === "nearby" ? " is-active" : "")}
+          onClick={() => setQuickFilter((f) => (f === "nearby" ? "all" : "nearby"))}
+        >
+          <MapPin size={14} aria-hidden="true" />
+          <span style={{ marginLeft: "6px" }}>Nearby</span>
+        </button>
+        <button
+          type="button"
+          className={"pf-stepper-pill" + (quickFilter === "entry" ? " is-active" : "")}
+          onClick={() => setQuickFilter((f) => (f === "entry" ? "all" : "entry"))}
+        >
+          <Sparkles size={14} aria-hidden="true" />
+          <span style={{ marginLeft: "6px" }}>Entry-level</span>
+        </button>
+        <button
+          type="button"
+          className={"pf-stepper-pill" + (quickFilter === "language" ? " is-active" : "")}
+          onClick={() => setQuickFilter((f) => (f === "language" ? "all" : "language"))}
+        >
+          <Globe size={14} aria-hidden="true" />
+          <span style={{ marginLeft: "6px" }}>Language</span>
+        </button>
+      </div>
+
+      <Card as="section" className="filter-card" aria-label={t("filterOpportunitiesLabel")}>
+        <label className="field-label" htmlFor="opp-role-filter" style={{ marginTop: 0 }}>
           {t("filterRoleLabel")}
         </label>
         <select
@@ -93,96 +160,156 @@ export function OpportunitiesPage(): JSX.Element {
           placeholder={t("filterLocationPlaceholder")}
         />
 
-        <button type="button" className="secondary" onClick={handleOptionalGps}>
+        <Button variant="secondary" fullWidth className="cta-spacer" onClick={handleOptionalGps}>
           Use GPS location (Optional)
-        </button>
+        </Button>
         {gpsStatus && (
           <p className="fineprint" role="status">
             {gpsStatus}
           </p>
         )}
-      </section>
+      </Card>
 
       {filtered.length === 0 ? (
-        <section className="info-card empty-state" role="status">
+        <Card as="section" className="empty-state opp-empty-card" role="status">
+          <EmptyOpportunitiesIllustration />
           <strong>{t("opportunitiesEmptyTitle")}</strong>
-          <p>{t("opportunitiesEmptyBody")}</p>
-          <button
-            type="button"
-            className="secondary"
-            onClick={() => {
-              setRoleFilter("all");
-              setLocationQuery("");
-            }}
-          >
-            {t("resetFilters")}
-          </button>
-        </section>
+          <p className="fineprint" style={{ maxWidth: "40ch", margin: "4px auto 12px" }}>
+            {t("opportunitiesEmptyBody")} Earn a <strong>Demonstrated</strong> outcome in your challenge to unlock more verified matches.
+          </p>
+          <div className="viva-secondary-controls">
+            <Button
+              variant="secondary"
+              onClick={() => {
+                setRoleFilter("all");
+                setLocationQuery("");
+                setQuickFilter("all");
+              }}
+            >
+              {t("resetFilters")}
+            </Button>
+            <Link to="/challenge" className="pf-btn pf-btn--primary">
+              Go to Challenge
+            </Link>
+          </div>
+        </Card>
       ) : (
-        <section className="card-list" aria-label={t("opportunitiesListLabel")}>
+        <section className="card-list opp-grid" aria-label={t("opportunitiesListLabel")}>
           {filtered.map((opp) => {
             const { matchPct, matchedWeight, totalWeight } = computeMatchDetails(opp);
             const matchedSkills = opp.requiredSkills.filter((s) => s.matched);
             const gaps = opp.requiredSkills.filter((s) => !s.matched);
+            const initials = opp.employer
+              .split(/\s+/)
+              .slice(0, 2)
+              .map((w) => w[0]?.toUpperCase() ?? "")
+              .join("");
 
             return (
-              <article key={opp.id} className="info-card opp-card">
-                <div className="card-header-row">
-                  <span className="sample-pill">
-                    {opp.isSample ? opp.sourceLabel : t("liveSourceLabel")}
-                  </span>
-                  <span className="match-pill">{matchPct}% {t("matchLabel")}</span>
+              <Card as="article" key={opp.id} className="opp-card" interactive>
+                <div className="opp-card-top">
+                  <div className="opp-company-head">
+                    <span className="opp-company-avatar" aria-hidden="true">
+                      {initials}
+                    </span>
+                    <div>
+                      <Badge tone="lavender">
+                        {opp.isSample ? opp.sourceLabel : t("liveSourceLabel")}
+                      </Badge>
+                      <h2 className="opp-role-serif">{opp.title}</h2>
+                      <p className="opp-employer-line">{opp.employer}</p>
+                    </div>
+                  </div>
+                  <ProgressRing
+                    value={matchPct}
+                    size={64}
+                    strokeWidth={6}
+                    tone={matchPct >= 75 ? "ok" : "violet"}
+                    label={`${matchPct}% ${t("matchLabel")}`}
+                  />
                 </div>
 
-                <h2>{opp.title}</h2>
-                <p className="opp-meta">
-                  {opp.employer} · {opp.city}, {opp.district} ({opp.pincode}) · Updated {opp.postedDate}
-                </p>
+                <div className="opp-location-row">
+                  <Chip tone="neutral">
+                    <MapPin size={12} aria-hidden="true" />
+                    <span>{opp.city}, {opp.district} ({opp.pincode})</span>
+                  </Chip>
+                  <span className="fineprint">Updated {opp.postedDate}</span>
+                </div>
+
                 <p className="fineprint">
                   Match calculation: ({matchedWeight} / {totalWeight}) × 100 = {matchPct}% (Demonstrated skills only · Decision support, not a job offer).
                 </p>
 
                 <div className="opp-skills-block">
                   <strong>{t("matchedSkillsLabel")}</strong>
-                  <ul className="mini-skill-list">
-                    {matchedSkills.map((s) => (
-                      <li key={s.skillId}>✓ {s.label} (weight {s.weight})</li>
-                    ))}
-                  </ul>
+                  <div className="opp-chips-wrap">
+                    {matchedSkills.map((s) => {
+                      const chipKey = `${opp.id}-${s.skillId}`;
+                      const showWeight = activeWeightId === chipKey;
+                      return (
+                        <button
+                          key={s.skillId}
+                          type="button"
+                          className="opp-skill-chip-btn pf-chip pf-chip--ok"
+                          title={`Weight: ${s.weight}`}
+                          onClick={() => setActiveWeightId(showWeight ? null : chipKey)}
+                        >
+                          <span>✓ {s.label}</span>
+                          <span className={"opp-weight-tag" + (showWeight ? " is-visible" : "")}>
+                            w:{s.weight}
+                          </span>
+                        </button>
+                      );
+                    })}
+                  </div>
                 </div>
 
                 {gaps.length > 0 && (
                   <div className="opp-skills-block opp-gaps-block">
                     <strong>{t("skillGapsLabel")}</strong>
-                    <ul className="mini-skill-list">
-                      {gaps.map((s) => (
-                        <li key={s.skillId}>
-                          ○ {s.label} (weight {s.weight}) — <Link to="/learn">{t("openLearnLink")}</Link>
-                        </li>
-                      ))}
-                    </ul>
-                    <p className="fineprint">
-                      {t("recommendedPracticeLabel")}: {opp.recommendedPractice}
+                    <div className="opp-chips-wrap">
+                      {gaps.map((s) => {
+                        const chipKey = `${opp.id}-${s.skillId}`;
+                        const showWeight = activeWeightId === chipKey;
+                        return (
+                          <button
+                            key={s.skillId}
+                            type="button"
+                            className="opp-skill-chip-btn skill-gap-chip"
+                            title={`Weight: ${s.weight}`}
+                            onClick={() => setActiveWeightId(showWeight ? null : chipKey)}
+                          >
+                            <span>○ {s.label}</span>
+                            <span className={"opp-weight-tag" + (showWeight ? " is-visible" : "")}>
+                              w:{s.weight}
+                            </span>
+                          </button>
+                        );
+                      })}
+                    </div>
+                    <p className="fineprint" style={{ marginTop: "6px" }}>
+                      {t("recommendedPracticeLabel")}: {opp.recommendedPractice} —{" "}
+                      <Link to="/learn">{t("openLearnLink")}</Link>
                     </p>
                   </div>
                 )}
-              </article>
+              </Card>
             );
           })}
         </section>
       )}
 
       {devnovateUrl && (
-        <section className="info-card" style={{ marginTop: "16px" }}>
+        <Card as="section" style={{ marginTop: "16px" }}>
           <h2>Devnovate Portfolio Link-Out</h2>
           <p className="fineprint">Optional external portfolio and opportunity link.</p>
           <a href={devnovateUrl} target="_blank" rel="noopener noreferrer" className="secondary link-button">
             Open Devnovate Profile
+            <ExternalLink size={15} style={{ marginLeft: "6px" }} aria-hidden="true" />
           </a>
-        </section>
+        </Card>
       )}
-
-      <p className="fineprint basis">{t("humanAgencyNotice")}</p>
     </main>
   );
 }

@@ -2,6 +2,7 @@ import { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
 import { finishSession, getHealth, sendTurn, startSession, type HealthReport } from "../api";
 import { useTranslation } from "../i18n";
+import { Badge, Button, Card, Skeleton } from "../shared/ui";
 
 interface TestSessionResult {
   sessionId: string;
@@ -71,61 +72,83 @@ export function HealthPage(): JSX.Element {
       <h1>{t("healthTitle")}</h1>
       <p className="lede">{t("healthSubtitle")}</p>
 
-      {loading && <p className="loading">{t("loading")}</p>}
-      {error && (
-        <div className="mic-help" role="alert">
-          <p>{error}</p>
-          <button className="primary" onClick={() => void loadHealth()}>{t("retry")}</button>
+      {loading && (
+        <div className="status-grid" aria-label={t("loading")}>
+          <Skeleton variant="card" />
+          <Skeleton variant="card" />
+          <Skeleton variant="card" />
+          <Skeleton variant="card" />
         </div>
+      )}
+
+      {error && (
+        <Card as="div" variant="error" role="alert">
+          <p style={{ margin: "0 0 12px" }}>{error}</p>
+          <Button variant="secondary" onClick={() => void loadHealth()}>
+            {t("retry")}
+          </Button>
+        </Card>
       )}
 
       {report && (
-        <div className="tap-stack">
+        <div className="status-grid">
           {Object.values(report.services)
             .filter((svc): svc is NonNullable<typeof svc> => Boolean(svc))
-            .map((svc) => (
-              <article key={svc.name} className="tap-card health-card">
-                <div className="health-card-header">
-                  <strong>{svc.name}</strong>
-                  <span className={`status-pill status-${svc.status}`}>
-                    {statusLabel(svc)}
-                  </span>
-                </div>
-                <span>{svc.message}</span>
-              </article>
-            ))}
+            .map((svc) => {
+              const tone = svc.status === "ok" ? "ok" : svc.status === "mock" ? "lavender" : "neutral";
+              return (
+                <Card as="article" key={svc.name} className="status-grid-card" padding="sm">
+                  <div className="health-card-header">
+                    <strong>{svc.name}</strong>
+                    <Badge tone={tone} className="status-badge-with-dot">
+                      {svc.status === "ok" && <span className="status-pulse-dot" aria-hidden="true" />}
+                      <span>{statusLabel(svc)}</span>
+                    </Badge>
+                  </div>
+                  <p className="fineprint" style={{ margin: 0 }}>{svc.message}</p>
+                </Card>
+              );
+            })}
         </div>
       )}
 
-      <div className="health-actions">
-        <button
-          className="primary large-button"
+      <div className="health-actions" style={{ marginTop: "24px" }}>
+        <Button
+          variant="primary"
+          size="lg"
+          fullWidth
           disabled={runningTest}
           onClick={() => void handleRunTestSession()}
         >
           {runningTest ? t("runningTest") : t("runTestSession")}
-        </button>
+        </Button>
 
         {testResult && (
-          <div className="test-session-card success-card" role="status">
+          <Card as="div" className="cta-spacer" role="status">
             <strong>✓ {t("testSessionSuccess")}</strong>
-            <p>Session ID: <code>{testResult.sessionId}</code></p>
-            <p>Score: <strong>{testResult.total}/100</strong> ({testResult.overallLevel})</p>
+            <p className="fineprint">
+              Session ID: <code className="mono">{testResult.sessionId}</code>
+            </p>
+            <p className="fineprint">
+              Score: <strong>{testResult.total}/100</strong> ({testResult.overallLevel})
+            </p>
             <Link className="primary link-button" to={`/results/${testResult.sessionId}`}>
               {t("viewTestResults")}
             </Link>
-          </div>
+          </Card>
         )}
 
         {testError && (
-          <div className="test-session-card error-card" role="alert">
+          <Card as="div" variant="error" className="cta-spacer" role="alert">
             <strong>✕ {t("testSessionFailed")}</strong>
-            <p>{testError}</p>
-          </div>
+            <p style={{ margin: "4px 0 0" }}>{testError}</p>
+          </Card>
         )}
       </div>
 
-      <Link className="text-button text-link" to="/">{t("backToHome")}</Link>
+      <Link className="text-button text-link" to="/">
+        {t("backToHome")}
+      </Link>
     </main>
   );
 }
