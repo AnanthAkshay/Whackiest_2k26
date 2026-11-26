@@ -1,4 +1,4 @@
-import { useEffect, useState, type ReactNode } from "react";
+import { useEffect, useRef, useState, type ReactNode } from "react";
 import { Link, useLocation } from "react-router-dom";
 import {
   ArrowUp,
@@ -18,7 +18,9 @@ import {
 import { useTranslation } from "../i18n";
 import { useSetup } from "../setup/SetupContext";
 import type { Language } from "../types";
+import { getStoredThemePreference, persistThemePreference, type ThemePreference } from "./theme";
 import { Frame, Grain, SegmentedControl, Sheet } from "./ui";
+import { extractUtmParams, saveStoredUtm } from "./utm";
 
 const LANG_OPTIONS: { value: Language; label: string; ariaLabel: string }[] = [
   { value: "en", label: "EN", ariaLabel: "English" },
@@ -50,45 +52,22 @@ export function AppShell({ children }: { children: ReactNode }): JSX.Element {
   const [scrollPct, setScrollPct] = useState(0);
   const [isScrolled, setIsScrolled] = useState(false);
   const [showTopBtn, setShowTopBtn] = useState(false);
-  const [theme, setTheme] = useState<"light" | "dark">("light");
+  const [themePref, setThemePref] = useState<ThemePreference>("system");
+  const drawerRef = useRef<HTMLElement>(null);
 
   useEffect(() => {
     if (typeof window === "undefined") return;
 
-    // Capture UTM params into sessionStorage for outbound link-outs only; strip from our URL
-    const params = new URLSearchParams(window.location.search);
-    const utmKeys = ["utm_source", "utm_medium", "utm_campaign", "utm_term", "utm_content"];
-    const utm: Record<string, string> = {};
-    let hasUtm = false;
-    for (const key of utmKeys) {
-      const val = params.get(key);
-      if (val) {
-        utm[key] = val;
-        params.delete(key);
-        hasUtm = true;
-      }
-    }
-    if (hasUtm) {
-      try {
-        window.sessionStorage.setItem("prooffolio_utm", JSON.stringify(utm));
-      } catch {
-        // Ignore storage quota errors
-      }
-      const cleanSearch = params.toString();
-      const nextUrl = window.location.pathname + (cleanSearch ? `?${cleanSearch}` : "") + window.location.hash;
-      window.history.replaceState({}, "", nextUrl);
+    const { utm, cleanedSearch } = extractUtmParams(window.location.search);
+    if (Object.keys(utm).length > 0) {
+      saveStoredUtm(utm);
+      window.history.replaceState({}, "", window.location.pathname + cleanedSearch + window.location.hash);
     }
 
-    try {
-      const savedTheme = window.localStorage.getItem("prooffolio_theme");
-      if (savedTheme === "dark" || savedTheme === "light") {
-        setTheme(savedTheme);
-        document.documentElement.dataset.theme = savedTheme;
-      } else if (window.matchMedia?.("(prefers-color-scheme: dark)").matches) {
-        setTheme("dark");
-      }
-    } catch {
-      // Ignore storage errors
+    const stored = getStoredThemePreference();
+    setThemePref(stored);
+    if (stored !== "system") {
+      document.documentElement.dataset.theme = stored;
     }
 
     let rafId = 0;
@@ -121,17 +100,43 @@ export function AppShell({ children }: { children: ReactNode }): JSX.Element {
     };
   }, [searchOpen]);
 
-  function toggleTheme(): void {
-    const next = theme === "dark" ? "light" : "dark";
-    setTheme(next);
-    if (typeof document !== "undefined") {
-      document.documentElement.dataset.theme = next;
-    }
-    try {
-      window.localStorage.setItem("prooffolio_theme", next);
-    } catch {
-      // Ignore storage errors
-    }
+  useEffect(() => {
+    if (!menuOpen || typeof document === "undefined") return;
+    const prevOverflow = document.body.style.overflow;
+    document.body.style.overflow = "hidden";
+    const drawer = drawerRef.current;
+    const firstLink = drawer?.querySelector<HTMLElement>("a, button");
+    firstLink?.focus();
+
+    const onDrawerKey = (e: KeyboardEvent): void => {
+      if (e.key === "Escape") {
+        setMenuOpen(false);
+        return;
+      }
+      if (e.key === "Tab" && drawer) {
+        const items = Array.from(drawer.querySelectorAll<HTMLElement>("a, button"));
+        if (items.length === 0) return;
+        const first = items[0];
+        const last = items[items.length - 1];
+        if (e.shiftKey && document.activeElement === first) {
+          e.preventDefault();
+          last.focus();
+        } else if (!e.shiftKey && document.activeElement === last) {
+          e.preventDefault();
+          first.focus();
+        }
+      }
+    };
+    document.addEventListener("keydown", onDrawerKey);
+    return () => {
+      document.body.style.overflow = prevOverflow;
+      document.removeEventListener("keydown", onDrawerKey);
+    };
+  }, [menuOpen]);
+
+  function setThemePreference(next: ThemePreference): void {
+    setThemePref(next);
+    persistThemePreference(next);
   }
 
   const navItems = [
@@ -202,10 +207,10 @@ export function AppShell({ children }: { children: ReactNode }): JSX.Element {
               <button
                 type="button"
                 className="topbar-icon-btn"
-                aria-label={theme === "dark" ? "Switch to light mode" : "Switch to dark mode"}
-                onClick={toggleTheme}
+                aria-label={themePref === "dark" ? "Switch to light mode" : "Switch to dark mode"}
+                onClick={() => setThemePreference(themePref === "dark" ? "light" : "dark")}
               >
-                {theme === "dark" ? <Sun size={18} weight="regular" aria-hidden="true" /> : <Moon size={18} weight="regular" aria-hidden="true" />}
+                {themePref === "dark" ? <Sun size={18} weight="regular" aria-hidden="true" /> : <Moon size={18} weight="regular" aria-hidden="true" />}
               </button>
 
               <Link
@@ -235,12 +240,22 @@ export function AppShell({ children }: { children: ReactNode }): JSX.Element {
           </div>
 
           {menuOpen && (
-            <nav id="mobile-nav-drawer" className="mobile-nav-drawer" aria-label={t("mainNavLabel")}>
+            <nav ref={drawerRef} id="mobile-nav-drawer" className="mobile-nav-drawer" aria-label={t("mainNavLabel")}>
               {navItems.map((item) => (
                 <Link key={item.to} to={item.to} className="mobile-nav-link" onClick={() => setMenuOpen(false)}>
                   {item.label}
                 </Link>
               ))}
+              <SegmentedControl
+                ariaLabel="Theme"
+                value={themePref}
+                onChange={setThemePreference}
+                options={[
+                  { value: "light", label: "Light" },
+                  { value: "dark", label: "Dark" },
+                  { value: "system", label: "System" }
+                ]}
+              />
             </nav>
           )}
         </header>
@@ -367,6 +382,19 @@ export function AppShell({ children }: { children: ReactNode }): JSX.Element {
         <p className="fineprint">
           Questions about the spreadsheet rubric, Mock Mode, or verification?
         </p>
+        <div style={{ marginBottom: "12px" }}>
+          <span className="field-label" style={{ marginTop: 0 }}>Theme</span>
+          <SegmentedControl
+            ariaLabel="Theme preference"
+            value={themePref}
+            onChange={setThemePreference}
+            options={[
+              { value: "light", label: "Light" },
+              { value: "dark", label: "Dark" },
+              { value: "system", label: "System" }
+            ]}
+          />
+        </div>
         <div className="cta-stack">
           <a href="mailto:team@prooffolio.example" className="pf-btn pf-btn--secondary">
             Email Team The North Remembers

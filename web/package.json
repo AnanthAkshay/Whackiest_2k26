@@ -7,7 +7,7 @@
     "dev": "vite",
     "typecheck": "tsc -b --pretty false",
     "build": "tsc -b && vite build",
-    "test": "tsx --tsconfig tsconfig.app.json --test src/App.test.tsx src/offline/offlineStore.test.ts"
+    "test": "tsx --tsconfig tsconfig.app.json --test src/App.test.tsx src/offline/offlineStore.test.ts src/shared/uiFeatures.test.tsx"
   },
   "dependencies": {
     "@elevenlabs/react": "^1.24.0",
