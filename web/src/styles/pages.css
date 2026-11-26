@@ -545,8 +545,71 @@ h2, .section-heading {
 .sticky-action-bar-inner { display: flex; flex-wrap: wrap; gap: var(--space-2); }
 .sticky-primary-cta { flex: 1 1 220px; }
 
-/* Opportunities, Health & Integrations */
-.human-agency-card { margin-bottom: var(--space-4); }
+/* Connect, Status Lists & 404 Reference Composition */
+.human-agency-note { margin-bottom: var(--space-16); }
+.opp-ruled-row { display: grid; gap: var(--space-8); }
+.opp-row-head { display: flex; align-items: flex-start; justify-content: space-between; gap: var(--space-16); }
+.opp-role-dm { margin: 4px 0 2px; font-size: 1.35rem; }
+.opp-match-score { text-align: right; flex-shrink: 0; }
+.numeral-lg { font-family: var(--font-numeral); font-size: 1.75rem; font-weight: 600; display: block; line-height: 1; }
+.opp-skills-inline { line-height: 1.65; }
+
+.skill-inline-btn {
+  display: inline;
+  padding: 2px 0;
+  border: 0;
+  background: transparent;
+  color: var(--ink);
+}
+.skill-inline-btn.is-matched { font-weight: 700; }
+.skill-inline-btn.is-gap { color: var(--muted); border-bottom: 1px dashed var(--line-strong); }
+
+.opp-weight-panel {
+  padding: var(--space-8) var(--space-12);
+  border-left: 3px solid var(--ink);
+  background: var(--surface-card);
+  font-size: 0.875rem;
+}
+
+.status-two-col {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: var(--space-12);
+}
+
+.status-state-cell {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  flex-shrink: 0;
+}
+
+.status-text--review { color: var(--review); }
+.status-text--neutral { color: var(--muted); }
+
+.ref-error-page {
+  position: relative;
+  min-height: 360px;
+  padding: var(--space-48) 0;
+  display: grid;
+  align-items: center;
+}
+
+.ref-error-inner {
+  position: relative;
+  z-index: 1;
+}
+
+.numeral-hero {
+  display: block;
+  font-family: var(--font-numeral);
+  font-size: clamp(3rem, 8vw, 4.5rem);
+  font-weight: 600;
+  line-height: 1;
+}
+
 .human-agency-row { display: flex; align-items: flex-start; gap: var(--space-3); }
 .human-agency-icon { color: var(--violet); flex-shrink: 0; margin-top: 2px; }
 .filter-pills-row { display: flex; gap: var(--space-2); overflow-x: auto; padding: 2px 0 var(--space-3); scrollbar-width: none; }

@@ -1,0 +1,70 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Offline — Prooffolio</title>
+    <style>
+      body {
+        margin: 0;
+        min-height: 100vh;
+        display: grid;
+        place-items: center;
+        padding: 16px;
+        background: linear-gradient(180deg, #E8E8E8 0%, #F3F3F3 100%);
+        color: #151515;
+        font-family: system-ui, -apple-system, sans-serif;
+      }
+      .frame {
+        position: relative;
+        width: min(100%, 720px);
+        padding: 48px 24px;
+        border-radius: 28px;
+        border: 1px solid rgba(21,21,21,0.1);
+        background: linear-gradient(180deg, #C8C8C8 0%, #F6F6F6 100%);
+        overflow: hidden;
+      }
+      .wordmark {
+        font-size: 14px;
+        letter-spacing: 0.08em;
+        text-transform: uppercase;
+        margin-bottom: 32px;
+      }
+      .ghost {
+        position: absolute;
+        right: 16px;
+        top: -10px;
+        font-size: 14rem;
+        font-weight: 700;
+        opacity: 0.06;
+        pointer-events: none;
+      }
+      h1 { margin: 0; font-size: 2rem; }
+      p { color: #4A4A4A; max-width: 46ch; line-height: 1.55; }
+      a {
+        display: inline-flex;
+        align-items: center;
+        min-height: 44px;
+        padding: 0 20px;
+        border-radius: 8px;
+        border: 1px solid rgba(21,21,21,0.12);
+        background: #FFFFFF;
+        color: #151515;
+        font-size: 13px;
+        font-weight: 700;
+        letter-spacing: 0.08em;
+        text-transform: uppercase;
+        text-decoration: none;
+      }
+    </style>
+  </head>
+  <body>
+    <main class="frame">
+      <div class="ghost" aria-hidden="true">0</div>
+      <div class="wordmark"><span style="font-weight:300">PROOF</span><strong>FOLIO</strong></div>
+      <h1>You&apos;re offline.</h1>
+      <p>Your cached lessons and practice drills remain available. Reconnect to upload workbooks, run the AI Viva, or verify passports.</p>
+      <a href="/learn">OPEN OFFLINE LESSONS</a>
+    </main>
+  </body>
+</html>

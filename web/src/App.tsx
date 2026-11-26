@@ -3,6 +3,7 @@ import { HealthPage } from "./health/HealthPage";
 import { ChallengePage } from "./pages/ChallengePage";
 import { IntegrationsPage } from "./pages/IntegrationsPage";
 import { LearnPractisePage } from "./pages/LearnPractisePage";
+import { NotFoundPage } from "./pages/NotFoundPage";
 import { OpportunitiesPage } from "./pages/OpportunitiesPage";
 import { ProfileSetupPage } from "./pages/ProfileSetupPage";
 import { RoleSelectionPage } from "./pages/RoleSelectionPage";
@@ -36,7 +37,7 @@ export function AppRoutes(): JSX.Element {
         <Route path="/integrations" element={<IntegrationsPage />} />
         <Route path="/sponsors" element={<IntegrationsPage />} />
         <Route path="/health" element={<HealthPage />} />
-        <Route path="*" element={<WelcomePage />} />
+        <Route path="*" element={<NotFoundPage />} />
       </Routes>
     </AppShell>
   );

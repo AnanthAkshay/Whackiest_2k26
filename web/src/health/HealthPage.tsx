@@ -2,7 +2,7 @@ import { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
 import { finishSession, getHealth, sendTurn, startSession, type HealthReport } from "../api";
 import { useTranslation } from "../i18n";
-import { Badge, Button, Card, Skeleton } from "../shared/ui";
+import { Button, Card, Skeleton, StatusMark, type StatusTone } from "../shared/ui";
 
 interface TestSessionResult {
   sessionId: string;
@@ -45,11 +45,7 @@ export function HealthPage(): JSX.Element {
       const sid = started.session.id;
       await sendTurn(sid, "The SUM function adds up numbers in a range of cells, such as SUM(A1:A10).");
       const record = await finishSession(sid);
-      setTestResult({
-        sessionId: sid,
-        total: record.total,
-        overallLevel: record.overallLevel
-      });
+      setTestResult({ sessionId: sid, total: record.total, overallLevel: record.overallLevel });
       void loadHealth();
     } catch (err) {
       setTestError(err instanceof Error ? err.message : "Test session failed");
@@ -58,26 +54,26 @@ export function HealthPage(): JSX.Element {
     }
   }
 
-  function statusLabel(svc: { status: "ok" | "mock" | "error"; displayState?: string }): string {
-    if (svc.displayState) return svc.displayState;
-    if (svc.status === "ok") return t("serviceOk");
-    if (svc.status === "mock") return t("serviceMock");
-    return t("serviceError");
+  function stateInfo(svc: { status: "ok" | "mock" | "error"; displayState?: string }): {
+    label: string;
+    tone: StatusTone;
+  } {
+    if (svc.status === "ok") return { label: svc.displayState || "LIVE", tone: "ok" };
+    if (svc.status === "mock") return { label: svc.displayState || "MOCK", tone: "review" };
+    return { label: svc.displayState || "NOT CONFIGURED", tone: "neutral" };
   }
 
   return (
     <main className="shell">
-      <p className="brand">{t("appName")}</p>
       <p className="eyebrow">{t("healthTitle")}</p>
       <h1>{t("healthTitle")}</h1>
       <p className="lede">{t("healthSubtitle")}</p>
 
       {loading && (
-        <div className="status-grid" aria-label={t("loading")}>
-          <Skeleton variant="card" />
-          <Skeleton variant="card" />
-          <Skeleton variant="card" />
-          <Skeleton variant="card" />
+        <div className="ruled-list" aria-label={t("loading")}>
+          <div className="ruled-row"><Skeleton variant="text" /></div>
+          <div className="ruled-row"><Skeleton variant="text" /></div>
+          <div className="ruled-row"><Skeleton variant="text" /></div>
         </div>
       )}
 
@@ -91,48 +87,42 @@ export function HealthPage(): JSX.Element {
       )}
 
       {report && (
-        <div className="status-grid">
+        <section className="ruled-list" aria-label="Service statuses">
           {Object.values(report.services)
             .filter((svc): svc is NonNullable<typeof svc> => Boolean(svc))
             .map((svc) => {
-              const tone = svc.status === "ok" ? "ok" : svc.status === "mock" ? "lavender" : "neutral";
+              const { label, tone } = stateInfo(svc);
               return (
-                <Card as="article" key={svc.name} className="status-grid-card" padding="sm">
-                  <div className="health-card-header">
+                <article key={svc.name} className="ruled-row status-two-col">
+                  <div>
                     <strong>{svc.name}</strong>
-                    <Badge tone={tone} className="status-badge-with-dot">
-                      {svc.status === "ok" && <span className="status-pulse-dot" aria-hidden="true" />}
-                      <span>{statusLabel(svc)}</span>
-                    </Badge>
+                    <p className="fineprint" style={{ margin: "2px 0 0" }}>{svc.message}</p>
                   </div>
-                  <p className="fineprint" style={{ margin: 0 }}>{svc.message}</p>
-                </Card>
+                  <div className="status-state-cell">
+                    <StatusMark tone={tone} size={15} />
+                    <span className={`status-text status-text--${tone}`}>{label}</span>
+                  </div>
+                </article>
               );
             })}
-        </div>
+        </section>
       )}
 
       <div className="health-actions" style={{ marginTop: "24px" }}>
-        <Button
-          variant="primary"
-          size="lg"
-          fullWidth
-          disabled={runningTest}
-          onClick={() => void handleRunTestSession()}
-        >
+        <Button variant="dark" size="lg" fullWidth disabled={runningTest} onClick={() => void handleRunTestSession()}>
           {runningTest ? t("runningTest") : t("runTestSession")}
         </Button>
 
         {testResult && (
           <Card as="div" className="cta-spacer" role="status">
-            <strong>✓ {t("testSessionSuccess")}</strong>
+            <strong>{t("testSessionSuccess")}</strong>
             <p className="fineprint">
               Session ID: <code className="mono">{testResult.sessionId}</code>
             </p>
             <p className="fineprint">
               Score: <strong>{testResult.total}/100</strong> ({testResult.overallLevel})
             </p>
-            <Link className="primary link-button" to={`/results/${testResult.sessionId}`}>
+            <Link className="pf-btn pf-btn--primary" to={`/results/${testResult.sessionId}`}>
               {t("viewTestResults")}
             </Link>
           </Card>
@@ -140,13 +130,13 @@ export function HealthPage(): JSX.Element {
 
         {testError && (
           <Card as="div" variant="error" className="cta-spacer" role="alert">
-            <strong>✕ {t("testSessionFailed")}</strong>
+            <strong>{t("testSessionFailed")}</strong>
             <p style={{ margin: "4px 0 0" }}>{testError}</p>
           </Card>
         )}
       </div>
 
-      <Link className="text-button text-link" to="/">
+      <Link className="hero-plain-link" style={{ marginTop: "16px" }} to="/">
         {t("backToHome")}
       </Link>
     </main>

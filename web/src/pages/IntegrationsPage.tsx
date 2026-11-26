@@ -1,21 +1,17 @@
 import { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
-import {
-  clientConfig,
-  getClientIntegrations,
-  type ClientIntegrationItem
-} from "../config/integrations";
+import { clientConfig, getClientIntegrations, type ClientIntegrationItem } from "../config/integrations";
 import { JourneyNav } from "../shared/JourneyNav";
-import { Badge, Card, IconExternalLink, type BadgeTone } from "../shared/ui";
+import { StatusMark, type StatusTone } from "../shared/ui";
 
-function badgeToneForStatus(status: string): { tone: BadgeTone; isLive: boolean } {
+function stateForIntegration(status: string): { label: string; tone: StatusTone } {
   if (/live|active|configured/i.test(status) && !/not configured/i.test(status)) {
-    return { tone: "ok", isLive: true };
+    return { label: status, tone: "ok" };
   }
   if (/mock|simulated/i.test(status)) {
-    return { tone: "lavender", isLive: false };
+    return { label: status, tone: "review" };
   }
-  return { tone: "neutral", isLive: false };
+  return { label: status, tone: "neutral" };
 }
 
 export function IntegrationsPage(): JSX.Element {
@@ -52,41 +48,40 @@ export function IntegrationsPage(): JSX.Element {
         Honest status of runtime providers, community sponsors, and optional external link-outs ({sourceNote}).
       </p>
 
-      <section className="status-grid" aria-label="Sponsor integration statuses">
+      <section className="ruled-list" aria-label="Sponsor integration statuses">
         {items.map((item) => {
-          const { tone, isLive } = badgeToneForStatus(item.status);
+          const { label, tone } = stateForIntegration(item.status);
           return (
-            <Card as="article" key={item.id} className="status-grid-card" padding="sm">
-              <div className="card-header-row">
+            <article key={item.id} className="ruled-row status-two-col">
+              <div>
                 <strong>{item.name}</strong>
-                <Badge tone={tone} className="status-badge-with-dot">
-                  {isLive && <span className="status-pulse-dot" aria-hidden="true" />}
-                  <span>{item.status}</span>
-                </Badge>
+                <p style={{ margin: "4px 0" }}>{item.role}</p>
+                <p className="fineprint" style={{ margin: 0 }}>{item.note}</p>
+                {item.externalUrl && (
+                  <a
+                    href={item.externalUrl}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="hero-plain-link"
+                  >
+                    Open External Link ({item.status})
+                  </a>
+                )}
               </div>
-              <p style={{ margin: "4px 0" }}>{item.role}</p>
-              <p className="fineprint" style={{ margin: 0 }}>{item.note}</p>
-              {item.externalUrl && (
-                <a
-                  href={item.externalUrl}
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className="secondary link-button"
-                >
-                  Open External Link ({item.status})
-                  <IconExternalLink size={14} style={{ marginLeft: "6px" }} />
-                </a>
-              )}
-            </Card>
+              <div className="status-state-cell">
+                <StatusMark tone={tone} size={15} />
+                <span className={`status-text status-text--${tone}`}>{label}</span>
+              </div>
+            </article>
           );
         })}
       </section>
 
       <div className="cta-stack" style={{ marginTop: "24px" }}>
-        <Link to="/health" className="secondary link-button">
+        <Link to="/health" className="pf-btn pf-btn--secondary">
           Open System Health (/health)
         </Link>
-        <Link to="/" className="text-link">
+        <Link to="/" className="hero-plain-link">
           Back to Home
         </Link>
       </div>

@@ -1,20 +1,9 @@
-import { useState } from "react";
+import { Fragment, useState } from "react";
 import { Link } from "react-router-dom";
 import { useTranslation } from "../i18n";
 import { getDevnovateUrl, MVP_ROLES, SAMPLE_OPPORTUNITIES } from "../mock/demoData";
 import { JourneyNav } from "../shared/JourneyNav";
-import {
-  Badge,
-  Button,
-  Card,
-  Chip,
-  IconClock,
-  IconExternalLink,
-  IconGlobe,
-  IconMapPin,
-  IconShield,
-  ProgressRing
-} from "../shared/ui";
+import { Button, Card, SegmentedControl } from "../shared/ui";
 import type { OpportunityItem } from "../types";
 
 function computeMatchDetails(opp: OpportunityItem): {
@@ -33,12 +22,20 @@ function computeMatchDetails(opp: OpportunityItem): {
   };
 }
 
-function EmptyOpportunitiesNotice(): JSX.Element {
-  return (
-    <p className="eyebrow" style={{ margin: 0 }}>
-      No matching listings
-    </p>
-  );
+function appendStoredUtm(url: string): string {
+  if (!url || typeof window === "undefined") return url;
+  try {
+    const raw = window.sessionStorage.getItem("prooffolio_utm");
+    if (!raw) return url;
+    const utm = JSON.parse(raw) as Record<string, string>;
+    const parsed = new URL(url, window.location.origin);
+    for (const [k, v] of Object.entries(utm)) {
+      if (!parsed.searchParams.has(k)) parsed.searchParams.set(k, v);
+    }
+    return parsed.toString();
+  } catch {
+    return url;
+  }
 }
 
 export function OpportunitiesPage(): JSX.Element {
@@ -47,8 +44,14 @@ export function OpportunitiesPage(): JSX.Element {
   const [locationQuery, setLocationQuery] = useState<string>("");
   const [quickFilter, setQuickFilter] = useState<"all" | "nearby" | "entry" | "language">("all");
   const [gpsStatus, setGpsStatus] = useState<string>("");
-  const [activeWeightId, setActiveWeightId] = useState<string | null>(null);
-  const devnovateUrl = getDevnovateUrl();
+  const [selectedSkill, setSelectedSkill] = useState<{
+    oppId: string;
+    label: string;
+    weight: number;
+    matched: boolean;
+  } | null>(null);
+  const rawDevnovateUrl = getDevnovateUrl();
+  const devnovateUrl = rawDevnovateUrl ? appendStoredUtm(rawDevnovateUrl) : "";
 
   const normalizedQuery = locationQuery.trim().toLowerCase();
   const filtered = SAMPLE_OPPORTUNITIES.filter((opp) => {
@@ -71,14 +74,10 @@ export function OpportunitiesPage(): JSX.Element {
       setGpsStatus("GPS is unavailable on this device. Filter by city, district, or pincode above.");
       return;
     }
-    setGpsStatus("Requesting optional location permission…");
+    setGpsStatus("Requesting optional location permission...");
     navigator.geolocation.getCurrentPosition(
-      () => {
-        setGpsStatus("Location permission granted (sorting/filtering by your area).");
-      },
-      () => {
-        setGpsStatus("Location permission declined. You can filter manually by city, district, or pincode.");
-      }
+      () => setGpsStatus("Location permission granted."),
+      () => setGpsStatus("Location permission declined. Filter manually by city, district, or pincode.")
     );
   }
 
@@ -90,52 +89,32 @@ export function OpportunitiesPage(): JSX.Element {
       <h1>{t("opportunitiesTitle")}</h1>
       <p className="lede">{t("opportunitiesBody")}</p>
 
-      {/* Calm Human-Agency Notice */}
-      <Card as="section" variant="lavender" className="human-agency-card" padding="sm">
-        <div className="human-agency-row">
-          <IconShield size={20} className="human-agency-icon" />
-          <div>
-            <strong>We never auto-apply or auto-reject. You decide.</strong>
-            <p className="fineprint" style={{ margin: "2px 0 0" }}>{t("humanAgencyNotice")}</p>
-          </div>
-        </div>
+      <Card as="section" className="human-agency-note" padding="sm">
+        <strong>You decide. Prooffolio never applies or rejects for you.</strong>
+        <p className="fineprint" style={{ margin: "4px 0 0" }}>{t("humanAgencyNotice")}</p>
       </Card>
 
-      {/* Horizontally Scrolling Filter Pills */}
-      <div className="filter-pills-row" role="group" aria-label="Quick opportunity filters">
-        <button
-          type="button"
-          className={"pf-stepper-pill" + (quickFilter === "nearby" ? " is-active" : "")}
-          onClick={() => setQuickFilter((f) => (f === "nearby" ? "all" : "nearby"))}
-        >
-          <IconMapPin size={14} />
-          <span style={{ marginLeft: "6px" }}>Nearby</span>
-        </button>
-        <button
-          type="button"
-          className={"pf-stepper-pill" + (quickFilter === "entry" ? " is-active" : "")}
-          onClick={() => setQuickFilter((f) => (f === "entry" ? "all" : "entry"))}
-        >
-          <IconClock size={14} />
-          <span style={{ marginLeft: "6px" }}>Entry-level</span>
-        </button>
-        <button
-          type="button"
-          className={"pf-stepper-pill" + (quickFilter === "language" ? " is-active" : "")}
-          onClick={() => setQuickFilter((f) => (f === "language" ? "all" : "language"))}
-        >
-          <IconGlobe size={14} />
-          <span style={{ marginLeft: "6px" }}>Language</span>
-        </button>
+      <div className="cta-spacer">
+        <SegmentedControl
+          ariaLabel="Quick opportunity filters"
+          value={quickFilter}
+          onChange={setQuickFilter}
+          options={[
+            { value: "all", label: "All" },
+            { value: "nearby", label: "Nearby" },
+            { value: "entry", label: "Entry-level" },
+            { value: "language", label: "Language" }
+          ]}
+        />
       </div>
 
-      <Card as="section" className="filter-card" aria-label={t("filterOpportunitiesLabel")}>
+      <Card as="section" className="filter-card cta-spacer" aria-label={t("filterOpportunitiesLabel")}>
         <label className="field-label" htmlFor="opp-role-filter" style={{ marginTop: 0 }}>
           {t("filterRoleLabel")}
         </label>
         <select
           id="opp-role-filter"
-          className="text-input"
+          className="pf-input"
           value={roleFilter}
           onChange={(e) => setRoleFilter(e.target.value)}
         >
@@ -153,7 +132,7 @@ export function OpportunitiesPage(): JSX.Element {
         <input
           id="opp-location-filter"
           type="text"
-          className="text-input"
+          className="pf-input"
           value={locationQuery}
           onChange={(e) => setLocationQuery(e.target.value)}
           placeholder={t("filterLocationPlaceholder")}
@@ -170,13 +149,13 @@ export function OpportunitiesPage(): JSX.Element {
       </Card>
 
       {filtered.length === 0 ? (
-        <Card as="section" className="empty-state opp-empty-card" role="status">
-          <EmptyOpportunitiesNotice />
-          <strong>{t("opportunitiesEmptyTitle")}</strong>
-          <p className="fineprint" style={{ maxWidth: "40ch", margin: "4px auto 12px" }}>
-            {t("opportunitiesEmptyBody")} Earn a <strong>Demonstrated</strong> outcome in your challenge to unlock more verified matches.
+        <section className="empty-ghost-wrap" role="status">
+          <span className="ghost-numeral" aria-hidden="true">0</span>
+          <h2>{t("opportunitiesEmptyTitle")}</h2>
+          <p className="fineprint">
+            {t("opportunitiesEmptyBody")} Earn a Demonstrated outcome in the challenge to unlock verified matches.
           </p>
-          <div className="viva-secondary-controls">
+          <div className="cta-stack" style={{ marginTop: "12px" }}>
             <Button
               variant="secondary"
               onClick={() => {
@@ -188,124 +167,98 @@ export function OpportunitiesPage(): JSX.Element {
               {t("resetFilters")}
             </Button>
             <Link to="/challenge" className="pf-btn pf-btn--primary">
-              Go to Challenge
+              START THE CHALLENGE
             </Link>
           </div>
-        </Card>
+        </section>
       ) : (
-        <section className="card-list opp-grid" aria-label={t("opportunitiesListLabel")}>
+        <section className="ruled-list" aria-label={t("opportunitiesListLabel")}>
           {filtered.map((opp) => {
             const { matchPct, matchedWeight, totalWeight } = computeMatchDetails(opp);
             const matchedSkills = opp.requiredSkills.filter((s) => s.matched);
             const gaps = opp.requiredSkills.filter((s) => !s.matched);
-            const initials = opp.employer
-              .split(/\s+/)
-              .slice(0, 2)
-              .map((w) => w[0]?.toUpperCase() ?? "")
-              .join("");
 
             return (
-              <Card as="article" key={opp.id} className="opp-card" interactive>
-                <div className="opp-card-top">
-                  <div className="opp-company-head">
-                    <span className="opp-company-avatar" aria-hidden="true">
-                      {initials}
+              <article key={opp.id} className="ruled-row opp-ruled-row">
+                <div className="opp-row-head">
+                  <div>
+                    <span className="eyebrow">
+                      {opp.isSample ? opp.sourceLabel : t("liveSourceLabel")} · Updated {opp.postedDate}
                     </span>
-                    <div>
-                      <Badge tone="lavender">
-                        {opp.isSample ? opp.sourceLabel : t("liveSourceLabel")}
-                      </Badge>
-                      <h2 className="opp-role-serif">{opp.title}</h2>
-                      <p className="opp-employer-line">{opp.employer}</p>
-                    </div>
+                    <h2 className="opp-role-dm">{opp.title}</h2>
+                    <p className="fineprint" style={{ margin: 0 }}>
+                      {opp.employer} · {opp.city}, {opp.district} ({opp.pincode})
+                    </p>
                   </div>
-                  <ProgressRing
-                    value={matchPct}
-                    size={64}
-                    strokeWidth={6}
-                    tone={matchPct >= 75 ? "ok" : "violet"}
-                    label={`${matchPct}% ${t("matchLabel")}`}
-                  />
+                  <div className="opp-match-score">
+                    <strong className="numeral-lg">{matchPct}%</strong>
+                    <span className="eyebrow">{t("matchLabel")}</span>
+                  </div>
                 </div>
 
-                <div className="opp-location-row">
-                  <Chip tone="neutral">
-                    <IconMapPin size={12} />
-                    <span>{opp.city}, {opp.district} ({opp.pincode})</span>
-                  </Chip>
-                  <span className="fineprint">Updated {opp.postedDate}</span>
-                </div>
-
-                <p className="fineprint">
-                  Match calculation: ({matchedWeight} / {totalWeight}) × 100 = {matchPct}% (Demonstrated skills only · Decision support, not a job offer).
+                <p className="fineprint" style={{ margin: "8px 0" }}>
+                  ({matchedWeight} / {totalWeight}) × 100 = {matchPct}% · Demonstrated skills only · Decision support, not a job offer.
                 </p>
 
-                <div className="opp-skills-block">
-                  <strong>{t("matchedSkillsLabel")}</strong>
-                  <div className="opp-chips-wrap">
-                    {matchedSkills.map((s) => {
-                      const chipKey = `${opp.id}-${s.skillId}`;
-                      const showWeight = activeWeightId === chipKey;
-                      return (
-                        <button
-                          key={s.skillId}
-                          type="button"
-                          className="opp-skill-chip-btn pf-chip pf-chip--ok"
-                          title={`Weight: ${s.weight}`}
-                          onClick={() => setActiveWeightId(showWeight ? null : chipKey)}
-                        >
-                          <span>{s.label}</span>
-                          <span className={"opp-weight-tag" + (showWeight ? " is-visible" : "")}>
-                            w:{s.weight}
-                          </span>
-                        </button>
-                      );
-                    })}
-                  </div>
+                <div className="opp-skills-inline">
+                  <span className="eyebrow">{t("matchedSkillsLabel")}: </span>
+                  {matchedSkills.map((s, idx) => (
+                    <Fragment key={s.skillId}>
+                      {idx > 0 && <span className="fineprint"> / </span>}
+                      <button
+                        type="button"
+                        className="skill-inline-btn is-matched"
+                        onClick={() =>
+                          setSelectedSkill({ oppId: opp.id, label: s.label, weight: s.weight, matched: true })
+                        }
+                      >
+                        {s.label}
+                      </button>
+                    </Fragment>
+                  ))}
                 </div>
 
                 {gaps.length > 0 && (
-                  <div className="opp-skills-block opp-gaps-block">
-                    <strong>{t("skillGapsLabel")}</strong>
-                    <div className="opp-chips-wrap">
-                      {gaps.map((s) => {
-                        const chipKey = `${opp.id}-${s.skillId}`;
-                        const showWeight = activeWeightId === chipKey;
-                        return (
-                          <button
-                            key={s.skillId}
-                            type="button"
-                            className="opp-skill-chip-btn skill-gap-chip"
-                            title={`Weight: ${s.weight}`}
-                            onClick={() => setActiveWeightId(showWeight ? null : chipKey)}
-                          >
-                            <span>{s.label}</span>
-                            <span className={"opp-weight-tag" + (showWeight ? " is-visible" : "")}>
-                              w:{s.weight}
-                            </span>
-                          </button>
-                        );
-                      })}
-                    </div>
-                    <p className="fineprint" style={{ marginTop: "6px" }}>
-                      {t("recommendedPracticeLabel")}: {opp.recommendedPractice} —{" "}
-                      <Link to="/learn">{t("openLearnLink")}</Link>
-                    </p>
+                  <div className="opp-skills-inline" style={{ marginTop: "6px" }}>
+                    <span className="eyebrow">{t("skillGapsLabel")}: </span>
+                    {gaps.map((s, idx) => (
+                      <Fragment key={s.skillId}>
+                        {idx > 0 && <span className="fineprint"> / </span>}
+                        <button
+                          type="button"
+                          className="skill-inline-btn is-gap"
+                          onClick={() =>
+                            setSelectedSkill({ oppId: opp.id, label: s.label, weight: s.weight, matched: false })
+                          }
+                        >
+                          {s.label}
+                        </button>
+                      </Fragment>
+                    ))}
+                    <span className="fineprint">
+                      {" "}— <Link to="/learn">{t("openLearnLink")}</Link>
+                    </span>
                   </div>
                 )}
-              </Card>
+
+                {selectedSkill?.oppId === opp.id && (
+                  <div className="opp-weight-panel" role="status">
+                    <strong>{selectedSkill.label}</strong> · Weight: <code className="mono">{selectedSkill.weight}</code> ·{" "}
+                    {selectedSkill.matched ? "Matched from Demonstrated skill" : `Gap (${opp.recommendedPractice})`}
+                  </div>
+                )}
+              </article>
             );
           })}
         </section>
       )}
 
       {devnovateUrl && (
-        <Card as="section" style={{ marginTop: "16px" }}>
+        <Card as="section" style={{ marginTop: "24px" }}>
           <h2>Devnovate Portfolio Link-Out</h2>
           <p className="fineprint">Optional external portfolio and opportunity link.</p>
-          <a href={devnovateUrl} target="_blank" rel="noopener noreferrer" className="secondary link-button">
+          <a href={devnovateUrl} target="_blank" rel="noopener noreferrer" className="pf-btn pf-btn--secondary">
             Open Devnovate Profile
-            <IconExternalLink size={15} style={{ marginLeft: "6px" }} />
           </a>
         </Card>
       )}
