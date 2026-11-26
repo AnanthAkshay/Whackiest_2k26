@@ -11,11 +11,12 @@ export function RoleSelectionPage(): JSX.Element {
 
   return (
     <main className="shell">
-      <JourneyNav activeStage="role" />
+      <div className="pf-frame">
+        <JourneyNav activeStage="role" />
 
-      <p className="eyebrow">{t("roleEyebrow")}</p>
-      <h1>{t("roleTitle")}</h1>
-      <p className="lede">{t("roleBody")}</p>
+        <p className="pf-label">{t("roleEyebrow")}</p>
+        <h1 className="pf-page-title" style={{ marginTop: "8px" }}>{t("roleTitle")}</h1>
+        <p className="pf-lead" style={{ marginTop: "16px" }}>{t("roleBody")}</p>
 
       <div className="tap-stack">
         {MVP_ROLES.map((role) => {
@@ -46,6 +47,7 @@ export function RoleSelectionPage(): JSX.Element {
       <button type="button" className="text-button" onClick={() => navigate("/profile")}>
         {t("back")}
       </button>
+      </div>
     </main>
   );
 }

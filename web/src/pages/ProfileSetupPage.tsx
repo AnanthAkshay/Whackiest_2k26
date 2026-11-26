@@ -81,11 +81,12 @@ export function ProfileSetupPage(): JSX.Element {
 
   return (
     <main className="shell">
-      <JourneyNav activeStage="profile" />
+      <div className="pf-frame">
+        <JourneyNav activeStage="profile" />
 
-      <p className="eyebrow">{t("profileEyebrow")}</p>
-      <h1>{t("profileTitle")}</h1>
-      <p className="lede">{t("profileBody")}</p>
+        <p className="pf-label">{t("profileEyebrow")}</p>
+        <h1 className="pf-page-title" style={{ marginTop: "8px" }}>{t("profileTitle")}</h1>
+        <p className="pf-lead" style={{ marginTop: "16px" }}>{t("profileBody")}</p>
 
       <div className="demo-fill-box">
         <Button variant="secondary" onClick={handleUseDemoLearner}>
@@ -181,6 +182,7 @@ export function ProfileSetupPage(): JSX.Element {
           {t("continueToRole")}
         </Button>
       </form>
+      </div>
     </main>
   );
 }

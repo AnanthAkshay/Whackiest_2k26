@@ -40,13 +40,14 @@ export function IntegrationsPage(): JSX.Element {
 
   return (
     <main className="shell">
-      <JourneyNav activeStage="welcome" />
+      <div className="pf-frame">
+        <JourneyNav activeStage="welcome" />
 
-      <p className="eyebrow">Internal Demo · Sponsor &amp; Integration Status</p>
-      <h1>Integrations &amp; Sponsor Touchpoints</h1>
-      <p className="lede">
-        Honest status of runtime providers, community sponsors, and optional external link-outs ({sourceNote}).
-      </p>
+        <p className="pf-label">Internal Demo · Sponsor &amp; Integration Status</p>
+        <h1 className="pf-page-title" style={{ marginTop: "8px" }}>Integrations &amp; Sponsor Touchpoints</h1>
+        <p className="pf-lead" style={{ marginTop: "16px" }}>
+          Honest status of runtime providers, community sponsors, and optional external link-outs ({sourceNote}).
+        </p>
 
       <section className="ruled-list" aria-label="Sponsor integration statuses">
         {items.map((item) => {
@@ -84,6 +85,7 @@ export function IntegrationsPage(): JSX.Element {
         <Link to="/" className="hero-plain-link">
           Back to Home
         </Link>
+      </div>
       </div>
     </main>
   );

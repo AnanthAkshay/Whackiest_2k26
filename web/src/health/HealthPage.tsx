@@ -65,9 +65,10 @@ export function HealthPage(): JSX.Element {
 
   return (
     <main className="shell">
-      <p className="eyebrow">{t("healthTitle")}</p>
-      <h1>{t("healthTitle")}</h1>
-      <p className="lede">{t("healthSubtitle")}</p>
+      <div className="pf-frame">
+        <p className="pf-label">{t("healthTitle")}</p>
+        <h1 className="pf-page-title" style={{ marginTop: "8px" }}>{t("healthTitle")}</h1>
+        <p className="pf-lead" style={{ marginTop: "16px" }}>{t("healthSubtitle")}</p>
 
       {loading && (
         <div className="ruled-list" aria-label={t("loading")}>
@@ -139,6 +140,7 @@ export function HealthPage(): JSX.Element {
       <Link className="hero-plain-link" style={{ marginTop: "16px" }} to="/">
         {t("backToHome")}
       </Link>
+      </div>
     </main>
   );
 }
