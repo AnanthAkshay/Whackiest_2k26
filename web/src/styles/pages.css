@@ -617,16 +617,118 @@ h2, .section-heading {
 }
 
 .upload-line-track {
-  height: 2px;
-  background: var(--line);
+  height: 6px;
+  border-radius: var(--radius-pill);
+  background: var(--bg-secondary);
   overflow: hidden;
 }
 
 .upload-line-fill {
   display: block;
   height: 100%;
-  background: var(--ink);
+  border-radius: var(--radius-pill);
+  background: var(--accent);
   transition: width 0.25s ease;
+}
+
+.profile-glass-panel {
+  max-width: 680px;
+  margin: var(--space-16) auto 0;
+}
+
+.profile-progress-head {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--space-12);
+}
+
+.role-card-head {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  width: 100%;
+}
+
+.role-selected-check {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 28px;
+  height: 28px;
+  border-radius: var(--radius-pill);
+  background: var(--accent);
+  color: #FFFFFF;
+}
+
+.role-card-selected {
+  border-color: var(--accent) !important;
+  box-shadow: 0 0 0 2px var(--accent), var(--glass-shadow);
+}
+
+.learn-progress-panel {
+  margin-bottom: var(--space-24);
+}
+
+.learn-progress-top {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: var(--space-12);
+}
+
+.dropzone-glass {
+  background: var(--glass-bg-soft);
+  border: 2px dashed var(--border);
+}
+
+.dropzone-glass.is-dragover {
+  border-color: var(--accent);
+  background: var(--glass-bg-strong);
+  box-shadow: 0 0 0 3px rgba(39, 199, 111, 0.16);
+}
+
+.dropzone-icon-ring {
+  display: inline-flex;
+  align-items: center;
+  gap: 10px;
+  padding: 12px 18px;
+  border-radius: var(--radius-pill);
+  background: var(--bg-secondary);
+  color: var(--text-primary);
+}
+
+.selected-file-preview {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--space-8);
+  margin-top: var(--space-16);
+  padding: var(--space-12) var(--space-16);
+  border-radius: var(--radius-md);
+  background: var(--surface);
+  border: 1px solid var(--border);
+}
+
+.security-checks-preview {
+  margin-top: var(--space-24);
+}
+
+.validation-summary-grid {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: var(--space-12);
+  margin-bottom: var(--space-16);
+}
+
+.cell-ref-chip {
+  display: inline-block;
+  padding: 6px 12px;
+  border-radius: var(--radius-sm);
+  background: var(--surface-muted);
+  border: 1px solid var(--border);
+  font-size: 13px;
 }
 
 .validating-row {

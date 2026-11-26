@@ -22,6 +22,8 @@ import {
   Accordion,
   Button,
   Card,
+  GlassBadge,
+  GlassPanel,
   OptionButton,
   RuledRow,
   StatusMark,
@@ -152,31 +154,43 @@ export function LearnPractisePage(): JSX.Element {
   });
   const activeGroupMeta = GROUP_TABS.find((g) => g.id === group) ?? GROUP_TABS[0];
 
+  const completedCount = offlineState.completedLessonIds.length;
+  const totalCount = bundle.lessons.length;
+  const progressPct = totalCount > 0 ? Math.round((completedCount / totalCount) * 100) : 0;
+
   return (
     <main className="shell">
       <div className="pf-frame">
         <JourneyNav activeStage="learn" />
 
-        <div className="offline-status-bar" role="status" aria-live="polite">
-          <StatusMark
-            tone={isOnline ? "ok" : "warn"}
-            label={isOnline ? t("networkOnline") : t("networkOffline")}
-          />
-          <span className="fineprint">
-            {syncSummary.overallStatus === "pending"
-              ? t("syncPending", { count: syncSummary.pendingCount })
-              : syncSummary.overallStatus === "failed"
-              ? t("syncFailed")
-              : syncSummary.overallStatus === "synced"
-              ? t("syncSynced")
-              : t("offlineReadyBadge")}
-          </span>
-          {(syncSummary.overallStatus === "pending" || syncSummary.overallStatus === "failed") && isOnline && (
-            <button type="button" className="hero-plain-link" onClick={() => void handleRetrySync()}>
-              {t("retrySync")}
-            </button>
-          )}
-        </div>
+        <GlassPanel as="section" padding="sm" className="learn-progress-panel" role="status" aria-live="polite">
+          <div className="learn-progress-top">
+            <StatusMark
+              tone={isOnline ? "ok" : "warn"}
+              label={isOnline ? t("networkOnline") : t("networkOffline")}
+            />
+            <GlassBadge>
+              <span className="tabular-nums">{completedCount} / {totalCount}</span> completed
+            </GlassBadge>
+            <span className="fineprint">
+              {syncSummary.overallStatus === "pending"
+                ? t("syncPending", { count: syncSummary.pendingCount })
+                : syncSummary.overallStatus === "failed"
+                ? t("syncFailed")
+                : syncSummary.overallStatus === "synced"
+                ? t("syncSynced")
+                : t("offlineReadyBadge")}
+            </span>
+            {(syncSummary.overallStatus === "pending" || syncSummary.overallStatus === "failed") && isOnline && (
+              <button type="button" className="hero-plain-link" onClick={() => void handleRetrySync()}>
+                {t("retrySync")}
+              </button>
+            )}
+          </div>
+          <div className="pillar-track" style={{ marginTop: "10px" }} aria-hidden="true">
+            <div className="pillar-fill" style={{ width: `${progressPct}%` }} />
+          </div>
+        </GlassPanel>
 
         <p className="pf-label">{t("learnEyebrow")}</p>
         <h1 className="pf-page-title" style={{ marginTop: "8px" }}>{t("learnTitle")}</h1>
@@ -332,7 +346,7 @@ export function LearnPractisePage(): JSX.Element {
         </Card>
 
         <div className="cta-stack" style={{ marginTop: "32px" }}>
-          <Button variant="dark" size="lg" fullWidth onClick={() => navigate("/challenge")}>
+          <Button variant="primary" size="lg" fullWidth onClick={() => navigate("/challenge")}>
             {t("continueToChallenge")}
           </Button>
           <Button variant="ghost" fullWidth onClick={() => navigate("/role")}>

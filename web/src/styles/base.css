@@ -156,6 +156,7 @@ pre,
   letter-spacing: -0.03em;
   line-height: 1.06;
   color: var(--text-primary);
+  overflow-wrap: break-word;
 }
 
 .pf-section-title {

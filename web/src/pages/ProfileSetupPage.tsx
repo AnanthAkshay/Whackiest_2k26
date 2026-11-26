@@ -4,7 +4,7 @@ import { useTranslation } from "../i18n";
 import { DEMO_LEARNER_PROFILE } from "../mock/demoData";
 import { useSetup } from "../setup/SetupContext";
 import { JourneyNav } from "../shared/JourneyNav";
-import { Button, Card, Input, SegmentedControl, StatusMark } from "../shared/ui";
+import { Button, Card, GlassBadge, GlassCard, GlassPanel, Input, SegmentedControl, StatusMark } from "../shared/ui";
 import type { Language } from "../types";
 
 export function ProfileSetupPage(): JSX.Element {
@@ -84,18 +84,26 @@ export function ProfileSetupPage(): JSX.Element {
       <div className="pf-frame">
         <JourneyNav activeStage="profile" />
 
-        <p className="pf-label">{t("profileEyebrow")}</p>
-        <h1 className="pf-page-title" style={{ marginTop: "8px" }}>{t("profileTitle")}</h1>
-        <p className="pf-lead" style={{ marginTop: "16px" }}>{t("profileBody")}</p>
+        <GlassPanel as="section" className="profile-glass-panel">
+          <div className="profile-progress-head">
+            <span className="pf-label">{t("profileEyebrow")}</span>
+            <GlassBadge>Step 1 of 7</GlassBadge>
+          </div>
+          <div className="pillar-track" style={{ marginTop: "10px" }} aria-hidden="true">
+            <div className="pillar-fill" style={{ width: "16%" }} />
+          </div>
 
-      <div className="demo-fill-box">
-        <Button variant="secondary" onClick={handleUseDemoLearner}>
-          {t("useDemoLearner")}
-        </Button>
-        {isDemoData && <span className="pf-chip">{t("demoDataLabel")}</span>}
-      </div>
+          <h1 className="pf-page-title" style={{ marginTop: "20px" }}>Let&apos;s get to know you.</h1>
+          <p className="pf-lead" style={{ marginTop: "12px" }}>{t("profileBody")}</p>
 
-      <form onSubmit={handleSubmit} className="form-stack" noValidate>
+          <div className="demo-fill-box" style={{ marginBottom: "16px" }}>
+            <Button variant="secondary" onClick={handleUseDemoLearner}>
+              {t("useDemoLearner")}
+            </Button>
+            {isDemoData && <GlassBadge>{t("demoDataLabel")}</GlassBadge>}
+          </div>
+
+          <form onSubmit={handleSubmit} className="form-stack" noValidate>
         <div className="pf-field">
           <label className="field-label" htmlFor="profile-name">
             {t("profileNameLabel")}
@@ -159,29 +167,32 @@ export function ProfileSetupPage(): JSX.Element {
           maxLength={80}
         />
 
-        <fieldset className="pf-card" style={{ marginTop: "8px" }}>
-          <legend className="field-label">Privacy &amp; Consent Controls (Policy v2026.1)</legend>
-          <label className="fineprint" style={{ display: "flex", gap: "8px", marginTop: "6px" }}>
-            <input type="checkbox" checked={aiConsent} onChange={(e) => setAiConsent(e.target.checked)} />
-            <span>Allow AI processing for Viva &amp; rubric evaluation</span>
-          </label>
-          <label className="fineprint" style={{ display: "flex", gap: "8px", marginTop: "6px" }}>
-            <input type="checkbox" checked={transcriptConsent} onChange={(e) => setTranscriptConsent(e.target.checked)} />
-            <span>Save text transcript for review &amp; Skill Passport (optional)</span>
-          </label>
-          <label className="fineprint" style={{ display: "flex", gap: "8px", marginTop: "6px" }}>
-            <input type="checkbox" checked={publicShareConsent} onChange={(e) => setPublicShareConsent(e.target.checked)} />
-            <span>Allow public Skill Passport sharing (private by default; withdrawable anytime)</span>
-          </label>
-          <p className="fineprint" style={{ marginTop: "8px", marginBottom: 0 }}>
-            Raw voice audio retention is <strong>OFF by default</strong>.
-          </p>
-        </fieldset>
+        <GlassCard as="div" variant="glass-soft" padding="sm" style={{ marginTop: "8px" }}>
+          <fieldset className="field-group" style={{ margin: 0 }}>
+            <legend className="field-label" style={{ marginTop: 0 }}>Privacy &amp; Consent Controls (Policy v2026.1)</legend>
+            <label className="fineprint" style={{ display: "flex", gap: "8px", marginTop: "6px" }}>
+              <input type="checkbox" checked={aiConsent} onChange={(e) => setAiConsent(e.target.checked)} />
+              <span>Allow AI processing for Viva &amp; rubric evaluation</span>
+            </label>
+            <label className="fineprint" style={{ display: "flex", gap: "8px", marginTop: "6px" }}>
+              <input type="checkbox" checked={transcriptConsent} onChange={(e) => setTranscriptConsent(e.target.checked)} />
+              <span>Save text transcript for review &amp; Skill Passport (optional)</span>
+            </label>
+            <label className="fineprint" style={{ display: "flex", gap: "8px", marginTop: "6px" }}>
+              <input type="checkbox" checked={publicShareConsent} onChange={(e) => setPublicShareConsent(e.target.checked)} />
+              <span>Allow public Skill Passport sharing (private by default; withdrawable anytime)</span>
+            </label>
+            <p className="fineprint" style={{ marginTop: "8px", marginBottom: 0 }}>
+              Raw voice audio retention is <strong>OFF by default</strong>.
+            </p>
+          </fieldset>
+        </GlassCard>
 
-        <Button type="submit" variant="dark" size="lg" fullWidth>
+        <Button type="submit" variant="primary" size="lg" fullWidth>
           {t("continueToRole")}
         </Button>
       </form>
+      </GlassPanel>
       </div>
     </main>
   );

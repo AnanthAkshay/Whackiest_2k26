@@ -1,6 +1,6 @@
 import { useRef, useState, type ChangeEvent, type DragEvent } from "react";
 import { useNavigate } from "react-router-dom";
-import { FileXls } from "@phosphor-icons/react";
+import { FileXls, UploadSimple } from "@phosphor-icons/react";
 import { getStarterWorkbookUrl, startChallengeAttempt, uploadChallengeArtifact } from "../api";
 import { useTranslation } from "../i18n";
 import { createMockValidationReport, MVP_CHALLENGE } from "../mock/demoData";
@@ -11,6 +11,9 @@ import {
   Button,
   Card,
   CopyButton,
+  GlassBadge,
+  GlassCard,
+  GlassPanel,
   InfoNote,
   RuledRow,
   Skeleton,
@@ -269,51 +272,86 @@ export function ChallengePage(): JSX.Element {
             </Card>
 
             <section className="upload-section" aria-label={t("uploadSectionTitle")}>
-              <div className="card-header-row">
-                <h2>{t("uploadSectionTitle")}</h2>
-                <span className="pf-chip pf-chip--review">{t("onlineOnlyBadge")}</span>
-              </div>
-              <InfoNote>{t("onlineOnlyValidationNote")}</InfoNote>
-              <p className="fineprint mock-disclosure">{t("mockUploadNotice")}</p>
+              <GlassPanel as="div" className="upload-central-panel">
+                <div className="card-header-row">
+                  <h2>{t("uploadSectionTitle")}</h2>
+                  <GlassBadge>{t("onlineOnlyBadge")}</GlassBadge>
+                </div>
+                <InfoNote>{t("onlineOnlyValidationNote")}</InfoNote>
+                <p className="fineprint mock-disclosure">{t("mockUploadNotice")}</p>
 
-              <div
-                className={"dropzone-monochrome" + (dragOver ? " is-dragover" : "")}
-                onDragOver={(e) => {
-                  e.preventDefault();
-                  setDragOver(true);
-                }}
-                onDragLeave={() => setDragOver(false)}
-                onDrop={handleDrop}
-              >
-                <input
-                  ref={fileInputRef}
-                  type="file"
-                  accept=".xlsx,application/vnd.openxmlformats-officedocument.spreadsheetml.sheet"
-                  className="sr-only"
-                  id="challenge-file-input"
-                  onChange={handleFileChange}
-                />
-                <FileXls size={28} weight="regular" aria-hidden="true" />
-                <p className="dropzone-title">Drop your .xlsx here, or browse</p>
-                <label
-                  htmlFor="challenge-file-input"
-                  className={buttonClasses({ variant: "primary" })}
-                  role="button"
-                  tabIndex={0}
+                <div
+                  className={"dropzone-monochrome dropzone-glass" + (dragOver ? " is-dragover" : "")}
+                  onDragOver={(e) => {
+                    e.preventDefault();
+                    setDragOver(true);
+                  }}
+                  onDragLeave={() => setDragOver(false)}
+                  onDrop={handleDrop}
                 >
-                  {t("chooseXlsxFile")}
-                </label>
-              </div>
+                  <input
+                    ref={fileInputRef}
+                    type="file"
+                    accept=".xlsx,application/vnd.openxmlformats-officedocument.spreadsheetml.sheet"
+                    className="sr-only"
+                    id="challenge-file-input"
+                    onChange={handleFileChange}
+                  />
+                  <div className="dropzone-icon-ring" aria-hidden="true">
+                    <UploadSimple size={24} weight="regular" />
+                    <FileXls size={24} weight="regular" />
+                  </div>
+                  <p className="dropzone-title">Drop your .xlsx here, or browse</p>
+                  <p className="fineprint" style={{ margin: 0 }}>
+                    {MVP_CHALLENGE.acceptedFormat} · Max {MVP_CHALLENGE.maxSizeMb} MB
+                  </p>
+                  <label
+                    htmlFor="challenge-file-input"
+                    className={buttonClasses({ variant: "primary" })}
+                    role="button"
+                    tabIndex={0}
+                  >
+                    {t("chooseXlsxFile")}
+                  </label>
+                </div>
 
-              <Button
-                variant="secondary"
-                fullWidth
-                disabled={isBusy}
-                className="cta-spacer"
-                onClick={() => startSimulatedCheck("retail_sales_cleaned_demo.xlsx", 42500)}
-              >
-                {t("loadDemoXlsx")}
-              </Button>
+                {selectedFile && (
+                  <div className="selected-file-preview" role="status">
+                    <span className="pf-label">Selected file</span>
+                    <strong>{selectedFile.name}</strong>
+                    <span className="fineprint tabular-nums">{Math.max(1, Math.round(selectedFile.size / 1024))} KB</span>
+                  </div>
+                )}
+
+                <div className="security-checks-preview" aria-label="Security and validation checks">
+                  <span className="pf-label">Four-stage XLSX verification</span>
+                  <ul className="ruled-list" style={{ marginTop: "8px" }}>
+                    {VALIDATING_STEPS.map((label, idx) => {
+                      const done = phase === "success" || (phase === "validating" && idx < resolvedCount);
+                      return (
+                        <li key={label} className="ruled-row validating-row">
+                          <span>{idx + 1}. {label}</span>
+                          {phase === "validating" && !done ? (
+                            <Skeleton variant="text" width={72} />
+                          ) : (
+                            <StatusMark tone={done ? "ok" : "neutral"} label={done ? "Verified" : "Ready"} />
+                          )}
+                        </li>
+                      );
+                    })}
+                  </ul>
+                </div>
+
+                <Button
+                  variant="secondary"
+                  fullWidth
+                  disabled={isBusy}
+                  className="cta-spacer"
+                  onClick={() => startSimulatedCheck("retail_sales_cleaned_demo.xlsx", 42500)}
+                >
+                  {t("loadDemoXlsx")}
+                </Button>
+              </GlassPanel>
 
               {phase === "uploading" && selectedFile && (
                 <Card as="div" className="cta-spacer" role="status" aria-live="polite">
@@ -383,10 +421,10 @@ export function ChallengePage(): JSX.Element {
           </div>
 
           <aside className="summary-col" aria-label="Summary">
-            <Card className="summary-panel summary-desktop-only">
+            <GlassCard className="summary-panel summary-desktop-only">
               <span className="pf-label">SUMMARY</span>
               <div style={{ marginTop: "12px" }}>{summaryRows}</div>
-            </Card>
+            </GlassCard>
             <div className="summary-mobile-only">
               <Accordion title="SUMMARY">
                 {summaryRows}
