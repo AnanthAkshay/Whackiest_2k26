@@ -9,10 +9,11 @@ import {
   Button,
   Card,
   CopyButton,
-  Grain,
   Modal,
+  RuledRow,
   Skeleton,
   StatusMark,
+  TextLink,
   Toast,
   Toggle
 } from "../shared/ui";
@@ -46,8 +47,8 @@ function PassportQrTile({ url }: { url: string }): JSX.Element {
 
   return (
     <a href={url} className="passport-qr-tile" aria-label={`QR code linking to ${url}`}>
-      <svg width="84" height="84" viewBox={`0 0 ${size} ${size}`} shapeRendering="crispEdges" aria-hidden="true">
-        <rect width={size} height={size} fill="#FFFFFF" />
+      <svg width="92" height="92" viewBox={`0 0 ${size} ${size}`} shapeRendering="crispEdges" aria-hidden="true">
+        <rect width={size} height={size} fill="#FCFAF3" />
         {cells.map((filled, idx) =>
           filled ? (
             <rect
@@ -56,7 +57,7 @@ function PassportQrTile({ url }: { url: string }): JSX.Element {
               y={Math.floor(idx / size)}
               width="1"
               height="1"
-              fill="#151515"
+              fill="#0B0B0B"
             />
           ) : null
         )}
@@ -136,29 +137,28 @@ export function SkillPage(): JSX.Element {
     const ctx = canvas.getContext("2d");
     if (!ctx) return;
 
-    ctx.fillStyle = "#2A2A2A";
+    ctx.fillStyle = "#0B0B0B";
     ctx.fillRect(0, 0, 1200, 630);
-    ctx.strokeStyle = "#B8B8B8";
-    ctx.lineWidth = 2;
-    ctx.strokeRect(20, 20, 1160, 590);
+    ctx.fillStyle = "#B9A9D4";
+    ctx.fillRect(0, 0, 1200, 4);
 
-    ctx.fillStyle = "#B8B8B8";
+    ctx.fillStyle = "#B8B3A6";
     ctx.font = "700 20px sans-serif";
     ctx.fillText("PROOFFOLIO · SKILL PASSPORT", 72, 88);
 
-    ctx.fillStyle = "#EDEDED";
-    ctx.font = "700 54px sans-serif";
+    ctx.fillStyle = "#F4F0E4";
+    ctx.font = "800 58px sans-serif";
     ctx.fillText(record.name || t("anonymousCandidate"), 72, 185);
 
-    ctx.fillStyle = "#B8B8B8";
+    ctx.fillStyle = "#B8B3A6";
     ctx.font = "400 28px sans-serif";
     ctx.fillText(record.skill, 72, 236);
 
-    ctx.fillStyle = "#EDEDED";
-    ctx.font = "600 72px sans-serif";
+    ctx.fillStyle = "#F4F0E4";
+    ctx.font = "800 72px sans-serif";
     ctx.fillText(`${record.total} / 100`, 72, 375);
 
-    ctx.fillStyle = "#68B891";
+    ctx.fillStyle = "#B9A9D4";
     ctx.font = "700 22px sans-serif";
     ctx.fillText(t("recordMatchesDatabase"), 72, 535);
 
@@ -178,13 +178,14 @@ export function SkillPage(): JSX.Element {
   if (missing) {
     return (
       <main className="shell">
-        <div className="empty-ghost-wrap">
-          <span className="ghost-numeral" aria-hidden="true">404</span>
-          <h1>{t("recordUnavailable")}</h1>
-          <p className="error">{t("recordUnavailableBody")}</p>
-          <Link className="pf-btn pf-btn--primary" to="/">
-            {t("startAgain")}
-          </Link>
+        <div className="pf-frame">
+          <div className="empty-ghost-wrap">
+            <h1 className="pf-page-title">{t("recordUnavailable")}</h1>
+            <p className="error" style={{ marginTop: "16px" }}>{t("recordUnavailableBody")}</p>
+            <Link className="pf-btn pf-btn--primary" to="/">
+              {t("startAgain")}
+            </Link>
+          </div>
         </div>
       </main>
     );
@@ -193,11 +194,13 @@ export function SkillPage(): JSX.Element {
   if (!record) {
     return (
       <main className="shell">
-        <p className="loading">{t("loading")}</p>
-        <div className="form-stack" style={{ marginTop: "16px" }}>
-          <Skeleton variant="title" />
-          <Skeleton variant="card" />
-          <Skeleton variant="card" />
+        <div className="pf-frame">
+          <p className="loading">{t("loading")}</p>
+          <div className="form-stack" style={{ marginTop: "16px" }}>
+            <Skeleton variant="title" />
+            <Skeleton variant="card" />
+            <Skeleton variant="card" />
+          </div>
         </div>
       </main>
     );
@@ -206,11 +209,13 @@ export function SkillPage(): JSX.Element {
   if (record.tooShort) {
     return (
       <main className="shell">
-        <h1>{t("recordUnavailable")}</h1>
-        <p className="error">{t("tooShortBody")}</p>
-        <Link className="pf-btn pf-btn--primary" to="/">
-          {t("startAgain")}
-        </Link>
+        <div className="pf-frame">
+          <h1 className="pf-page-title">{t("recordUnavailable")}</h1>
+          <p className="error" style={{ marginTop: "16px" }}>{t("tooShortBody")}</p>
+          <Link className="pf-btn pf-btn--primary" to="/">
+            {t("startAgain")}
+          </Link>
+        </div>
       </main>
     );
   }
@@ -228,128 +233,115 @@ export function SkillPage(): JSX.Element {
 
   return (
     <main className="shell passport-page-shell">
-      <p className="eyebrow no-print">
-        {isDemo && <span>{t("replayBadge")} · </span>}
-        {t("skillPageEyebrow")}
-      </p>
+      <div className="pf-frame">
+        <p className="pf-label no-print">
+          {isDemo && <span>{t("replayBadge")} · </span>}
+          {t("skillPageEyebrow")}
+        </p>
 
-      {/* Graphite (#2A2A2A) Credential Panel with 1px Silver (#B8B8B8) Edge */}
-      <article className="passport-graphite-card" aria-label="Skill Passport Credential">
-        <div className="passport-pattern-band" aria-hidden="true" />
-        <Grain />
-        <div className="passport-card-inner">
-          <div className="passport-card-top">
-            <span className="passport-wordmark">
-              <span className="wordmark-light">PROOF</span>
-              <span className="wordmark-bold">FOLIO</span>
-            </span>
-            <span className="passport-type-label">SKILL PASSPORT</span>
-          </div>
+        {/* Dark (#0B0B0B) Credential Panel with 2px Lavender top rule */}
+        <article className="passport-kohaku-card" aria-label="Skill Passport Credential">
+          <div className="passport-card-inner">
+            <div className="passport-card-top">
+              <span className="passport-wordmark">
+                <span className="wordmark-light">PROOF</span>
+                <span className="wordmark-bold">FOLIO</span>
+              </span>
+              <span className="passport-type-label">SKILL PASSPORT</span>
+            </div>
 
-          <div className="passport-identity">
-            <h1 className="passport-handle-dm">{displayName}</h1>
-            <p className="passport-role-sub">{record.skill}</p>
-          </div>
+            <div className="passport-identity">
+              <h1 className="pf-page-title passport-handle-dm">{displayName}</h1>
+              <p className="passport-role-sub">{record.skill}</p>
+            </div>
 
-          <div className="passport-facts-grid">
-            <dl className="passport-dl">
-              <div>
-                <dt>Composite</dt>
-                <dd className="numeral-md">{record.total} / 100</dd>
+            <div className="passport-facts-grid">
+              <div className="passport-facts-rows">
+                <RuledRow label="Composite" value={<span className="tabular-nums">{record.total} / 100</span>} />
+                <RuledRow label="Outcome" value={outcomeLabel} />
+                <RuledRow label="Issued" value={issuedDate} />
+                <RuledRow label="Passport ID" value={<code className="mono">{id || "demo"}</code>} />
+                <RuledRow label="Key ID" value={<code className="mono">{jwsKid}</code>} />
+                <RuledRow label="Artifact SHA-256" value={<code className="mono crypto-code">{artifactSha}</code>} />
               </div>
-              <div>
-                <dt>Outcome</dt>
-                <dd>{outcomeLabel}</dd>
-              </div>
-              <div>
-                <dt>Issued date</dt>
-                <dd>{issuedDate}</dd>
-              </div>
-              <div>
-                <dt>Passport ID</dt>
-                <dd className="mono">{id || "demo"}</dd>
-              </div>
-            </dl>
-            <PassportQrTile url={`/p/${id}`} />
+              <PassportQrTile url={`/p/${id}`} />
+            </div>
           </div>
-        </div>
-      </article>
+        </article>
 
-      {/* Verification Block */}
-      <Card as="section" className="crypto-proof-card">
-        <div className="rule-feedback rule-feedback--ok" style={{ marginTop: 0 }}>
-          <StatusMark tone="ok" size={18} />
-          <strong>{t("recordMatchesDatabase")}</strong>
-        </div>
+        {/* Verification Block */}
+        <Card as="section" className="crypto-proof-card">
+          <StatusMark tone="ok" label={t("recordMatchesDatabase")} />
 
-        <p className="fineprint">{t("whatVerificationMeansBody")}</p>
+          <p className="fineprint">{t("whatVerificationMeansBody")}</p>
 
-        <div className="crypto-row">
-          <span className="spec-label">Artifact SHA-256</span>
-          <div className="crypto-value-row">
-            <code className="mono crypto-code">{artifactSha}</code>
-            <CopyButton text={artifactSha} ariaLabel="Copy artifact SHA-256" />
+          <div className="crypto-row">
+            <span className="pf-label">Artifact SHA-256</span>
+            <div className="crypto-value-row">
+              <code className="mono crypto-code">{artifactSha}</code>
+              <CopyButton text={artifactSha} ariaLabel="Copy artifact SHA-256" />
+            </div>
           </div>
-        </div>
 
-        <div className="crypto-row">
-          <span className="spec-label">JWS Key ID (kid)</span>
-          <div className="crypto-value-row">
-            <code className="mono crypto-code">{jwsKid}</code>
-            <CopyButton text={jwsKid} ariaLabel="Copy JWS key ID" />
+          <div className="crypto-row">
+            <span className="pf-label">JWS Key ID (kid)</span>
+            <div className="crypto-value-row">
+              <code className="mono crypto-code">{jwsKid}</code>
+              <CopyButton text={jwsKid} ariaLabel="Copy JWS key ID" />
+            </div>
           </div>
+
+          <div className="crypto-footer-links">
+            <TextLink href="/.well-known/jwks.json" target="_blank" rel="noopener noreferrer">
+              Verify independently
+            </TextLink>
+            <span className="fineprint">{clientConfig.passportPublicDomain || "Local development URL"}</span>
+          </div>
+        </Card>
+
+        {/* Actions */}
+        <Card as="section" className="passport-actions-card no-print">
+          <Toggle
+            checked={Boolean(record.shared)}
+            onChange={(val) => void handleToggleShare(val)}
+            label={record.shared ? t("pagePublic") : "Only you can see this until you share"}
+          />
+
+          <div className="passport-action-buttons">
+            <CopyButton text={pageUrl} label="COPY LINK" copiedLabel="COPIED" ariaLabel="Copy passport link" />
+            <Button variant="secondary" onClick={handleDownloadImage}>
+              DOWNLOAD AS IMAGE
+            </Button>
+            <Button variant="ghost" className="withdraw-btn" onClick={() => setWithdrawOpen(true)}>
+              WITHDRAW
+            </Button>
+          </div>
+        </Card>
+
+        <ScoreList record={record} />
+
+        <div className="no-print" style={{ marginTop: "16px" }}>
+          <Link className="pf-btn pf-btn--secondary" to="/opportunities">
+            {t("discoverOpportunitiesCta")}
+          </Link>
         </div>
 
-        <div className="crypto-footer-links">
-          <a href="/.well-known/jwks.json" target="_blank" rel="noopener noreferrer" className="hero-plain-link">
-            Verify independently
-          </a>
-          <span className="fineprint">{clientConfig.passportPublicDomain || "Local development URL"}</span>
-        </div>
-      </Card>
+        <p className="passport-disclaimer">{record.basisNote ?? t("rubricBasis")}</p>
 
-      {/* Actions */}
-      <Card as="section" className="passport-actions-card no-print">
-        <Toggle
-          checked={Boolean(record.shared)}
-          onChange={(val) => void handleToggleShare(val)}
-          label={record.shared ? t("pagePublic") : "Only you can see this until you share"}
-        />
+        <Modal open={withdrawOpen} onClose={() => setWithdrawOpen(false)} title="Withdraw Skill Passport?">
+          <p className="fineprint">{t("deleteConfirm")}</p>
+          <div className="cta-stack">
+            <Button variant="secondary" fullWidth onClick={() => setWithdrawOpen(false)}>
+              Cancel
+            </Button>
+            <Button variant="dark" fullWidth className="withdraw-confirm-btn" onClick={() => void handleWithdraw()}>
+              WITHDRAW PASSPORT
+            </Button>
+          </div>
+        </Modal>
 
-        <div className="passport-action-buttons">
-          <CopyButton text={pageUrl} label="COPY LINK" copiedLabel="COPIED" ariaLabel="Copy passport link" />
-          <Button variant="secondary" onClick={handleDownloadImage}>
-            DOWNLOAD AS IMAGE
-          </Button>
-          <Button variant="ghost" className="withdraw-btn" onClick={() => setWithdrawOpen(true)}>
-            WITHDRAW
-          </Button>
-        </div>
-      </Card>
-
-      <ScoreList record={record} />
-
-      <div className="no-print" style={{ marginTop: "16px" }}>
-        <Link className="pf-btn pf-btn--secondary" to="/opportunities">
-          {t("discoverOpportunitiesCta")}
-        </Link>
+        <Toast open={Boolean(toastMsg)} message={toastMsg} tone="ok" onDismiss={() => setToastMsg("")} />
       </div>
-
-      <p className="passport-disclaimer">{record.basisNote ?? t("rubricBasis")}</p>
-
-      <Modal open={withdrawOpen} onClose={() => setWithdrawOpen(false)} title="Withdraw Skill Passport?">
-        <p className="fineprint">{t("deleteConfirm")}</p>
-        <div className="cta-stack">
-          <Button variant="secondary" fullWidth onClick={() => setWithdrawOpen(false)}>
-            Cancel
-          </Button>
-          <Button variant="dark" fullWidth className="withdraw-confirm-btn" onClick={() => void handleWithdraw()}>
-            WITHDRAW PASSPORT
-          </Button>
-        </div>
-      </Modal>
-
-      <Toast open={Boolean(toastMsg)} message={toastMsg} tone="ok" onDismiss={() => setToastMsg("")} />
     </main>
   );
 }
