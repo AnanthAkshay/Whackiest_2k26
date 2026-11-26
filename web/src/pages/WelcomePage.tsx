@@ -73,7 +73,7 @@ export function WelcomePage(): JSX.Element {
 
               <div className="hero-cta-row">
                 <Button variant="primary" size="lg" onClick={() => startJourney("voice")}>
-                  Start the challenge →
+                  START THE CHALLENGE
                 </Button>
                 <button
                   type="button"
