@@ -6,25 +6,19 @@ import { localeTags, useTranslation } from "../i18n";
 import { useSetup } from "../setup/SetupContext";
 import { ScoreList } from "../shared/ScoreList";
 import {
-  Badge,
   Button,
   Card,
-  IconCheck,
-  IconCopy,
-  IconDownload,
-  IconExternalLink,
-  IconLock,
-  IconShare,
-  IconShield,
-  IconTrash,
-  Sheet,
+  CopyButton,
+  Grain,
+  Modal,
   Skeleton,
-  Toast
+  StatusMark,
+  Toast,
+  Toggle
 } from "../shared/ui";
 import type { SkillRecord } from "../types";
 
 function PassportQrTile({ url }: { url: string }): JSX.Element {
-  // Deterministic visual QR-style matrix seeded from URL for offline/client rendering
   const cells: boolean[] = [];
   let hash = 2166136261;
   for (let i = 0; i < url.length; i++) {
@@ -52,8 +46,8 @@ function PassportQrTile({ url }: { url: string }): JSX.Element {
 
   return (
     <a href={url} className="passport-qr-tile" aria-label={`QR code linking to ${url}`}>
-      <svg width="88" height="88" viewBox={`0 0 ${size} ${size}`} shapeRendering="crispEdges" aria-hidden="true">
-        <rect width={size} height={size} fill="#FAF6EE" />
+      <svg width="84" height="84" viewBox={`0 0 ${size} ${size}`} shapeRendering="crispEdges" aria-hidden="true">
+        <rect width={size} height={size} fill="#FFFFFF" />
         {cells.map((filled, idx) =>
           filled ? (
             <rect
@@ -62,7 +56,7 @@ function PassportQrTile({ url }: { url: string }): JSX.Element {
               y={Math.floor(idx / size)}
               width="1"
               height="1"
-              fill="#14110F"
+              fill="#151515"
             />
           ) : null
         )}
@@ -118,43 +112,21 @@ export function SkillPage(): JSX.Element {
   const showToast = useCallback((msg: string) => {
     setToastMsg(msg);
     if (typeof window !== "undefined") {
-      window.setTimeout(() => setToastMsg(""), 2200);
+      window.setTimeout(() => setToastMsg(""), 2000);
     }
   }, []);
 
-  const copyText = useCallback(
-    async (text: string, message: string) => {
-      if (typeof navigator === "undefined" || !navigator.clipboard) return;
-      await navigator.clipboard.writeText(text);
-      showToast(message);
-    },
-    [showToast]
-  );
-
-  const handleToggleShare = useCallback(async () => {
-    if (!record) return;
-    if (!record.shared) {
-      await shareCredential(id).catch(() => undefined);
-      setRecord({ ...record, shared: true });
-      showToast(t("pagePublic"));
-    }
-    if (typeof navigator !== "undefined" && navigator.share) {
-      try {
-        await navigator.share({ title: t("shareTitle"), url: pageUrl });
-      } catch {
-        // User cancelled native share
+  const handleToggleShare = useCallback(
+    async (nextShared: boolean) => {
+      if (!record) return;
+      if (nextShared && !record.shared) {
+        await shareCredential(id).catch(() => undefined);
       }
-    }
-  }, [record, id, pageUrl, t, showToast]);
-
-  const handleCopyLink = useCallback(async () => {
-    if (!record) return;
-    if (!record.shared) {
-      await shareCredential(id).catch(() => undefined);
-      setRecord({ ...record, shared: true });
-    }
-    await copyText(pageUrl, t("linkCopied"));
-  }, [record, id, pageUrl, copyText, t]);
+      setRecord({ ...record, shared: nextShared });
+      showToast(nextShared ? t("pagePublic") : "Only you can see this until you share.");
+    },
+    [record, id, t, showToast]
+  );
 
   const handleDownloadImage = useCallback(() => {
     if (!record || typeof document === "undefined") return;
@@ -164,38 +136,31 @@ export function SkillPage(): JSX.Element {
     const ctx = canvas.getContext("2d");
     if (!ctx) return;
 
-    ctx.fillStyle = "#14110F";
+    ctx.fillStyle = "#2A2A2A";
     ctx.fillRect(0, 0, 1200, 630);
-    ctx.strokeStyle = "#D4B26A";
-    ctx.lineWidth = 4;
+    ctx.strokeStyle = "#B8B8B8";
+    ctx.lineWidth = 2;
     ctx.strokeRect(20, 20, 1160, 590);
 
-    const grad = ctx.createLinearGradient(20, 20, 20, 610);
-    grad.addColorStop(0, "#EFE9FF");
-    grad.addColorStop(0.5, "#B9A7FF");
-    grad.addColorStop(1, "#5B3FD6");
-    ctx.fillStyle = grad;
-    ctx.fillRect(20, 20, 18, 590);
+    ctx.fillStyle = "#B8B8B8";
+    ctx.font = "700 20px sans-serif";
+    ctx.fillText("PROOFFOLIO · SKILL PASSPORT", 72, 88);
 
-    ctx.fillStyle = "#B9A7FF";
-    ctx.font = "600 22px sans-serif";
-    ctx.fillText("PROOFFOLIO SKILL PASSPORT", 76, 92);
+    ctx.fillStyle = "#EDEDED";
+    ctx.font = "700 54px sans-serif";
+    ctx.fillText(record.name || t("anonymousCandidate"), 72, 185);
 
-    ctx.fillStyle = "#FAF6EE";
-    ctx.font = "400 56px Georgia, serif";
-    ctx.fillText(record.name || t("anonymousCandidate"), 76, 185);
+    ctx.fillStyle = "#B8B8B8";
+    ctx.font = "400 28px sans-serif";
+    ctx.fillText(record.skill, 72, 236);
 
-    ctx.fillStyle = "#D4B26A";
-    ctx.font = "400 32px Georgia, serif";
-    ctx.fillText(record.skill, 76, 240);
+    ctx.fillStyle = "#EDEDED";
+    ctx.font = "600 72px sans-serif";
+    ctx.fillText(`${record.total} / 100`, 72, 375);
 
-    ctx.fillStyle = "#FAF6EE";
-    ctx.font = "700 84px sans-serif";
-    ctx.fillText(`${record.total} / 100`, 76, 380);
-
-    ctx.fillStyle = "#7FE0BA";
-    ctx.font = "600 24px sans-serif";
-    ctx.fillText(`✓ ${t("recordMatchesDatabase")}`, 76, 540);
+    ctx.fillStyle = "#68B891";
+    ctx.font = "700 22px sans-serif";
+    ctx.fillText(t("recordMatchesDatabase"), 72, 535);
 
     const link = document.createElement("a");
     link.download = `prooffolio-passport-${id || "demo"}.png`;
@@ -213,11 +178,14 @@ export function SkillPage(): JSX.Element {
   if (missing) {
     return (
       <main className="shell">
-        <h1>{t("recordUnavailable")}</h1>
-        <p className="error">{t("recordUnavailableBody")}</p>
-        <Link className="text-link" to="/">
-          {t("startAgain")}
-        </Link>
+        <div className="empty-ghost-wrap">
+          <span className="ghost-numeral" aria-hidden="true">404</span>
+          <h1>{t("recordUnavailable")}</h1>
+          <p className="error">{t("recordUnavailableBody")}</p>
+          <Link className="pf-btn pf-btn--primary" to="/">
+            {t("startAgain")}
+          </Link>
+        </div>
       </main>
     );
   }
@@ -240,7 +208,7 @@ export function SkillPage(): JSX.Element {
       <main className="shell">
         <h1>{t("recordUnavailable")}</h1>
         <p className="error">{t("tooShortBody")}</p>
-        <Link className="text-link" to="/">
+        <Link className="pf-btn pf-btn--primary" to="/">
           {t("startAgain")}
         </Link>
       </main>
@@ -261,78 +229,66 @@ export function SkillPage(): JSX.Element {
   return (
     <main className="shell passport-page-shell">
       <p className="eyebrow no-print">
-        {isDemo && <Badge tone="lavender">{t("replayBadge")}</Badge>} {t("skillPageEyebrow")}
+        {isDemo && <span>{t("replayBadge")} · </span>}
+        {t("skillPageEyebrow")}
       </p>
 
-      {/* Dark Credential Card with Gold Foil Border & Holographic Lavender Strip */}
-      <article className="passport-credential-card" aria-label="Skill Passport Credential">
-        <div className="passport-holo-strip" aria-hidden="true" />
-        <div className="passport-shimmer-sweep" aria-hidden="true" />
-
+      {/* Graphite (#2A2A2A) Credential Panel with 1px Silver (#B8B8B8) Edge */}
+      <article className="passport-graphite-card" aria-label="Skill Passport Credential">
+        <div className="passport-pattern-band" aria-hidden="true" />
+        <Grain />
         <div className="passport-card-inner">
           <div className="passport-card-top">
-            <span className="passport-issuer-eyebrow">PROOFFOLIO SKILL PASSPORT</span>
-            <Badge tone="ok" className="passport-verified-pill">
-              <IconShield size={14} />
-              <span>{t("recordMatchesDatabase")}</span>
-            </Badge>
+            <span className="passport-wordmark">
+              <span className="wordmark-light">PROOF</span>
+              <span className="wordmark-bold">FOLIO</span>
+            </span>
+            <span className="passport-type-label">SKILL PASSPORT</span>
           </div>
 
-          <div className="passport-card-main">
-            <div>
-              <h1 className="passport-candidate-name">{displayName}</h1>
-              <p className="passport-role-serif">{record.skill}</p>
-            </div>
-            <div className="passport-score-box">
-              <strong>{record.total}</strong>
-              <span>/ 100 ECVE</span>
-            </div>
+          <div className="passport-identity">
+            <h1 className="passport-handle-dm">{displayName}</h1>
+            <p className="passport-role-sub">{record.skill}</p>
           </div>
 
-          <div className="passport-card-bottom">
-            <div className="passport-meta-fields">
+          <div className="passport-facts-grid">
+            <dl className="passport-dl">
               <div>
-                <span className="passport-field-label">Outcome</span>
-                <Badge tone="ok">{outcomeLabel}</Badge>
+                <dt>Composite</dt>
+                <dd className="numeral-md">{record.total} / 100</dd>
               </div>
               <div>
-                <span className="passport-field-label">Issued</span>
-                <strong>{issuedDate}</strong>
+                <dt>Outcome</dt>
+                <dd>{outcomeLabel}</dd>
               </div>
               <div>
-                <span className="passport-field-label">Handle</span>
-                <strong className="mono">@{displayName.toLowerCase().replace(/[^a-z0-9]/g, "").slice(0, 14) || "learner"}</strong>
+                <dt>Issued date</dt>
+                <dd>{issuedDate}</dd>
               </div>
-            </div>
-
+              <div>
+                <dt>Passport ID</dt>
+                <dd className="mono">{id || "demo"}</dd>
+              </div>
+            </dl>
             <PassportQrTile url={`/p/${id}`} />
           </div>
         </div>
       </article>
 
-      {/* Cryptographic Proof Section */}
+      {/* Verification Block */}
       <Card as="section" className="crypto-proof-card">
-        <div className="card-header-row">
-          <h2 style={{ margin: 0 }}>Cryptographic Verification</h2>
-          <Badge tone="review">{t("onlineOnlyBadge")}</Badge>
+        <div className="rule-feedback rule-feedback--ok" style={{ marginTop: 0 }}>
+          <StatusMark tone="ok" size={18} />
+          <strong>{t("recordMatchesDatabase")}</strong>
         </div>
-        <p className="fineprint" style={{ marginTop: "6px" }}>
-          {t("whatVerificationMeansBody")}
-        </p>
+
+        <p className="fineprint">{t("whatVerificationMeansBody")}</p>
 
         <div className="crypto-row">
           <span className="spec-label">Artifact SHA-256</span>
           <div className="crypto-value-row">
             <code className="mono crypto-code">{artifactSha}</code>
-            <button
-              type="button"
-              className="sha-copy-chip"
-              onClick={() => void copyText(artifactSha, "SHA-256 copied")}
-              aria-label="Copy artifact SHA-256"
-            >
-              <IconCopy size={14} />
-              <span>Copy</span>
-            </button>
+            <CopyButton text={artifactSha} ariaLabel="Copy artifact SHA-256" />
           </div>
         </div>
 
@@ -340,62 +296,33 @@ export function SkillPage(): JSX.Element {
           <span className="spec-label">JWS Key ID (kid)</span>
           <div className="crypto-value-row">
             <code className="mono crypto-code">{jwsKid}</code>
-            <button
-              type="button"
-              className="sha-copy-chip"
-              onClick={() => void copyText(jwsKid, "Key ID copied")}
-              aria-label="Copy JWS key ID"
-            >
-              <IconCopy size={14} />
-              <span>Copy</span>
-            </button>
+            <CopyButton text={jwsKid} ariaLabel="Copy JWS key ID" />
           </div>
         </div>
 
         <div className="crypto-footer-links">
-          <a
-            href="/.well-known/jwks.json"
-            target="_blank"
-            rel="noopener noreferrer"
-            className="verify-jwks-link"
-          >
-            <span>Verify independently</span>
-            <IconExternalLink size={14} />
+          <a href="/.well-known/jwks.json" target="_blank" rel="noopener noreferrer" className="hero-plain-link">
+            Verify independently
           </a>
-          <span className="fineprint">
-            {clientConfig.passportPublicDomain || "Local development URL"}
-          </span>
+          <span className="fineprint">{clientConfig.passportPublicDomain || "Local development URL"}</span>
         </div>
       </Card>
 
       {/* Actions */}
       <Card as="section" className="passport-actions-card no-print">
-        <div className="passport-privacy-row">
-          <IconLock size={16} />
-          <div>
-            <strong>{record.shared ? t("statusActivePublic") : t("statusActivePrivate")}</strong>
-            <p className="fineprint" style={{ margin: "2px 0 0" }}>
-              {record.shared ? t("pagePublic") : "Only you can see this until you share."}
-            </p>
-          </div>
-        </div>
+        <Toggle
+          checked={Boolean(record.shared)}
+          onChange={(val) => void handleToggleShare(val)}
+          label={record.shared ? t("pagePublic") : "Only you can see this until you share"}
+        />
 
         <div className="passport-action-buttons">
-          <Button variant="primary" onClick={() => void handleToggleShare()}>
-            <IconShare size={16} />
-            <span>{record.shared ? t("nativeShare") : t("makePublic")}</span>
-          </Button>
-          <Button variant="secondary" onClick={() => void handleCopyLink()}>
-            <IconCheck size={16} />
-            <span>{t("copyLink")}</span>
-          </Button>
+          <CopyButton text={pageUrl} label="COPY LINK" copiedLabel="COPIED" ariaLabel="Copy passport link" />
           <Button variant="secondary" onClick={handleDownloadImage}>
-            <IconDownload size={16} />
-            <span>Download image</span>
+            DOWNLOAD AS IMAGE
           </Button>
           <Button variant="ghost" className="withdraw-btn" onClick={() => setWithdrawOpen(true)}>
-            <IconTrash size={16} />
-            <span>{t("deletePage")}</span>
+            WITHDRAW
           </Button>
         </div>
       </Card>
@@ -403,24 +330,24 @@ export function SkillPage(): JSX.Element {
       <ScoreList record={record} />
 
       <div className="no-print" style={{ marginTop: "16px" }}>
-        <Link className="secondary link-button" to="/opportunities">
+        <Link className="pf-btn pf-btn--secondary" to="/opportunities">
           {t("discoverOpportunitiesCta")}
         </Link>
       </div>
 
-      <p className="fineprint basis">{record.basisNote ?? t("rubricBasis")}</p>
+      <p className="passport-disclaimer">{record.basisNote ?? t("rubricBasis")}</p>
 
-      <Sheet open={withdrawOpen} onClose={() => setWithdrawOpen(false)} title={t("deletePage")}>
+      <Modal open={withdrawOpen} onClose={() => setWithdrawOpen(false)} title="Withdraw Skill Passport?">
         <p className="fineprint">{t("deleteConfirm")}</p>
         <div className="cta-stack">
-          <Button variant="primary" fullWidth className="withdraw-confirm-btn" onClick={() => void handleWithdraw()}>
-            {t("deletePage")}
-          </Button>
           <Button variant="secondary" fullWidth onClick={() => setWithdrawOpen(false)}>
-            {t("deleteCancel")}
+            Cancel
+          </Button>
+          <Button variant="dark" fullWidth className="withdraw-confirm-btn" onClick={() => void handleWithdraw()}>
+            WITHDRAW PASSPORT
           </Button>
         </div>
-      </Sheet>
+      </Modal>
 
       <Toast open={Boolean(toastMsg)} message={toastMsg} tone="ok" onDismiss={() => setToastMsg("")} />
     </main>
