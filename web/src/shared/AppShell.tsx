@@ -19,7 +19,7 @@ import { useTranslation } from "../i18n";
 import { useSetup } from "../setup/SetupContext";
 import type { Language } from "../types";
 import { getStoredThemePreference, persistThemePreference, type ThemePreference } from "./theme";
-import { Frame, Grain, SegmentedControl, Sheet } from "./ui";
+import { Frame, SegmentedControl, Sheet, TextLink } from "./ui";
 import { extractUtmParams, saveStoredUtm } from "./utm";
 
 const LANG_OPTIONS: { value: Language; label: string; ariaLabel: string }[] = [
@@ -45,6 +45,7 @@ export function AppShell({ children }: { children: ReactNode }): JSX.Element {
   const location = useLocation();
   const demoQuery = location.search.includes("demo=1") ? "?demo=1" : "";
 
+  const [announcementDismissed, setAnnouncementDismissed] = useState(false);
   const [menuOpen, setMenuOpen] = useState(false);
   const [searchOpen, setSearchOpen] = useState(false);
   const [searchQuery, setSearchQuery] = useState("");
@@ -140,10 +141,10 @@ export function AppShell({ children }: { children: ReactNode }): JSX.Element {
   }
 
   const navItems = [
-    { label: t("navHowItWorks"), to: "/learn" },
-    { label: t("navForLearners"), to: `/profile${demoQuery}` },
-    { label: t("navForEmployers"), to: "/opportunities" },
-    { label: t("navVerify"), to: "/skill/demo?demo=1" }
+    { label: t("navHowItWorks"), to: "/learn", matches: (p: string) => p.startsWith("/learn") },
+    { label: t("navForLearners"), to: `/profile${demoQuery}`, matches: (p: string) => p.startsWith("/profile") || p.startsWith("/role") || p.startsWith("/challenge") },
+    { label: t("navForEmployers"), to: "/opportunities", matches: (p: string) => p.startsWith("/opportunities") || p.startsWith("/connect") },
+    { label: t("navVerify"), to: "/skill/demo?demo=1", matches: (p: string) => p.startsWith("/skill") || p.startsWith("/passport") }
   ];
 
   const mobileDockItems = [
@@ -159,93 +160,134 @@ export function AppShell({ children }: { children: ReactNode }): JSX.Element {
     ? SEARCH_INDEX.filter((item) => item.title.toLowerCase().includes(q) || item.desc.toLowerCase().includes(q))
     : SEARCH_INDEX;
 
+  const env = (import.meta as { env?: Record<string, string | undefined> }).env;
+  const isMockOrDemo = location.search.includes("demo=1") || env?.VITE_MOCK_MODE !== "0";
+  const announcementText = isMockOrDemo
+    ? "Mock mode: integrations are simulated. Voice needs a microphone; Text mode is always available."
+    : "";
+
   return (
     <div className="app-frame">
-      <Grain fixed />
       <a href="#main-content" className="skip-to-content">
         Skip to content
       </a>
 
-      <Frame>
-        <header className={"site-topbar" + (isScrolled ? " is-scrolled" : "")}>
-          <div className="site-topbar-inner">
-            <Link to={`/${demoQuery}`} className="topbar-wordmark" onClick={() => setMenuOpen(false)}>
-              <svg width="22" height="22" viewBox="0 0 24 24" fill="none" aria-hidden="true">
-                <path d="M5 20V4H13.5C16.538 4 19 6.462 19 9.5C19 12.538 16.538 15 13.5 15H5" stroke="currentColor" strokeWidth="2.2" />
-              </svg>
-              <span className="wordmark-light">PROOF</span>
-              <span className="wordmark-bold">FOLIO</span>
+      {announcementText && !announcementDismissed && (
+        <div className="announcement-bar" role="region" aria-label="System notice">
+          <div className="announcement-bar-inner">
+            <span>{announcementText}</span>
+            <button
+              type="button"
+              className="announcement-close-btn"
+              aria-label="Dismiss announcement"
+              onClick={() => setAnnouncementDismissed(true)}
+            >
+              <X size={16} weight="regular" aria-hidden="true" />
+            </button>
+          </div>
+        </div>
+      )}
+
+      <header className={"site-topbar" + (isScrolled ? " is-scrolled" : "")}>
+        <div className="site-topbar-inner">
+          <Link to={`/${demoQuery}`} className="topbar-wordmark" onClick={() => setMenuOpen(false)}>
+            <svg width="22" height="22" viewBox="0 0 24 24" fill="none" aria-hidden="true">
+              <path d="M5 20V4H13.5C16.538 4 19 6.462 19 9.5C19 12.538 16.538 15 13.5 15H5" stroke="currentColor" strokeWidth="2.4" />
+            </svg>
+            <span className="wordmark-light">PROOF</span>
+            <span className="wordmark-bold">FOLIO</span>
+          </Link>
+
+          <nav className="topbar-nav" aria-label={t("mainNavLabel")}>
+            {navItems.map((item) => (
+              <TextLink
+                key={item.to}
+                to={item.to}
+                current={item.matches(location.pathname)}
+                className="topbar-nav-link"
+              >
+                {item.label}
+              </TextLink>
+            ))}
+          </nav>
+
+          <div className="topbar-actions">
+            <SegmentedControl
+              options={LANG_OPTIONS}
+              value={language}
+              onChange={chooseLanguage}
+              ariaLabel="Language switcher"
+              className="topbar-lang-seg"
+            />
+
+            <button
+              type="button"
+              className="topbar-icon-btn"
+              aria-label="Search site (/)"
+              title="Search (/)"
+              onClick={() => setSearchOpen(true)}
+            >
+              <MagnifyingGlass size={18} weight="regular" aria-hidden="true" />
+            </button>
+
+            <button
+              type="button"
+              className="topbar-icon-btn"
+              aria-label={themePref === "dark" ? "Switch to light mode" : "Switch to dark mode"}
+              onClick={() => setThemePreference(themePref === "dark" ? "light" : "dark")}
+            >
+              {themePref === "dark" ? <Sun size={18} weight="regular" aria-hidden="true" /> : <Moon size={18} weight="regular" aria-hidden="true" />}
+            </button>
+
+            <Link
+              to={`/profile${demoQuery}`}
+              className="topbar-icon-btn"
+              aria-label={t("navForLearners")}
+              title={t("navForLearners")}
+            >
+              <User size={18} weight="regular" aria-hidden="true" />
             </Link>
 
-            <nav className="topbar-nav" aria-label={t("mainNavLabel")}>
-              {navItems.map((item) => (
-                <Link key={item.to} to={item.to} className="topbar-nav-link">
-                  {item.label}
-                </Link>
-              ))}
-            </nav>
+            <button
+              type="button"
+              className="topbar-icon-btn topbar-menu-btn"
+              aria-expanded={menuOpen}
+              aria-controls="mobile-nav-drawer"
+              aria-label={t("navMenuToggle")}
+              onClick={() => setMenuOpen((prev) => !prev)}
+            >
+              {menuOpen ? <X size={18} weight="regular" aria-hidden="true" /> : <List size={18} weight="regular" aria-hidden="true" />}
+            </button>
+          </div>
+        </div>
 
-            <div className="topbar-actions">
+        <div className="scroll-progress-bar" aria-hidden="true">
+          <div className="scroll-progress-fill" style={{ transform: `scaleX(${scrollPct / 100})` }} />
+        </div>
+
+        {menuOpen && (
+          <nav ref={drawerRef} id="mobile-nav-drawer" className="mobile-nav-drawer" aria-label={t("mainNavLabel")}>
+            {navItems.map((item) => (
+              <Link
+                key={item.to}
+                to={item.to}
+                className={"mobile-nav-link" + (item.matches(location.pathname) ? " is-current" : "")}
+                onClick={() => setMenuOpen(false)}
+              >
+                {item.label}
+              </Link>
+            ))}
+            <div style={{ marginTop: "8px" }}>
+              <span className="pf-label" style={{ display: "block", marginBottom: "8px" }}>Language</span>
               <SegmentedControl
                 options={LANG_OPTIONS}
                 value={language}
                 onChange={chooseLanguage}
-                ariaLabel="Language switcher"
-                className="topbar-lang-seg"
+                ariaLabel="Mobile language switcher"
               />
-
-              <button
-                type="button"
-                className="topbar-icon-btn"
-                aria-label="Search site (/)"
-                title="Search (/)"
-                onClick={() => setSearchOpen(true)}
-              >
-                <MagnifyingGlass size={18} weight="regular" aria-hidden="true" />
-              </button>
-
-              <button
-                type="button"
-                className="topbar-icon-btn"
-                aria-label={themePref === "dark" ? "Switch to light mode" : "Switch to dark mode"}
-                onClick={() => setThemePreference(themePref === "dark" ? "light" : "dark")}
-              >
-                {themePref === "dark" ? <Sun size={18} weight="regular" aria-hidden="true" /> : <Moon size={18} weight="regular" aria-hidden="true" />}
-              </button>
-
-              <Link
-                to={`/profile${demoQuery}`}
-                className="topbar-icon-btn"
-                aria-label={t("navForLearners")}
-                title={t("navForLearners")}
-              >
-                <User size={18} weight="regular" aria-hidden="true" />
-              </Link>
-
-              <button
-                type="button"
-                className="topbar-icon-btn topbar-menu-btn"
-                aria-expanded={menuOpen}
-                aria-controls="mobile-nav-drawer"
-                aria-label={t("navMenuToggle")}
-                onClick={() => setMenuOpen((prev) => !prev)}
-              >
-                {menuOpen ? <X size={18} weight="regular" aria-hidden="true" /> : <List size={18} weight="regular" aria-hidden="true" />}
-              </button>
             </div>
-          </div>
-
-          <div className="scroll-progress-bar" aria-hidden="true">
-            <div className="scroll-progress-fill" style={{ transform: `scaleX(${scrollPct / 100})` }} />
-          </div>
-
-          {menuOpen && (
-            <nav ref={drawerRef} id="mobile-nav-drawer" className="mobile-nav-drawer" aria-label={t("mainNavLabel")}>
-              {navItems.map((item) => (
-                <Link key={item.to} to={item.to} className="mobile-nav-link" onClick={() => setMenuOpen(false)}>
-                  {item.label}
-                </Link>
-              ))}
+            <div style={{ marginTop: "8px" }}>
+              <span className="pf-label" style={{ display: "block", marginBottom: "8px" }}>Theme</span>
               <SegmentedControl
                 ariaLabel="Theme"
                 value={themePref}
@@ -256,14 +298,16 @@ export function AppShell({ children }: { children: ReactNode }): JSX.Element {
                   { value: "system", label: "System" }
                 ]}
               />
-            </nav>
-          )}
-        </header>
+            </div>
+          </nav>
+        )}
+      </header>
 
-        <div id="main-content" className="app-content" tabIndex={-1}>
-          {children}
-        </div>
+      <div id="main-content" className="app-content" tabIndex={-1}>
+        {children}
+      </div>
 
+      <Frame>
         <footer className="site-footer">
           <div className="footer-grid">
             <div>
@@ -299,29 +343,29 @@ export function AppShell({ children }: { children: ReactNode }): JSX.Element {
           </div>
           <p className="footer-basis">{t("rubricBasis")}</p>
         </footer>
-
-        <nav className="mobile-bottom-dock" aria-label={t("mainNavLabel")}>
-          {mobileDockItems.map((item) => {
-            const Icon = item.icon;
-            const isActive = item.matches(location.pathname);
-            return (
-              <Link
-                key={item.key}
-                to={item.to}
-                className={"mobile-dock-item" + (isActive ? " is-active" : "")}
-                aria-current={isActive ? "page" : undefined}
-              >
-                <Icon size={20} weight="regular" aria-hidden="true" />
-                <span className="mobile-dock-label">{item.label}</span>
-              </Link>
-            );
-          })}
-        </nav>
       </Frame>
 
       <div className="quiet-subfooter">
         <span>{t("appName")} — {t("tagline")}</span>
       </div>
+
+      <nav className="mobile-bottom-dock" aria-label={t("mainNavLabel")}>
+        {mobileDockItems.map((item) => {
+          const Icon = item.icon;
+          const isActive = item.matches(location.pathname);
+          return (
+            <Link
+              key={item.key}
+              to={item.to}
+              className={"mobile-dock-item" + (isActive ? " is-active" : "")}
+              aria-current={isActive ? "page" : undefined}
+            >
+              <Icon size={20} weight="regular" aria-hidden="true" />
+              <span className="mobile-dock-label">{item.label}</span>
+            </Link>
+          );
+        })}
+      </nav>
 
       {showTopBtn && (
         <button
