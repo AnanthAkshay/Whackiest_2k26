@@ -1,41 +1,40 @@
-import { useEffect, useState, type CSSProperties, type ReactNode } from "react";
+import { useEffect, useState, type ReactNode } from "react";
 import { Link, useLocation } from "react-router-dom";
+import {
+  ArrowUp,
+  BookOpen,
+  Briefcase,
+  Certificate,
+  FileXls,
+  List,
+  MagnifyingGlass,
+  Microphone,
+  Moon,
+  Question,
+  Sun,
+  User,
+  X
+} from "@phosphor-icons/react";
 import { useTranslation } from "../i18n";
 import { useSetup } from "../setup/SetupContext";
 import type { Language } from "../types";
-import {
-  Button,
-  IconArrowUp,
-  IconBook,
-  IconBriefcase,
-  IconClose,
-  IconHelp,
-  IconMenu,
-  IconMic,
-  IconMoon,
-  IconSearch,
-  IconSheet,
-  IconShield,
-  IconSun,
-  IconUser,
-  Sheet
-} from "./ui";
+import { Frame, Grain, SegmentedControl, Sheet } from "./ui";
 
-const LANG_OPTIONS: { code: Language; short: string; label: string }[] = [
-  { code: "en", short: "EN", label: "English" },
-  { code: "hi", short: "हि", label: "हिन्दी" },
-  { code: "kn", short: "ಕ", label: "ಕನ್ನಡ" }
+const LANG_OPTIONS: { value: Language; label: string; ariaLabel: string }[] = [
+  { value: "en", label: "EN", ariaLabel: "English" },
+  { value: "hi", label: "हिं", ariaLabel: "हिन्दी" },
+  { value: "kn", label: "ಕನ್ನಡ", ariaLabel: "ಕನ್ನಡ" }
 ];
 
 const SEARCH_INDEX = [
-  { title: "Learn & Practise", desc: "Spreadsheet micro-lessons and drills", to: "/learn" },
-  { title: "Retail Sales Challenge (.xlsx)", desc: "Download starter workbook and upload", to: "/challenge" },
-  { title: "Validation Report", desc: "Deterministic spreadsheet check results", to: "/validation" },
-  { title: "AI Viva Setup", desc: "Choose language, voice/text mode, and test mic", to: "/setup-viva" },
-  { title: "Explain (AI Viva)", desc: "Live voice or text examiner interview", to: "/session" },
-  { title: "Sample Skill Passport", desc: "Ed25519-signed credential preview", to: "/skill/demo?demo=1" },
-  { title: "Local Opportunities", desc: "Matched entry-level roles and skill gaps", to: "/opportunities" },
-  { title: "System Health & Integrations", desc: "Live / Mock / Not configured status", to: "/health" }
+  { group: "Journey", title: "Learn & Practise", desc: "Spreadsheet micro-lessons and drills", to: "/learn" },
+  { group: "Journey", title: "Retail Sales Challenge (.xlsx)", desc: "Download starter workbook and upload", to: "/challenge" },
+  { group: "Journey", title: "Validation Report", desc: "Deterministic spreadsheet check results", to: "/validation" },
+  { group: "Journey", title: "AI Viva Setup", desc: "Choose language, voice/text mode, and test mic", to: "/setup-viva" },
+  { group: "Journey", title: "Explain (AI Viva)", desc: "Live voice or text examiner interview", to: "/session" },
+  { group: "Passport", title: "Sample Skill Passport", desc: "Ed25519-signed credential preview", to: "/skill/demo?demo=1" },
+  { group: "Connect", title: "Local Opportunities", desc: "Matched entry-level roles and skill gaps", to: "/opportunities" },
+  { group: "Diagnostics", title: "System Health & Integrations", desc: "Live / Mock / Not configured status", to: "/health" }
 ];
 
 export function AppShell({ children }: { children: ReactNode }): JSX.Element {
@@ -43,36 +42,41 @@ export function AppShell({ children }: { children: ReactNode }): JSX.Element {
   const { language, chooseLanguage } = useSetup();
   const location = useLocation();
   const demoQuery = location.search.includes("demo=1") ? "?demo=1" : "";
-  const activeLangIndex = Math.max(
-    0,
-    LANG_OPTIONS.findIndex((opt) => opt.code === language)
-  );
 
   const [menuOpen, setMenuOpen] = useState(false);
   const [searchOpen, setSearchOpen] = useState(false);
   const [searchQuery, setSearchQuery] = useState("");
   const [helpOpen, setHelpOpen] = useState(false);
   const [scrollPct, setScrollPct] = useState(0);
+  const [isScrolled, setIsScrolled] = useState(false);
   const [showTopBtn, setShowTopBtn] = useState(false);
   const [theme, setTheme] = useState<"light" | "dark">("light");
-  const [consentAck, setConsentAck] = useState(true);
 
   useEffect(() => {
     if (typeof window === "undefined") return;
-    // Preserve UTM parameters locally for session attribution (zero third-party scripts)
+
+    // Capture UTM params into sessionStorage for outbound link-outs only; strip from our URL
     const params = new URLSearchParams(window.location.search);
     const utmKeys = ["utm_source", "utm_medium", "utm_campaign", "utm_term", "utm_content"];
     const utm: Record<string, string> = {};
+    let hasUtm = false;
     for (const key of utmKeys) {
       const val = params.get(key);
-      if (val) utm[key] = val;
+      if (val) {
+        utm[key] = val;
+        params.delete(key);
+        hasUtm = true;
+      }
     }
-    if (Object.keys(utm).length > 0) {
+    if (hasUtm) {
       try {
         window.sessionStorage.setItem("prooffolio_utm", JSON.stringify(utm));
       } catch {
         // Ignore storage quota errors
       }
+      const cleanSearch = params.toString();
+      const nextUrl = window.location.pathname + (cleanSearch ? `?${cleanSearch}` : "") + window.location.hash;
+      window.history.replaceState({}, "", nextUrl);
     }
 
     try {
@@ -83,20 +87,39 @@ export function AppShell({ children }: { children: ReactNode }): JSX.Element {
       } else if (window.matchMedia?.("(prefers-color-scheme: dark)").matches) {
         setTheme("dark");
       }
-      setConsentAck(window.localStorage.getItem("prooffolio_storage_ack") === "1");
     } catch {
       // Ignore storage errors
     }
 
+    let rafId = 0;
     const onScroll = (): void => {
-      const doc = document.documentElement;
-      const max = Math.max(1, doc.scrollHeight - window.innerHeight);
-      setScrollPct(Math.min(100, Math.max(0, (window.scrollY / max) * 100)));
-      setShowTopBtn(window.scrollY > 320);
+      if (rafId) return;
+      rafId = window.requestAnimationFrame(() => {
+        rafId = 0;
+        const doc = document.documentElement;
+        const max = Math.max(1, doc.scrollHeight - window.innerHeight);
+        const y = window.scrollY;
+        setScrollPct(Math.min(100, Math.max(0, (y / max) * 100)));
+        setIsScrolled(y > 16);
+        setShowTopBtn(y > 600);
+      });
     };
+
+    const onKeyDown = (e: KeyboardEvent): void => {
+      if (e.key === "/" && !searchOpen && document.activeElement?.tagName !== "INPUT" && document.activeElement?.tagName !== "TEXTAREA") {
+        e.preventDefault();
+        setSearchOpen(true);
+      }
+    };
+
     window.addEventListener("scroll", onScroll, { passive: true });
-    return () => window.removeEventListener("scroll", onScroll);
-  }, []);
+    document.addEventListener("keydown", onKeyDown);
+    return () => {
+      if (rafId) window.cancelAnimationFrame(rafId);
+      window.removeEventListener("scroll", onScroll);
+      document.removeEventListener("keydown", onKeyDown);
+    };
+  }, [searchOpen]);
 
   function toggleTheme(): void {
     const next = theme === "dark" ? "light" : "dark";
@@ -111,15 +134,6 @@ export function AppShell({ children }: { children: ReactNode }): JSX.Element {
     }
   }
 
-  function acceptStorageNotice(): void {
-    setConsentAck(true);
-    try {
-      window.localStorage.setItem("prooffolio_storage_ack", "1");
-    } catch {
-      // Ignore storage errors
-    }
-  }
-
   const navItems = [
     { label: t("navHowItWorks"), to: "/learn" },
     { label: t("navForLearners"), to: `/profile${demoQuery}` },
@@ -128,178 +142,171 @@ export function AppShell({ children }: { children: ReactNode }): JSX.Element {
   ];
 
   const mobileDockItems = [
-    {
-      key: "learn",
-      label: "Learn",
-      to: "/learn",
-      icon: IconBook,
-      matches: (p: string) => p.startsWith("/learn") || p.startsWith("/role")
-    },
-    {
-      key: "challenge",
-      label: "Challenge",
-      to: "/challenge",
-      icon: IconSheet,
-      matches: (p: string) => p.startsWith("/challenge") || p.startsWith("/validation")
-    },
-    {
-      key: "explain",
-      label: "Explain",
-      to: `/session${demoQuery}`,
-      icon: IconMic,
-      matches: (p: string) => p.startsWith("/session") || p.startsWith("/results") || p.startsWith("/setup-viva")
-    },
-    {
-      key: "passport",
-      label: "Passport",
-      to: "/skill/demo?demo=1",
-      icon: IconShield,
-      matches: (p: string) => p.startsWith("/skill") || p.startsWith("/passport")
-    },
-    {
-      key: "connect",
-      label: "Connect",
-      to: "/opportunities",
-      icon: IconBriefcase,
-      matches: (p: string) => p.startsWith("/opportunities") || p.startsWith("/connect")
-    }
+    { key: "learn", label: "Learn", to: "/learn", icon: BookOpen, matches: (p: string) => p.startsWith("/learn") || p.startsWith("/role") },
+    { key: "challenge", label: "Challenge", to: "/challenge", icon: FileXls, matches: (p: string) => p.startsWith("/challenge") || p.startsWith("/validation") },
+    { key: "explain", label: "Explain", to: `/session${demoQuery}`, icon: Microphone, matches: (p: string) => p.startsWith("/session") || p.startsWith("/results") || p.startsWith("/setup-viva") },
+    { key: "passport", label: "Passport", to: "/skill/demo?demo=1", icon: Certificate, matches: (p: string) => p.startsWith("/skill") || p.startsWith("/passport") },
+    { key: "connect", label: "Connect", to: "/opportunities", icon: Briefcase, matches: (p: string) => p.startsWith("/opportunities") || p.startsWith("/connect") }
   ];
 
   const q = searchQuery.trim().toLowerCase();
   const filteredSearch = q
-    ? SEARCH_INDEX.filter(
-        (item) =>
-          item.title.toLowerCase().includes(q) || item.desc.toLowerCase().includes(q)
-      )
+    ? SEARCH_INDEX.filter((item) => item.title.toLowerCase().includes(q) || item.desc.toLowerCase().includes(q))
     : SEARCH_INDEX;
 
   return (
     <div className="app-frame">
+      <Grain fixed />
       <a href="#main-content" className="skip-to-content">
         Skip to content
       </a>
 
-      <div className="scroll-progress-bar" aria-hidden="true">
-        <div
-          className="scroll-progress-fill"
-          style={{ transform: `scaleX(${scrollPct / 100})` }}
-        />
-      </div>
-
-      <header className="site-topbar">
-        <div className="site-topbar-inner">
-          <Link to={`/${demoQuery}`} className="topbar-wordmark" onClick={() => setMenuOpen(false)}>
-            {t("appName")}
-          </Link>
-
-          <nav className="topbar-nav" aria-label={t("mainNavLabel")}>
-            {navItems.map((item) => (
-              <Link key={item.to} to={item.to} className="topbar-nav-link">
-                {item.label}
-              </Link>
-            ))}
-          </nav>
-
-          <div className="topbar-actions">
-            <div
-              className="lang-switcher"
-              role="group"
-              aria-label="Language switcher"
-              style={{ "--lang-idx": activeLangIndex } as CSSProperties}
-            >
-              <span className="lang-switcher-thumb" aria-hidden="true" />
-              {LANG_OPTIONS.map((opt) => {
-                const isActive = language === opt.code;
-                return (
-                  <button
-                    key={opt.code}
-                    type="button"
-                    className={"lang-switcher-btn" + (isActive ? " is-active" : "")}
-                    aria-pressed={isActive}
-                    aria-label={opt.label}
-                    onClick={() => chooseLanguage(opt.code)}
-                  >
-                    {opt.short}
-                  </button>
-                );
-              })}
-            </div>
-
-            <button
-              type="button"
-              className="topbar-icon-btn"
-              aria-label="Search site"
-              onClick={() => setSearchOpen(true)}
-            >
-              <IconSearch size={17} />
-            </button>
-
-            <button
-              type="button"
-              className="topbar-icon-btn"
-              aria-label={theme === "dark" ? "Switch to light mode" : "Switch to dark mode"}
-              onClick={toggleTheme}
-            >
-              {theme === "dark" ? <IconSun size={17} /> : <IconMoon size={17} />}
-            </button>
-
-            <Link
-              to={`/profile${demoQuery}`}
-              className="topbar-icon-btn"
-              aria-label={t("navForLearners")}
-              title={t("navForLearners")}
-            >
-              <IconUser size={17} />
+      <Frame>
+        <header className={"site-topbar" + (isScrolled ? " is-scrolled" : "")}>
+          <div className="site-topbar-inner">
+            <Link to={`/${demoQuery}`} className="topbar-wordmark" onClick={() => setMenuOpen(false)}>
+              <svg width="22" height="22" viewBox="0 0 24 24" fill="none" aria-hidden="true">
+                <path d="M5 20V4H13.5C16.538 4 19 6.462 19 9.5C19 12.538 16.538 15 13.5 15H5" stroke="currentColor" strokeWidth="2.2" />
+              </svg>
+              <span className="wordmark-light">PROOF</span>
+              <span className="wordmark-bold">FOLIO</span>
             </Link>
 
-            <button
-              type="button"
-              className="topbar-icon-btn topbar-menu-btn"
-              aria-expanded={menuOpen}
-              aria-controls="mobile-nav-drawer"
-              aria-label={t("navMenuToggle")}
-              onClick={() => setMenuOpen((prev) => !prev)}
-            >
-              {menuOpen ? <IconClose size={17} /> : <IconMenu size={17} />}
-            </button>
-          </div>
-        </div>
+            <nav className="topbar-nav" aria-label={t("mainNavLabel")}>
+              {navItems.map((item) => (
+                <Link key={item.to} to={item.to} className="topbar-nav-link">
+                  {item.label}
+                </Link>
+              ))}
+            </nav>
 
-        {menuOpen && (
-          <nav id="mobile-nav-drawer" className="mobile-nav-drawer" aria-label={t("mainNavLabel")}>
-            {navItems.map((item) => (
-              <Link
-                key={item.to}
-                to={item.to}
-                className="mobile-nav-link"
-                onClick={() => setMenuOpen(false)}
+            <div className="topbar-actions">
+              <SegmentedControl
+                options={LANG_OPTIONS}
+                value={language}
+                onChange={chooseLanguage}
+                ariaLabel="Language switcher"
+                className="topbar-lang-seg"
+              />
+
+              <button
+                type="button"
+                className="topbar-icon-btn"
+                aria-label="Search site (/)"
+                title="Search (/)"
+                onClick={() => setSearchOpen(true)}
               >
-                {item.label}
+                <MagnifyingGlass size={18} weight="regular" aria-hidden="true" />
+              </button>
+
+              <button
+                type="button"
+                className="topbar-icon-btn"
+                aria-label={theme === "dark" ? "Switch to light mode" : "Switch to dark mode"}
+                onClick={toggleTheme}
+              >
+                {theme === "dark" ? <Sun size={18} weight="regular" aria-hidden="true" /> : <Moon size={18} weight="regular" aria-hidden="true" />}
+              </button>
+
+              <Link
+                to={`/profile${demoQuery}`}
+                className="topbar-icon-btn"
+                aria-label={t("navForLearners")}
+                title={t("navForLearners")}
+              >
+                <User size={18} weight="regular" aria-hidden="true" />
               </Link>
-            ))}
-          </nav>
-        )}
-      </header>
 
-      <div id="main-content" className="app-content" tabIndex={-1}>
-        {children}
-      </div>
+              <button
+                type="button"
+                className="topbar-icon-btn topbar-menu-btn"
+                aria-expanded={menuOpen}
+                aria-controls="mobile-nav-drawer"
+                aria-label={t("navMenuToggle")}
+                onClick={() => setMenuOpen((prev) => !prev)}
+              >
+                {menuOpen ? <X size={18} weight="regular" aria-hidden="true" /> : <List size={18} weight="regular" aria-hidden="true" />}
+              </button>
+            </div>
+          </div>
 
-      <footer className="site-footer">
-        <div className="site-footer-inner">
-          <div>
-            <strong className="footer-wordmark">{t("appName")}</strong>
-            <p className="footer-tagline">{t("tagline")}</p>
-            <p className="footer-basis">{t("rubricBasis")}</p>
-            <p className="footer-updated">Last updated: Nov 2026</p>
+          <div className="scroll-progress-bar" aria-hidden="true">
+            <div className="scroll-progress-fill" style={{ transform: `scaleX(${scrollPct / 100})` }} />
           </div>
-          <div className="footer-links">
-            <Link to="/opportunities">{t("navForEmployers")}</Link>
-            <Link to="/integrations">{t("footerIntegrations")}</Link>
-            <Link to="/health">{t("footerHealth")}</Link>
-          </div>
+
+          {menuOpen && (
+            <nav id="mobile-nav-drawer" className="mobile-nav-drawer" aria-label={t("mainNavLabel")}>
+              {navItems.map((item) => (
+                <Link key={item.to} to={item.to} className="mobile-nav-link" onClick={() => setMenuOpen(false)}>
+                  {item.label}
+                </Link>
+              ))}
+            </nav>
+          )}
+        </header>
+
+        <div id="main-content" className="app-content" tabIndex={-1}>
+          {children}
         </div>
-      </footer>
+
+        <footer className="site-footer">
+          <div className="footer-grid">
+            <div>
+              <strong className="footer-col-title">Project</strong>
+              <ul className="footer-col-list">
+                <li><Link to="/learn">{t("navHowItWorks")}</Link></li>
+                <li><Link to="/challenge">Demonstrate (.xlsx)</Link></li>
+                <li><Link to="/opportunities">{t("navForEmployers")}</Link></li>
+              </ul>
+            </div>
+            <div>
+              <strong className="footer-col-title">Verify a passport</strong>
+              <ul className="footer-col-list">
+                <li><Link to="/skill/demo?demo=1">Sample Skill Passport</Link></li>
+                <li><a href="/.well-known/jwks.json">JWKS Public Keys</a></li>
+                <li><Link to="/health">{t("footerHealth")}</Link></li>
+              </ul>
+            </div>
+            <div>
+              <strong className="footer-col-title">Honesty and disclosure</strong>
+              <ul className="footer-col-list">
+                <li><Link to="/integrations">{t("footerIntegrations")}</Link></li>
+                <li><span className="footer-note">No ad trackers. Local device storage only.</span></li>
+              </ul>
+            </div>
+            <div>
+              <strong className="footer-col-title">Team The North Remembers</strong>
+              <p className="footer-note">MSRIT · wHACKiest 2026 · Track 04 UnlockED</p>
+              <p className="footer-note">
+                Last updated: <time dateTime="2026-11-26">2026-11-26</time>
+              </p>
+            </div>
+          </div>
+          <p className="footer-basis">{t("rubricBasis")}</p>
+        </footer>
+
+        <nav className="mobile-bottom-dock" aria-label={t("mainNavLabel")}>
+          {mobileDockItems.map((item) => {
+            const Icon = item.icon;
+            const isActive = item.matches(location.pathname);
+            return (
+              <Link
+                key={item.key}
+                to={item.to}
+                className={"mobile-dock-item" + (isActive ? " is-active" : "")}
+                aria-current={isActive ? "page" : undefined}
+              >
+                <Icon size={20} weight="regular" aria-hidden="true" />
+                <span className="mobile-dock-label">{item.label}</span>
+              </Link>
+            );
+          })}
+        </nav>
+      </Frame>
+
+      <div className="quiet-subfooter">
+        <span>{t("appName")} — {t("tagline")}</span>
+      </div>
 
       {showTopBtn && (
         <button
@@ -308,59 +315,28 @@ export function AppShell({ children }: { children: ReactNode }): JSX.Element {
           aria-label="Back to top"
           onClick={() => window.scrollTo({ top: 0, behavior: "smooth" })}
         >
-          <IconArrowUp size={16} />
-          <span>Top</span>
+          <ArrowUp size={18} weight="regular" aria-hidden="true" />
         </button>
       )}
 
       <button
         type="button"
         className="floating-help-btn"
-        aria-label="Help and support"
+        aria-label="Help"
         onClick={() => setHelpOpen(true)}
       >
-        <IconHelp size={16} />
-        <span>Help</span>
+        <Question size={16} weight="regular" aria-hidden="true" />
+        <span>HELP</span>
       </button>
-
-      {!consentAck && (
-        <div className="consent-banner" role="region" aria-label="Local storage notice">
-          <span className="fineprint">
-            Prooffolio saves your progress and language locally on this device. No ad trackers.
-          </span>
-          <Button variant="primary" onClick={acceptStorageNotice}>
-            Got it
-          </Button>
-        </div>
-      )}
-
-      <nav className="mobile-bottom-dock" aria-label={t("mainNavLabel")}>
-        {mobileDockItems.map((item) => {
-          const Icon = item.icon;
-          const isActive = item.matches(location.pathname);
-          return (
-            <Link
-              key={item.key}
-              to={item.to}
-              className={"mobile-dock-item" + (isActive ? " is-active" : "")}
-              aria-current={isActive ? "page" : undefined}
-            >
-              {isActive && <span className="mobile-dock-bar" aria-hidden="true" />}
-              <Icon size={19} />
-              <span className="mobile-dock-label">{item.label}</span>
-            </Link>
-          );
-        })}
-      </nav>
 
       <Sheet open={searchOpen} onClose={() => setSearchOpen(false)} title="Search Prooffolio">
         <label htmlFor="site-search-input" className="sr-only">
-          Search lessons, challenges, and pages
+          Search lessons, rubric terms, and routes
         </label>
         <input
           id="site-search-input"
           type="search"
-          className="text-input"
+          className="pf-input"
           value={searchQuery}
           onChange={(e) => setSearchQuery(e.target.value)}
           placeholder="Search lessons, challenge, passport, opportunities..."
@@ -380,6 +356,7 @@ export function AppShell({ children }: { children: ReactNode }): JSX.Element {
                   <strong>{item.title}</strong>
                   <div className="fineprint">{item.desc}</div>
                 </div>
+                <span className="eyebrow">{item.group}</span>
               </Link>
             </li>
           ))}
@@ -388,17 +365,17 @@ export function AppShell({ children }: { children: ReactNode }): JSX.Element {
 
       <Sheet open={helpOpen} onClose={() => setHelpOpen(false)} title="Help & Support">
         <p className="fineprint">
-          Need help completing the spreadsheet challenge or running the AI Viva in Mock Mode?
+          Questions about the spreadsheet rubric, Mock Mode, or verification?
         </p>
         <div className="cta-stack">
-          <Link to="/learn" className="pf-btn pf-btn--secondary" onClick={() => setHelpOpen(false)}>
-            Open Learn &amp; Practise
+          <a href="mailto:team@prooffolio.example" className="pf-btn pf-btn--secondary">
+            Email Team The North Remembers
+          </a>
+          <Link to="/integrations" className="pf-btn pf-btn--secondary" onClick={() => setHelpOpen(false)}>
+            Honesty &amp; Provider Status
           </Link>
           <Link to="/health" className="pf-btn pf-btn--secondary" onClick={() => setHelpOpen(false)}>
-            Check System Health
-          </Link>
-          <Link to="/integrations" className="pf-btn pf-btn--secondary" onClick={() => setHelpOpen(false)}>
-            View Sponsor &amp; Provider Status
+            System Health
           </Link>
         </div>
       </Sheet>

@@ -1,103 +1,46 @@
-import { useEffect, useRef, useState, type CSSProperties } from "react";
 import { useNavigate } from "react-router-dom";
 import { useTranslation } from "../i18n";
+import { createMockValidationReport } from "../mock/demoData";
 import { useSetup } from "../setup/SetupContext";
-import {
-  Badge,
-  Button,
-  Chip,
-  IconBook,
-  IconBriefcase,
-  IconClock,
-  IconCompare,
-  IconFingerprint,
-  IconMessage,
-  IconMic,
-  IconSheet,
-  IconShield,
-  IconWifiOff,
-  ProgressRing
-} from "../shared/ui";
+import { Button, Card, StatusMark } from "../shared/ui";
 
 const JOURNEY_STAGES = [
-  {
-    num: "01",
-    key: "1. Learn",
-    outcome: "Practical micro-lessons for real office work.",
-    icon: IconBook
-  },
-  {
-    num: "02",
-    key: "2. Practise",
-    outcome: "Low-stakes drills at your own pace.",
-    icon: IconClock
-  },
-  {
-    num: "03",
-    key: "3. Demonstrate",
-    outcome: "Clean and upload a realistic .xlsx workbook.",
-    icon: IconSheet
-  },
-  {
-    num: "04",
-    key: "4. Explain",
-    outcome: "Talk with the AI Examiner in EN, HI, or KN.",
-    icon: IconMic
-  },
-  {
-    num: "05",
-    key: "5. Cross-Verify",
-    outcome: "Match spoken reasoning to spreadsheet facts.",
-    icon: IconCompare
-  },
-  {
-    num: "06",
-    key: "6. Verify",
-    outcome: "Earn an Ed25519-signed Skill Passport.",
-    icon: IconShield
-  },
-  {
-    num: "07",
-    key: "7. Connect",
-    outcome: "Discover transparent local job matches.",
-    icon: IconBriefcase
-  }
+  { num: "01", key: "1. Learn", outcome: "Study short spreadsheet rules cached for offline access." },
+  { num: "02", key: "2. Practise", outcome: "Complete low-stakes drills with immediate explanations." },
+  { num: "03", key: "3. Demonstrate", outcome: "Clean a seeded .xlsx sales workbook and upload it." },
+  { num: "04", key: "4. Explain", outcome: "Answer the AI Examiner in English, Hindi, or Kannada (voice or text)." },
+  { num: "05", key: "5. Cross-Verify", outcome: "Check consistency between your spoken claims and file facts." },
+  { num: "06", key: "6. Verify", outcome: "Receive an Ed25519-signed Skill Passport bound to the SHA-256 hash." },
+  { num: "07", key: "7. Connect", outcome: "Review local entry-level matches with transparent skill gaps." }
 ];
 
-const TRUST_CHIPS = [
-  { label: "Ed25519-signed", icon: IconShield },
-  { label: "SHA-256 bound", icon: IconFingerprint },
-  { label: "Works offline", icon: IconWifiOff },
-  { label: "Voice or text", icon: IconMessage }
+const FAQ_ITEMS = [
+  {
+    q: "Do I need an account or password?",
+    a: "No. Enter a display handle or use the Demo Learner profile to start immediately."
+  },
+  {
+    q: "What if I do not have a microphone or quiet room?",
+    a: "Switch to Text mode at any time before or during the AI Viva. Both modes evaluate the same rubric."
+  },
+  {
+    q: "What happens when the AI flags a mismatch?",
+    a: "Your attempt enters Pending Human Review. A mismatch is a review signal only, never an accusation."
+  },
+  {
+    q: "Are my uploaded spreadsheets public?",
+    a: "No. Uploaded files, audio, and full transcripts stay private. Public Skill Passports show only consented summary fields."
+  }
 ];
 
 export function WelcomePage(): JSX.Element {
   const { t } = useTranslation();
   const { chooseInputMode } = useSetup();
   const navigate = useNavigate();
-  const isDemo = new URLSearchParams(window.location.search).get("demo") === "1";
+  const isDemo = typeof window !== "undefined" && new URLSearchParams(window.location.search).get("demo") === "1";
 
-  const railRef = useRef<HTMLElement>(null);
-  const [railVisible, setRailVisible] = useState(false);
-
-  useEffect(() => {
-    const el = railRef.current;
-    if (!el || typeof IntersectionObserver === "undefined") {
-      setRailVisible(true);
-      return;
-    }
-    const observer = new IntersectionObserver(
-      (entries) => {
-        if (entries.some((entry) => entry.isIntersecting)) {
-          setRailVisible(true);
-          observer.disconnect();
-        }
-      },
-      { threshold: 0.2 }
-    );
-    observer.observe(el);
-    return () => observer.disconnect();
-  }, []);
+  const sampleReport = createMockValidationReport("retail_sales_cleaned_demo.xlsx", 42500);
+  const sampleChecks = sampleReport.checks.slice(0, 4);
 
   function startJourney(mode: "voice" | "text"): void {
     chooseInputMode(mode);
@@ -107,13 +50,9 @@ export function WelcomePage(): JSX.Element {
   return (
     <main className="shell landing-shell">
       {isDemo && (
-        <div className="demo-top-banner stagger-in" style={{ "--stagger": 0 } as CSSProperties}>
-          <Badge tone="lavender">{t("replayBadge")}</Badge>
-          <Button
-            variant="primary"
-            className="demo-start-btn"
-            onClick={() => navigate("/session?demo=1")}
-          >
+        <div className="demo-top-banner">
+          <span className="eyebrow">{t("replayBadge")}</span>
+          <Button variant="dark" className="demo-start-btn" onClick={() => navigate("/session?demo=1")}>
             {t("startDemoReplay")}
           </Button>
         </div>
@@ -121,185 +60,137 @@ export function WelcomePage(): JSX.Element {
 
       <section className="hero-grid" aria-labelledby="hero-heading">
         <div className="hero-copy">
-          <p className="eyebrow hero-eyebrow stagger-in" style={{ "--stagger": 0 } as CSSProperties}>
-            {t("tagline")}
-          </p>
-
-          <h1 id="hero-heading" className="hero-headline stagger-in" style={{ "--stagger": 1 } as CSSProperties}>
-            Work. Explain.{" "}
-            <span className="hero-verify-word">
-              Verify
-              <svg
-                className="hero-verify-underline"
-                viewBox="0 0 180 18"
-                fill="none"
-                aria-hidden="true"
-                preserveAspectRatio="none"
-              >
-                <path
-                  d="M3 13.5C46 5.5 112 3.5 177 10.5"
-                  stroke="var(--lav-500)"
-                  strokeWidth="5"
-                  strokeLinecap="round"
-                />
-                <path
-                  d="M12 15.5C64 9.5 128 8.5 168 12.5"
-                  stroke="var(--violet)"
-                  strokeWidth="2.2"
-                  strokeLinecap="round"
-                  opacity="0.7"
-                />
-              </svg>
-            </span>
-            .
+          <h1 id="hero-heading" className="hero-headline">
+            Show the work. Explain it. Carry the proof.
           </h1>
-
-          <p className="lede hero-subline stagger-in" style={{ "--stagger": 2 } as CSSProperties}>
-            {t("platformBannerBody")}
+          <p className="lede hero-subline">
+            A vocational graduate cleans a real workbook, explains it to an AI examiner in English, Hindi or Kannada, and gets a signed Skill Passport that employers can verify.
           </p>
 
-          <div className="hero-cta-row stagger-in" style={{ "--stagger": 3 } as CSSProperties}>
-            <Button
-              variant="primary"
-              size="lg"
-              className="hero-pill-btn"
-              onClick={() => startJourney("voice")}
-            >
-              Start your journey
+          <div className="hero-cta-row">
+            <Button variant="primary" size="lg" onClick={() => startJourney("voice")}>
+              START THE CHALLENGE
             </Button>
-
-            <Button
-              variant="secondary"
-              size="lg"
-              className="hero-pill-btn"
+            <button
+              type="button"
+              className="hero-plain-link"
               onClick={() => navigate("/skill/demo?demo=1")}
             >
               See a sample passport
-            </Button>
+            </button>
           </div>
 
-          <div className="hero-secondary-actions stagger-in" style={{ "--stagger": 4 } as CSSProperties}>
-            <Button
-              variant="ghost"
-              className="hero-text-mode-btn"
+          <div className="hero-secondary-actions">
+            <button
+              type="button"
+              className="hero-plain-link"
               onClick={() => startJourney("text")}
             >
               {t("textModeOption")}
-            </Button>
-            <Button
-              variant="ghost"
-              className="hero-text-mode-btn"
+            </button>
+            <button
+              type="button"
+              className="hero-plain-link"
               onClick={() => navigate("/opportunities")}
             >
               {t("welcomeExploreOpportunities")}
-            </Button>
+            </button>
           </div>
         </div>
 
-        <aside
-          className="hero-passport-stage stagger-in"
-          style={{ "--stagger": 3 } as CSSProperties}
-          aria-label={t("sampleClusterLabel")}
-        >
-          <article className="passport-preview-card">
-            <div className="passport-foil-edge" aria-hidden="true" />
-            <div className="passport-preview-top">
-              <Badge tone="lavender">{t("sampleClusterLabel")}</Badge>
-              <Badge tone="ok">Demonstrated</Badge>
-            </div>
+        <aside className="hero-demo-col" aria-label="Live product sample">
+          <span className="ghost-numeral" aria-hidden="true">7</span>
 
-            <div className="passport-card-head">
-              <span className="initials-avatar" aria-hidden="true">AK</span>
+          <Card as="article" className="hero-sample-passport" padding="sm">
+            <div className="hero-sample-head">
               <div>
-                <strong>Ananya K.</strong>
-                <span>Entry-Level Data Entry Operator</span>
+                <span className="eyebrow">SKILL PASSPORT · SAMPLE</span>
+                <strong className="hero-sample-name">Ananya K.</strong>
+                <span className="fineprint">Entry-Level Data Entry Operator</span>
               </div>
-              <ProgressRing value={88} size={60} strokeWidth={5} tone="ok" label="ECVE" />
+              <div className="hero-sample-score">
+                <strong>88</strong>
+                <span>/ 100</span>
+              </div>
             </div>
+            <div className="hero-sample-meta">
+              <span className="pf-chip pf-chip--ok">{t("recordMatchesDatabase")}</span>
+              <code className="mono">{sampleReport.sha256.slice(0, 8)}…{sampleReport.sha256.slice(-6)}</code>
+            </div>
+          </Card>
 
-            <div className="passport-preview-pillars">
-              <div>
-                <span>Practical</span>
-                <strong>90%</strong>
-              </div>
-              <div>
-                <span>Explain</span>
-                <strong>84%</strong>
-              </div>
-              <div>
-                <span>Consistency</span>
-                <strong>90%</strong>
-              </div>
-            </div>
-
-            <div className="passport-card-meta">
-              <code className="mono">sha256:9f4c…e81a</code>
-              <span className="verified-chip">{t("recordMatchesDatabase")}</span>
-            </div>
-          </article>
+          <Card as="article" className="hero-sample-checks" padding="sm">
+            <span className="eyebrow">Validator checks · {sampleReport.fileName}</span>
+            <ul className="sample-check-list">
+              {sampleChecks.map((chk) => {
+                const tone = chk.status === "pass" ? "ok" : chk.status === "issue" ? "bad" : "warn";
+                return (
+                  <li key={chk.id} className="sample-check-row">
+                    <StatusMark tone={tone} size={15} />
+                    <span className="sample-check-title">{chk.title}</span>
+                    <code className="mono">{chk.status}</code>
+                  </li>
+                );
+              })}
+            </ul>
+          </Card>
         </aside>
       </section>
 
-      <section
-        className="trust-strip stagger-in"
-        style={{ "--stagger": 4 } as CSSProperties}
-        aria-label="Verification guarantees"
-      >
-        {TRUST_CHIPS.map((chip) => {
-          const Icon = chip.icon;
-          return (
-            <Chip key={chip.label} tone="neutral" className="trust-chip">
-              <Icon size={14} strokeWidth={2} aria-hidden="true" />
-              <span>{chip.label}</span>
-            </Chip>
-          );
-        })}
+      <section id="how-it-works" className="stages-vertical-section" aria-label={t("journeyNavLabel")}>
+        <h2 className="section-heading">Seven-stage evidence pipeline</h2>
+        <ol className="stages-vertical-list">
+          {JOURNEY_STAGES.map((stage) => (
+            <li key={stage.key} className="stage-vertical-row">
+              <span className="stage-numeral">{stage.num}</span>
+              <div className="stage-body">
+                <strong>{stage.key}</strong>
+                <p>{stage.outcome}</p>
+              </div>
+            </li>
+          ))}
+        </ol>
       </section>
 
-      <section
-        ref={railRef}
-        id="how-it-works"
-        aria-label={t("journeyNavLabel")}
-        className={"journey-rail-section" + (railVisible ? " is-in-view" : "")}
-      >
-        <div className="journey-rail-track" aria-hidden="true">
-          <div className="journey-rail-progress" />
+      <section className="how-checked-band" aria-label="How it is checked">
+        <h2 className="section-heading">How it&apos;s checked</h2>
+        <div className="ecve-summary-row">
+          <div className="ecve-weight-item">
+            <span className="ecve-weight-num">60%</span>
+            <div>
+              <strong>Practical execution</strong>
+              <p className="fineprint">Deterministic Python checks on your .xlsx workbook.</p>
+            </div>
+          </div>
+          <div className="ecve-weight-item">
+            <span className="ecve-weight-num">25%</span>
+            <div>
+              <strong>Conceptual understanding</strong>
+              <p className="fineprint">AI Viva responses scored against the public MO-200 rubric.</p>
+            </div>
+          </div>
+          <div className="ecve-weight-item">
+            <span className="ecve-weight-num">15%</span>
+            <div>
+              <strong>Evidence consistency</strong>
+              <p className="fineprint">Cross-check between spoken reasoning and file facts.</p>
+            </div>
+          </div>
         </div>
-
-        <div className="journey-rail">
-          {JOURNEY_STAGES.map((stage, idx) => {
-            const Icon = stage.icon;
-            return (
-              <article
-                key={stage.key}
-                className="journey-rail-card stagger-in"
-                style={{ "--stagger": idx + 2 } as CSSProperties}
-              >
-                <div className="journey-rail-head">
-                  <span className="journey-rail-num">{stage.num}</span>
-                  <span className="journey-rail-icon" aria-hidden="true">
-                    <Icon size={16} strokeWidth={1.9} />
-                  </span>
-                </div>
-                <strong className="journey-rail-title">{stage.key}</strong>
-                <p className="journey-rail-outcome">{stage.outcome}</p>
-              </article>
-            );
-          })}
-        </div>
+        <p className="fineprint" style={{ marginTop: "12px" }}>
+          Authoritative Demonstrated outcomes receive an Ed25519-signed JWS bound to the artifact SHA-256 hash.
+        </p>
       </section>
 
-      <section className="built-with-bar stagger-in" style={{ "--stagger": 5 } as CSSProperties} aria-label={t("builtWithLabel")}>
-        <div className="built-with-group">
-          <span className="built-with-title">{t("builtWithLabel")}</span>
-          <span className="wordmark-item">ElevenLabs</span>
-          <span className="wordmark-item">AWS</span>
-          <span className="wordmark-item">.xyz</span>
-        </div>
-        <div className="built-with-group">
-          <span className="built-with-title">{t("linkOutsLabel")}</span>
-          <span className="wordmark-item">tryb</span>
-          <span className="wordmark-item">Devnovate</span>
+      <section className="faq-section" aria-label="Frequently asked questions">
+        <h2 className="section-heading">Questions</h2>
+        <div className="faq-list">
+          {FAQ_ITEMS.map((item) => (
+            <details key={item.q} className="faq-item">
+              <summary className="faq-summary">{item.q}</summary>
+              <p className="faq-answer">{item.a}</p>
+            </details>
+          ))}
         </div>
       </section>
 
