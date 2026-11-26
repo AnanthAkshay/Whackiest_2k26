@@ -34,15 +34,16 @@ function renderRoute(path: string): string {
   );
 }
 
-test("Welcome page renders Prooffolio 6-stage journey, text mode, and mock notice", () => {
+test("Welcome page renders Prooffolio 7-stage journey, text mode, and mock notice", () => {
   const html = renderRoute("/");
   assert.match(html, /Prooffolio/);
   assert.match(html, /1\. Learn/);
   assert.match(html, /2\. Practise/);
   assert.match(html, /3\. Demonstrate/);
   assert.match(html, /4\. Explain/);
-  assert.match(html, /5\. Verify/);
-  assert.match(html, /6\. Connect/);
+  assert.match(html, /5\. Cross-Verify/);
+  assert.match(html, /6\. Verify/);
+  assert.match(html, /7\. Connect/);
   assert.match(html, /Text mode \(typing only\)/);
   assert.match(html, /Mock Mode/);
 });
