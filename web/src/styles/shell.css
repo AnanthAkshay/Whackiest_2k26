@@ -60,17 +60,38 @@
   background: var(--surface-muted);
 }
 
-/* Sticky Editorial Glass Header */
-.site-topbar {
+/* Floating Glass Navigation Bar */
+.site-topbar-wrap {
   position: sticky;
-  top: 0;
+  top: 10px;
   z-index: 40;
-  border-bottom: 1px solid var(--glass-border-subtle);
+  padding: 0 12px;
+}
+
+@media (min-width: 768px) {
+  .site-topbar-wrap {
+    top: 14px;
+    padding: 0 24px;
+  }
+}
+
+.site-topbar {
+  max-width: var(--layout-max);
+  margin: 0 auto;
+  border-radius: 22px;
+  border: 1px solid var(--glass-border);
   background: var(--glass-bg-strong);
-  backdrop-filter: blur(var(--glass-blur)) saturate(145%);
-  -webkit-backdrop-filter: blur(var(--glass-blur)) saturate(145%);
-  box-shadow: var(--glass-highlight);
+  backdrop-filter: blur(20px) saturate(145%);
+  -webkit-backdrop-filter: blur(20px) saturate(145%);
+  box-shadow: var(--glass-shadow), var(--glass-highlight);
+  overflow: hidden;
   transition: box-shadow 0.2s ease, background-color 0.2s ease;
+}
+
+@media (min-width: 960px) {
+  .site-topbar {
+    border-radius: var(--radius-pill);
+  }
 }
 
 @supports not ((backdrop-filter: blur(1px)) or (-webkit-backdrop-filter: blur(1px))) {
@@ -79,23 +100,17 @@
   }
 }
 
-.site-topbar.is-scrolled {
-  box-shadow: var(--shadow-sm);
-}
-
 .site-topbar-inner {
   display: flex;
   align-items: center;
   justify-content: space-between;
   gap: var(--space-12);
-  max-width: var(--layout-max);
-  margin: 0 auto;
-  padding: 12px var(--gutter-mobile);
+  padding: 8px 14px;
 }
 
 @media (min-width: 768px) {
   .site-topbar-inner {
-    padding: 14px var(--gutter-desktop);
+    padding: 8px 20px;
   }
 }
 
@@ -231,11 +246,16 @@
   color: var(--surface);
 }
 
-/* Editorial Footer */
+/* Editorial Frosted Glass Footer */
 .site-footer {
   margin-top: var(--space-64);
-  padding: var(--space-48) 0 var(--space-32);
-  border-top: 1px solid var(--border);
+  padding: var(--space-32);
+  border-radius: var(--radius-xl);
+  border: 1px solid var(--glass-border);
+  background: var(--glass-bg);
+  backdrop-filter: blur(var(--glass-blur)) saturate(145%);
+  -webkit-backdrop-filter: blur(var(--glass-blur)) saturate(145%);
+  box-shadow: var(--glass-shadow), var(--glass-highlight);
 }
 
 .footer-grid {
@@ -315,18 +335,22 @@
   }
 }
 
-/* Safe-area aware mobile bottom glass dock */
+/* Floating Glass Mobile Bottom Dock (safe-area aware) */
 .mobile-bottom-dock {
   position: sticky;
-  bottom: 0;
+  bottom: 10px;
   z-index: 45;
   display: grid;
   grid-template-columns: repeat(5, minmax(0, 1fr));
+  width: calc(100% - 24px);
+  margin: 0 auto 10px;
   padding-bottom: env(safe-area-inset-bottom, 0px);
-  border-top: 1px solid var(--glass-border-subtle);
+  border-radius: 24px;
+  border: 1px solid var(--glass-border);
   background: var(--glass-bg-strong);
   backdrop-filter: blur(var(--glass-blur)) saturate(145%);
   -webkit-backdrop-filter: blur(var(--glass-blur)) saturate(145%);
+  box-shadow: var(--glass-shadow), var(--glass-highlight);
 }
 
 .mobile-dock-item {

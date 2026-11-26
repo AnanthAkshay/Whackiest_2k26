@@ -15,21 +15,21 @@ import { useSetup } from "../setup/SetupContext";
 import { Accordion, Button, Frame, GlassBadge, GlassCard, GlassPanel, StatusMark } from "../shared/ui";
 
 const JOURNEY_STAGES = [
-  { num: "01", key: "1. Learn", outcome: "Study short spreadsheet rules cached for offline access.", to: "/learn", icon: BookOpen },
-  { num: "02", key: "2. Practise", outcome: "Complete low-stakes drills with immediate explanations.", to: "/learn", icon: CheckCircle },
-  { num: "03", key: "3. Demonstrate", outcome: "Clean a seeded .xlsx sales workbook and upload it.", to: "/challenge", icon: FileXls },
-  { num: "04", key: "4. Explain", outcome: "Answer the AI Examiner in English, Hindi, or Kannada (voice or text).", to: "/setup-viva", icon: Microphone },
-  { num: "05", key: "5. Cross-Verify", outcome: "Check consistency between your spoken claims and file facts.", to: "/results/att_demo_retail_01?demo=1", icon: GitDiff },
-  { num: "06", key: "6. Verify", outcome: "Receive an Ed25519-signed Skill Passport bound to the SHA-256 hash.", to: "/skill/demo?demo=1", icon: Certificate },
-  { num: "07", key: "7. Connect", outcome: "Review local entry-level matches with transparent skill gaps.", to: "/opportunities", icon: Briefcase }
+  { num: "01", key: "1. Learn", status: "Offline ready", outcome: "Study short spreadsheet rules cached for offline access.", to: "/learn", icon: BookOpen },
+  { num: "02", key: "2. Practise", status: "Interactive", outcome: "Complete low-stakes drills with immediate explanations.", to: "/learn", icon: CheckCircle },
+  { num: "03", key: "3. Demonstrate", status: ".xlsx check", outcome: "Clean a seeded .xlsx sales workbook and upload it.", to: "/challenge", icon: FileXls },
+  { num: "04", key: "4. Explain", status: "AI Viva", outcome: "Answer the AI Examiner in English, Hindi, or Kannada (voice or text).", to: "/setup-viva", icon: Microphone },
+  { num: "05", key: "5. Cross-Verify", status: "ECVE 60/25/15", outcome: "Check consistency between your spoken claims and file facts.", to: "/results/att_demo_retail_01?demo=1", icon: GitDiff },
+  { num: "06", key: "6. Verify", status: "Signed JWS", outcome: "Receive an Ed25519-signed Skill Passport bound to the SHA-256 hash.", to: "/skill/demo?demo=1", icon: Certificate },
+  { num: "07", key: "7. Connect", status: "Transparent", outcome: "Review local entry-level matches with transparent skill gaps.", to: "/opportunities", icon: Briefcase }
 ];
 
 const TRUST_CAPABILITIES = [
-  "PRACTICAL ASSESSMENT",
-  "MULTILINGUAL AI VIVA",
-  "EVIDENCE-BASED SCORING",
-  "SIGNED SKILL PASSPORTS",
-  "EXPLAINABLE JOB MATCHING"
+  "Practical assessment",
+  "Multilingual AI Viva",
+  "Evidence verification",
+  "Skill Passport",
+  "Job matching"
 ];
 
 const FAQ_ITEMS = [
@@ -50,6 +50,39 @@ const FAQ_ITEMS = [
     a: "No. Uploaded files, audio, and full transcripts stay private. Public Skill Passports show only consented summary fields."
   }
 ];
+
+function DemoQrTile({ url }: { url: string }): JSX.Element {
+  const cells: boolean[] = [];
+  let hash = 2166136261;
+  for (let i = 0; i < url.length; i++) {
+    hash ^= url.charCodeAt(i);
+    hash = Math.imul(hash, 16777619);
+  }
+  const size = 19;
+  const isFinder = (r: number, c: number): boolean =>
+    (r < 6 && c < 6) || (r < 6 && c >= size - 6) || (r >= size - 6 && c < 6);
+  for (let r = 0; r < size; r++) {
+    for (let c = 0; c < size; c++) {
+      if (isFinder(r, c)) {
+        const lr = r >= size - 6 ? r - (size - 6) : r;
+        const lc = c >= size - 6 ? c - (size - 6) : c;
+        cells.push(lr === 0 || lr === 5 || lc === 0 || lc === 5 || (lr >= 2 && lr <= 3 && lc >= 2 && lc <= 3));
+      } else {
+        cells.push((((hash >>> ((r * size + c) % 24)) ^ (r * 7 + c * 13)) & 1) === 1);
+      }
+    }
+  }
+  return (
+    <div className="passport-qr-tile" aria-label="Sample Skill Passport verification QR code">
+      <svg width="84" height="84" viewBox={`0 0 ${size} ${size}`} shapeRendering="crispEdges" aria-hidden="true">
+        <rect width={size} height={size} fill="#FFFFFF" />
+        {cells.map((filled, idx) =>
+          filled ? <rect key={idx} x={idx % size} y={Math.floor(idx / size)} width="1" height="1" fill="#121411" /> : null
+        )}
+      </svg>
+    </div>
+  );
+}
 
 export function WelcomePage(): JSX.Element {
   const { t } = useTranslation();
@@ -85,7 +118,7 @@ export function WelcomePage(): JSX.Element {
                 Your skills deserve to be seen.
               </h1>
               <p className="pf-lead editorial-hero-sub">
-                Don&apos;t let your skills get lost behind a traditional resume. Show what you can actually do, explain your work and carry trusted proof of your abilities.
+                Show what you can do. Explain your work. Earn trusted proof. Connect with opportunities.
               </p>
 
               <div className="hero-cta-row">
@@ -97,7 +130,7 @@ export function WelcomePage(): JSX.Element {
                   className="hero-circle-cta"
                   onClick={() => navigate("/skill/demo?demo=1")}
                 >
-                  <span>VIEW SAMPLE SKILL PASSPORT</span>
+                  <span>EXPLORE SKILL PASSPORT</span>
                   <span className="circle-arrow-badge" aria-hidden="true">
                     <ArrowUpRight size={16} weight="regular" />
                   </span>
@@ -129,11 +162,17 @@ export function WelcomePage(): JSX.Element {
               </div>
             </div>
 
-            <aside className="hero-demo-col" aria-label="Live product sample">
+            <aside className="hero-glass-stack" aria-label="Live product sample">
+              <div className="hero-floating-badge-row">
+                <GlassBadge className="hero-verify-pill">
+                  <StatusMark tone="ok" label={t("recordMatchesDatabase")} />
+                </GlassBadge>
+              </div>
+
               <GlassPanel as="article" className="hero-passport-preview">
                 <div className="hero-sample-head">
                   <div>
-                    <span className="pf-label">SAMPLE SKILL PASSPORT</span>
+                    <span className="pf-label">SAMPLE SKILL PASSPORT · DEMO</span>
                     <strong className="hero-sample-name">Ananya Kumar</strong>
                     <span className="fineprint">Entry-Level Data Entry Operator</span>
                   </div>
@@ -142,14 +181,17 @@ export function WelcomePage(): JSX.Element {
                     <span>/ 100</span>
                   </div>
                 </div>
+                <div className="pillar-track" style={{ marginTop: "14px" }} aria-hidden="true">
+                  <div className="pillar-fill" style={{ width: "88%" }} />
+                </div>
                 <div className="hero-sample-meta">
-                  <StatusMark tone="ok" label={t("recordMatchesDatabase")} />
+                  <span className="fineprint">Demonstrated · ECVE</span>
                   <code className="mono">{sampleReport.sha256.slice(0, 8)}…{sampleReport.sha256.slice(-6)}</code>
                 </div>
               </GlassPanel>
 
-              <GlassCard as="article" padding="sm">
-                <span className="pf-label">Validator checks · {sampleReport.fileName}</span>
+              <GlassCard as="article" variant="glass-soft" padding="sm" className="hero-assessment-overlap">
+                <span className="pf-label">Assessment summary · {sampleReport.fileName}</span>
                 <ul className="sample-check-list">
                   {sampleChecks.map((chk) => {
                     const tone = chk.status === "pass" ? "ok" : chk.status === "issue" ? "bad" : "warn";
@@ -194,11 +236,14 @@ export function WelcomePage(): JSX.Element {
                 <GlassCard key={stage.key} as="article" interactive className="stage-editorial-card">
                   <div className="stage-card-top">
                     <span className="pf-label tabular-nums">{stage.num}</span>
+                    <GlassBadge>{stage.status}</GlassBadge>
+                  </div>
+                  <div className="stage-title-row">
                     <span className="stage-icon-badge" aria-hidden="true">
                       <Icon size={18} weight="regular" />
                     </span>
+                    <h3 className="stage-card-title">{stage.key}</h3>
                   </div>
-                  <h3 className="stage-card-title">{stage.key}</h3>
                   <p className="fineprint" style={{ margin: 0, flex: 1 }}>{stage.outcome}</p>
                   <Link to={stage.to + (isDemo ? "?demo=1" : "")} className="stage-card-link">
                     <span>Open</span>
@@ -220,25 +265,40 @@ export function WelcomePage(): JSX.Element {
               <span className="pf-label">P · PRACTICAL EXECUTION</span>
               <div className="ecve-big-num tabular-nums">60%</div>
               <div className="pillar-track"><div className="pillar-fill" style={{ width: "60%" }} /></div>
-              <p className="fineprint" style={{ marginTop: "12px", marginBottom: 0 }}>
+              <p className="fineprint" style={{ marginTop: "12px", marginBottom: "8px" }}>
                 Deterministic code checks on your submitted .xlsx workbook.
               </p>
+              <Accordion title="How P is measured">
+                <p className="fineprint" style={{ margin: 0 }}>
+                  Python/TS workbook checks verify column hygiene, ISO dates, missing values, and dynamic formulas against the MO-200 rubric.
+                </p>
+              </Accordion>
             </GlassCard>
             <GlassCard as="article">
               <span className="pf-label">U · CONCEPTUAL UNDERSTANDING</span>
               <div className="ecve-big-num tabular-nums">25%</div>
               <div className="pillar-track"><div className="pillar-fill" style={{ width: "25%" }} /></div>
-              <p className="fineprint" style={{ marginTop: "12px", marginBottom: 0 }}>
-                Artifact-aware AI Viva responses scored against the public MO-200 rubric.
+              <p className="fineprint" style={{ marginTop: "12px", marginBottom: "8px" }}>
+                Artifact-aware AI Viva responses scored against the public rubric.
               </p>
+              <Accordion title="How U is measured">
+                <p className="fineprint" style={{ margin: 0 }}>
+                  The AI Examiner asks about cells and formulas in your file in English, Hindi, or Kannada (voice or text mode).
+                </p>
+              </Accordion>
             </GlassCard>
             <GlassCard as="article">
               <span className="pf-label">C · EVIDENCE CONSISTENCY</span>
               <div className="ecve-big-num tabular-nums">15%</div>
               <div className="pillar-track"><div className="pillar-fill" style={{ width: "15%" }} /></div>
-              <p className="fineprint" style={{ marginTop: "12px", marginBottom: 0 }}>
+              <p className="fineprint" style={{ marginTop: "12px", marginBottom: "8px" }}>
                 Cross-check between spoken reasoning and verified file facts.
               </p>
+              <Accordion title="How C is measured">
+                <p className="fineprint" style={{ margin: 0 }}>
+                  Compares spoken claims against FactSheet evidence. Unresolved mismatches trigger calm Pending Human Review, never cheating claims.
+                </p>
+              </Accordion>
             </GlassCard>
           </div>
           <p className="fineprint" style={{ marginTop: "16px" }}>
@@ -248,13 +308,13 @@ export function WelcomePage(): JSX.Element {
 
         <section className="editorial-section" aria-label="Skill Passport Showcase">
           <div className="passport-showcase-panel">
-            <div>
-              <span className="pf-label" style={{ color: "#B1B5AB" }}>SAMPLE SKILL PASSPORT · ED25519 JWS</span>
+            <div style={{ flex: "1 1 320px" }}>
+              <span className="pf-label" style={{ color: "#B1B5AB" }}>SAMPLE SKILL PASSPORT · DEMO FIXTURE</span>
               <h2 className="pf-section-title" style={{ color: "#F5F3EC", marginTop: "8px" }}>
                 Ananya Kumar
               </h2>
               <p style={{ color: "#B1B5AB", margin: "6px 0 16px" }}>
-                Entry-Level Data Entry Operator · Score 88 / 100 · Demonstrated
+                Entry-Level Data Entry Operator · Score 88 / 100 · Sample Demonstrated Outcome
               </p>
               <div className="passport-showcase-meta">
                 <StatusMark tone="ok" label={t("recordMatchesDatabase")} />
@@ -262,19 +322,24 @@ export function WelcomePage(): JSX.Element {
                   ID: att_demo_retail_01 · SHA-256: {sampleReport.sha256.slice(0, 12)}…
                 </code>
               </div>
+              <div style={{ marginTop: "20px" }}>
+                <Link to="/skill/demo?demo=1" className="pf-btn pf-btn--primary pf-btn--lg">
+                  EXPLORE A SAMPLE PASSPORT
+                </Link>
+              </div>
             </div>
-            <Link to="/skill/demo?demo=1" className="pf-btn pf-btn--primary pf-btn--lg">
-              EXPLORE A SAMPLE PASSPORT
-            </Link>
+            <DemoQrTile url="/p/att_demo_retail_01" />
           </div>
         </section>
 
         <section className="editorial-section final-cta-band" aria-label="Get started">
-          <h2 className="pf-page-title">Let your work speak for you.</h2>
-          <div style={{ marginTop: "24px" }}>
-            <Button variant="primary" size="lg" onClick={() => startJourney("voice")}>
-              START YOUR SKILL JOURNEY
-            </Button>
+          <div className="final-cta-inner">
+            <h2 className="pf-page-title">Let your work speak for you.</h2>
+            <div style={{ marginTop: "24px" }}>
+              <Button variant="primary" size="lg" onClick={() => startJourney("voice")}>
+                START YOUR SKILL JOURNEY
+              </Button>
+            </div>
           </div>
         </section>
 

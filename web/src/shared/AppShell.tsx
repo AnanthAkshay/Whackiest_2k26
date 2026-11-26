@@ -12,6 +12,7 @@ import {
   Moon,
   Question,
   Sun,
+  User,
   X
 } from "@phosphor-icons/react";
 import { DEFAULT_CONTENT_BUNDLE } from "../content/lessons";
@@ -195,118 +196,129 @@ export function AppShell({ children }: { children: ReactNode }): JSX.Element {
         </div>
       )}
 
-      <header className={"site-topbar" + (isScrolled ? " is-scrolled" : "")}>
-        <div className="site-topbar-inner">
-          <Link to={`/${demoQuery}`} className="topbar-wordmark" onClick={() => setMenuOpen(false)}>
-            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" aria-hidden="true">
-              <circle cx="12" cy="12" r="10.5" stroke="currentColor" strokeWidth="2" />
-              <path d="M9 17V7H13C14.933 7 16.5 8.567 16.5 10.5C16.5 12.433 14.933 14 13 14H9" stroke="currentColor" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round" />
-            </svg>
-            <span className="wordmark-bold">PROOFFOLIO</span>
-          </Link>
-
-          <nav className="topbar-nav" aria-label={t("mainNavLabel")}>
-            {navItems.map((item) => (
-              <TextLink
-                key={item.to}
-                to={item.to}
-                current={item.matches(location.pathname)}
-                className="topbar-nav-link"
-              >
-                {item.label}
-              </TextLink>
-            ))}
-          </nav>
-
-          <div className="topbar-actions">
-            <SegmentedControl
-              options={LANG_OPTIONS}
-              value={language}
-              onChange={chooseLanguage}
-              ariaLabel="Language switcher"
-              className="topbar-lang-seg"
-            />
-
-            <button
-              type="button"
-              className="topbar-icon-btn topbar-search-btn"
-              aria-label="Search site (/)"
-              title="Search (/)"
-              onClick={() => setSearchOpen(true)}
-            >
-              <MagnifyingGlass size={18} weight="regular" aria-hidden="true" />
-            </button>
-
-            <button
-              type="button"
-              className="topbar-icon-btn"
-              aria-label={themePref === "dark" ? "Switch to light mode" : "Switch to dark mode"}
-              onClick={() => setThemePreference(themePref === "dark" ? "light" : "dark")}
-            >
-              {themePref === "dark" ? <Sun size={18} weight="regular" aria-hidden="true" /> : <Moon size={18} weight="regular" aria-hidden="true" />}
-            </button>
-
-            <Link
-              to={`/profile${demoQuery}`}
-              className={buttonClasses({ variant: "primary", className: "topbar-start-cta" })}
-            >
-              START NOW
+      <div className="site-topbar-wrap">
+        <header className={"site-topbar" + (isScrolled ? " is-scrolled" : "")}>
+          <div className="site-topbar-inner">
+            <Link to={`/${demoQuery}`} className="topbar-wordmark" onClick={() => setMenuOpen(false)}>
+              <svg width="24" height="24" viewBox="0 0 24 24" fill="none" aria-hidden="true">
+                <circle cx="12" cy="12" r="10.5" stroke="currentColor" strokeWidth="2" />
+                <path d="M9 17V7H13C14.933 7 16.5 8.567 16.5 10.5C16.5 12.433 14.933 14 13 14H9" stroke="currentColor" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round" />
+              </svg>
+              <span className="wordmark-bold">PROOFFOLIO</span>
             </Link>
 
-            <button
-              type="button"
-              className="topbar-icon-btn topbar-menu-btn"
-              aria-expanded={menuOpen}
-              aria-controls="mobile-nav-drawer"
-              aria-label={t("navMenuToggle")}
-              onClick={() => setMenuOpen((prev) => !prev)}
-            >
-              {menuOpen ? <X size={18} weight="regular" aria-hidden="true" /> : <List size={18} weight="regular" aria-hidden="true" />}
-            </button>
-          </div>
-        </div>
+            <nav className="topbar-nav" aria-label={t("mainNavLabel")}>
+              {navItems.map((item) => (
+                <TextLink
+                  key={item.to}
+                  to={item.to}
+                  current={item.matches(location.pathname)}
+                  className="topbar-nav-link"
+                >
+                  {item.label}
+                </TextLink>
+              ))}
+            </nav>
 
-        <div className="scroll-progress-bar" aria-hidden="true">
-          <div className="scroll-progress-fill" style={{ transform: `scaleX(${scrollPct / 100})` }} />
-        </div>
-
-        {menuOpen && (
-          <nav ref={drawerRef} id="mobile-nav-drawer" className="mobile-nav-drawer" aria-label={t("mainNavLabel")}>
-            {navItems.map((item) => (
-              <Link
-                key={item.to}
-                to={item.to}
-                className={"mobile-nav-link" + (item.matches(location.pathname) ? " is-current" : "")}
-                onClick={() => setMenuOpen(false)}
-              >
-                {item.label}
-              </Link>
-            ))}
-            <div style={{ marginTop: "8px" }}>
-              <span className="pf-label" style={{ display: "block", marginBottom: "8px" }}>Language</span>
+            <div className="topbar-actions">
               <SegmentedControl
                 options={LANG_OPTIONS}
                 value={language}
                 onChange={chooseLanguage}
-                ariaLabel="Mobile language switcher"
+                ariaLabel="Language switcher"
+                className="topbar-lang-seg"
               />
+
+              <button
+                type="button"
+                className="topbar-icon-btn topbar-search-btn"
+                aria-label="Search site (/)"
+                title="Search (/)"
+                onClick={() => setSearchOpen(true)}
+              >
+                <MagnifyingGlass size={18} weight="regular" aria-hidden="true" />
+              </button>
+
+              <button
+                type="button"
+                className="topbar-icon-btn"
+                aria-label={themePref === "dark" ? "Switch to light mode" : "Switch to dark mode"}
+                onClick={() => setThemePreference(themePref === "dark" ? "light" : "dark")}
+              >
+                {themePref === "dark" ? <Sun size={18} weight="regular" aria-hidden="true" /> : <Moon size={18} weight="regular" aria-hidden="true" />}
+              </button>
+
+              <Link
+                to={`/profile${demoQuery}`}
+                className="topbar-icon-btn topbar-search-btn"
+                aria-label={t("navForLearners")}
+                title={t("navForLearners")}
+              >
+                <User size={18} weight="regular" aria-hidden="true" />
+              </Link>
+
+              <Link
+                to={`/profile${demoQuery}`}
+                className={buttonClasses({ variant: "primary", className: "topbar-start-cta" })}
+              >
+                START NOW
+              </Link>
+
+              <button
+                type="button"
+                className="topbar-icon-btn topbar-menu-btn"
+                aria-expanded={menuOpen}
+                aria-controls="mobile-nav-drawer"
+                aria-label={t("navMenuToggle")}
+                onClick={() => setMenuOpen((prev) => !prev)}
+              >
+                {menuOpen ? <X size={18} weight="regular" aria-hidden="true" /> : <List size={18} weight="regular" aria-hidden="true" />}
+              </button>
             </div>
-            <div style={{ marginTop: "8px" }}>
-              <span className="pf-label" style={{ display: "block", marginBottom: "8px" }}>Theme</span>
-              <SegmentedControl
-                ariaLabel="Theme"
-                value={themePref}
-                onChange={setThemePreference}
-                options={[
-                  { value: "light", label: "Light" },
-                  { value: "dark", label: "Dark" },
-                  { value: "system", label: "System" }
-                ]}
-              />
-            </div>
-          </nav>
-        )}
-      </header>
+          </div>
+
+          <div className="scroll-progress-bar" aria-hidden="true">
+            <div className="scroll-progress-fill" style={{ transform: `scaleX(${scrollPct / 100})` }} />
+          </div>
+        </header>
+      </div>
+
+      {menuOpen && (
+        <nav ref={drawerRef} id="mobile-nav-drawer" className="mobile-nav-drawer" aria-label={t("mainNavLabel")}>
+          {navItems.map((item) => (
+            <Link
+              key={item.to}
+              to={item.to}
+              className={"mobile-nav-link" + (item.matches(location.pathname) ? " is-current" : "")}
+              onClick={() => setMenuOpen(false)}
+            >
+              {item.label}
+            </Link>
+          ))}
+          <div style={{ marginTop: "8px" }}>
+            <span className="pf-label" style={{ display: "block", marginBottom: "8px" }}>Language</span>
+            <SegmentedControl
+              options={LANG_OPTIONS}
+              value={language}
+              onChange={chooseLanguage}
+              ariaLabel="Mobile language switcher"
+            />
+          </div>
+          <div style={{ marginTop: "8px" }}>
+            <span className="pf-label" style={{ display: "block", marginBottom: "8px" }}>Theme</span>
+            <SegmentedControl
+              ariaLabel="Theme"
+              value={themePref}
+              onChange={setThemePreference}
+              options={[
+                { value: "light", label: "Light" },
+                { value: "dark", label: "Dark" },
+                { value: "system", label: "System" }
+              ]}
+            />
+          </div>
+        </nav>
+      )}
 
       <div id="main-content" className="app-content" tabIndex={-1}>
         {children}
