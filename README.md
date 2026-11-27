@@ -31,17 +31,37 @@ Conventional hiring filters out skilled informal and vocational learners: resume
 
 ## Screenshots
 
-| Desktop Landing (`1280px`) | Mobile Landing (`360px`) |
+| Desktop Landing — Porcelain Light (`1280px`) | Desktop Landing — Deep Evergreen Dark (`1280px`) |
 |---|---|
-| ![Desktop Landing](docs/assets/screenshots/02-landing-desktop-1280.png) | ![Mobile Landing](docs/assets/screenshots/01-landing-mobile-360.png) |
+| ![Desktop Landing Light](docs/assets/screenshots/02-landing-desktop-1280.png) | ![Desktop Landing Dark](docs/assets/screenshots/10-landing-dark-1280.png) |
 
-| Demo Replay (`?demo=1`) | Challenge & XLSX Upload (`/challenge`) |
+| Mobile Landing (`360px`) | Demo Replay (`/?demo=1`) |
 |---|---|
-| ![Demo Replay](docs/assets/screenshots/03-demo-replay-desktop.png) | ![Challenge Upload](docs/assets/screenshots/04-challenge-desktop.png) |
+| ![Mobile Landing](docs/assets/screenshots/01-landing-mobile-360.png) | ![Demo Replay](docs/assets/screenshots/03-demo-replay-desktop.png) |
 
-| Opportunities Discovery (`/opportunities`) | System Health & Integrations (`/health`, `/integrations`) |
+| Challenge & XLSX Upload (`/challenge`) | ECVE Results Breakdown (`/results/:id`) |
 |---|---|
-| ![Opportunities](docs/assets/screenshots/05-opportunities-desktop.png) | ![Health Dashboard](docs/assets/screenshots/06-health-desktop.png) |
+| ![Challenge Upload](docs/assets/screenshots/04-challenge-desktop.png) | ![ECVE Results](docs/assets/screenshots/09-results-desktop.png) |
+
+| Skill Passport (`/passport/:id`) | Opportunities Discovery (`/opportunities`) |
+|---|---|
+| ![Skill Passport](docs/assets/screenshots/08-passport-desktop.png) | ![Opportunities](docs/assets/screenshots/05-opportunities-desktop.png) |
+
+| System Health (`/health`) | Sponsor Integrations (`/integrations`) |
+|---|---|
+| ![Health Dashboard](docs/assets/screenshots/06-health-desktop.png) | ![Integrations](docs/assets/screenshots/07-integrations-desktop.png) |
+
+---
+
+## Design System & Interactive UI
+
+- **Porcelain + Forest Palette**: Light theme (`#F7F8F5` porcelain canvas, `#17221D` ink, `#087F5B` forest accent, `#DDF4E9` mint tint) and Dark theme (`#0C1411` deep evergreen canvas, `#121E18` surface, `#43C995` mint accent) with `prooffolio_theme` persistence (`light` / `dark` / `system`).
+- **Selective Glassmorphism**: Frosted glass navigation bar, mobile bottom dock, hero Skill Passport preview, sheets/modals, and `@supports not (backdrop-filter)` solid fallbacks.
+- **Interactive & Motion Primitives** (zero extra runtime bloat, React 18 + CSS + WebGL):
+  - **Aceternity-adapted (`web/src/shared/aceternity/`)**: `AuroraBackground`, `BackgroundBeams`, `Spotlight`, `TextGenerateEffect`, `Card3D`, `GlareCard`, `MovingBorder`, `GlowingEffect`, `TracingBeam`, `BentoGrid`, `AnimatedTabs`, `TypewriterEffect`, `MultiStepLoader`, `FocusCard`, `PinBadge`, `MacbookScroll`, `CardStack`.
+  - **Skiper-adapted (`web/src/shared/skiper/`)**: `DynamicIsland` (real upload & AI Viva status), `AiInput`, `VercelTooltip`, `MinimalCardExpand`, `SvgFollowScroll`, `ScrollImagesReveal`.
+  - **Animmaster-inspired (`web/src/shared/animmaster/`)**: `ShaderHeroCanvas` (low-power WebGL hero shader with off-screen pause), `Magnetic` CTA wrapper, `VerificationSealSvg`, and smooth route transitions.
+- **Accessibility & Mobile-First**: Verified at `360px`–`1440px` with zero horizontal overflow, coarse-pointer motion guards, keyboard focus outlines, and global `prefers-reduced-motion` support.
 
 ---
 
@@ -273,7 +293,7 @@ npm run test:bluff                                 # 20-transcript Anti-Bluff ha
 npm run smoke                                      # Smoke test against http://localhost:8787
 ```
 
-For AWS deployment instructions (user-run only) and manual sponsor setup checklists, see [DEPLOY.md](file:///a:/Whackiest_2k26/DEPLOY.md), [docs/PROOFFOLIO_REQUIREMENTS_TRACEABILITY.md](file:///a:/Whackiest_2k26/docs/PROOFFOLIO_REQUIREMENTS_TRACEABILITY.md), and [docs/FINAL_MIGRATION_REPORT.md](file:///a:/Whackiest_2k26/docs/FINAL_MIGRATION_REPORT.md).
+For AWS deployment instructions (user-run only) and manual sponsor setup checklists, see [DEPLOY.md](DEPLOY.md), [docs/PROOFFOLIO_REQUIREMENTS_TRACEABILITY.md](docs/PROOFFOLIO_REQUIREMENTS_TRACEABILITY.md), and [docs/FINAL_MIGRATION_REPORT.md](docs/FINAL_MIGRATION_REPORT.md).
 
 ---
 
