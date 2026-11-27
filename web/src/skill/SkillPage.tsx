@@ -8,7 +8,6 @@ import {
   CardBody,
   CardContainer,
   CardItem,
-  EvervaultCard,
   GlareCard,
   GlowingEffect,
   MovingBorder,
@@ -292,17 +291,16 @@ export function SkillPage(): JSX.Element {
 
         {/* Verification Block */}
         <GlowingEffect>
-          <EvervaultCard seed={artifactSha}>
-            <GlassPanel as="section" className="crypto-proof-card">
-              <div style={{ display: "flex", flexWrap: "wrap", alignItems: "center", justifyContent: "space-between", gap: "12px" }}>
-                <div style={{ display: "inline-flex", alignItems: "center", gap: "12px" }}>
-                  <VerificationSealSvg size={36} />
-                  <StatusMark tone="ok" label={t("recordMatchesDatabase")} />
-                </div>
-                <MovingBorder>
-                  <PinBadge label="Ed25519 Signed · JWS" />
-                </MovingBorder>
+          <GlassPanel as="section" className="crypto-proof-card">
+            <div style={{ display: "flex", flexWrap: "wrap", alignItems: "center", justifyContent: "space-between", gap: "12px" }}>
+              <div style={{ display: "inline-flex", alignItems: "center", gap: "12px" }}>
+                <VerificationSealSvg size={36} />
+                <StatusMark tone="ok" label={t("recordMatchesDatabase")} />
               </div>
+              <MovingBorder>
+                <PinBadge label="Ed25519 Signed · JWS" />
+              </MovingBorder>
+            </div>
 
           <p className="fineprint">{t("whatVerificationMeansBody")}</p>
 
@@ -328,8 +326,7 @@ export function SkillPage(): JSX.Element {
               </TextLink>
               <span className="fineprint">{clientConfig.passportPublicDomain || "Local development URL"}</span>
             </div>
-            </GlassPanel>
-          </EvervaultCard>
+          </GlassPanel>
         </GlowingEffect>
 
         {/* Actions */}

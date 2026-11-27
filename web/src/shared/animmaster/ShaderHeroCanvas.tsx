@@ -20,10 +20,10 @@ void main() {
   float wave2 = cos(uv.y * 3.0 - t * 0.8 + cos(uv.x * 2.6 + t * 0.4));
   float field = (wave1 + wave2) * 0.25 + 0.5;
 
-  vec3 lightBase = vec3(0.965, 0.969, 0.976);
-  vec3 lightAccent = vec3(0.76, 0.94, 0.87);
-  vec3 darkBase = vec3(0.043, 0.051, 0.063);
-  vec3 darkAccent = vec3(0.06, 0.22, 0.17);
+  vec3 lightBase = vec3(0.969, 0.973, 0.961);
+  vec3 lightAccent = vec3(0.867, 0.957, 0.914);
+  vec3 darkBase = vec3(0.047, 0.078, 0.067);
+  vec3 darkAccent = vec3(0.098, 0.157, 0.125);
 
   vec3 col = mix(
     mix(lightBase, lightAccent, smoothstep(0.32, 0.88, field) * 0.55),

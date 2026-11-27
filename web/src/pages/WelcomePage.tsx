@@ -29,7 +29,7 @@ import {
   TextGenerateEffect,
   TracingBeam
 } from "../shared/aceternity";
-import { Magnetic, ScrollParallax, ShaderHeroCanvas } from "../shared/animmaster";
+import { Magnetic, ShaderHeroCanvas } from "../shared/animmaster";
 import { ScrollImagesReveal } from "../shared/skiper";
 import { Accordion, Button, Frame, GlassBadge, GlassCard, GlassPanel, StatusMark } from "../shared/ui";
 
@@ -193,8 +193,7 @@ export function WelcomePage(): JSX.Element {
               </div>
 
               <aside aria-label="Live product sample">
-                <ScrollParallax speed={0.05}>
-                  <CardContainer>
+                <CardContainer>
                   <CardBody className="hero-glass-stack">
                     <CardItem translateZ={30} className="hero-floating-badge-row">
                       <GlassBadge className="hero-verify-pill">
@@ -246,7 +245,6 @@ export function WelcomePage(): JSX.Element {
                     </CardItem>
                   </CardBody>
                 </CardContainer>
-                </ScrollParallax>
               </aside>
             </div>
           </Frame>

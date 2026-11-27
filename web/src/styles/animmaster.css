@@ -68,6 +68,13 @@
   }
 }
 
+@media (hover: none), (pointer: coarse) {
+  .am-magnetic {
+    transform: none !important;
+    transition: none !important;
+  }
+}
+
 @media (prefers-reduced-motion: reduce) {
   .am-shader-canvas {
     display: none !important;

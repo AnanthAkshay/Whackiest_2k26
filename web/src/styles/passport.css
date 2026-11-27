@@ -62,10 +62,11 @@
 .passport-kohaku-card {
   position: relative;
   border-radius: var(--radius-xl);
-  border: 1px solid rgba(255, 255, 255, 0.14);
-  background: #111318;
-  color: #F4F6F9;
-  box-shadow: 0 24px 60px rgba(11, 13, 16, 0.28), inset 0 1px 0 rgba(255, 255, 255, 0.12);
+  border: 1px solid rgba(241, 246, 242, 0.14);
+  border-top: 2px solid #D9A86C;
+  background: #121E18;
+  color: #F1F6F2;
+  box-shadow: 0 24px 60px rgba(12, 20, 17, 0.26), inset 0 1px 0 rgba(241, 246, 242, 0.12);
 }
 
 .passport-card-inner {

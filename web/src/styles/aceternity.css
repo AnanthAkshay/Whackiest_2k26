@@ -11,31 +11,31 @@
   inset: -25%;
   pointer-events: none;
   z-index: 0;
-  opacity: 0.7;
+  opacity: 0.65;
   background-image:
-    radial-gradient(60% 50% at 22% 28%, rgba(16, 185, 129, 0.14) 0%, transparent 70%),
-    radial-gradient(55% 45% at 78% 24%, rgba(203, 213, 225, 0.65) 0%, transparent 72%),
-    radial-gradient(50% 45% at 62% 76%, rgba(59, 130, 246, 0.08) 0%, transparent 70%);
+    radial-gradient(60% 50% at 22% 28%, rgba(8, 127, 91, 0.11) 0%, transparent 70%),
+    radial-gradient(55% 45% at 78% 24%, rgba(221, 244, 233, 0.72) 0%, transparent 72%),
+    radial-gradient(50% 45% at 62% 76%, rgba(217, 168, 108, 0.07) 0%, transparent 70%);
   filter: blur(42px);
   transform: translate3d(0, 0, 0);
   animation: acAuroraDrift 18s ease-in-out infinite alternate;
 }
 
 :root[data-theme="dark"] .ac-aurora-layer {
-  opacity: 0.6;
+  opacity: 0.58;
   background-image:
-    radial-gradient(60% 50% at 22% 28%, rgba(52, 211, 153, 0.14) 0%, transparent 70%),
-    radial-gradient(55% 45% at 78% 24%, rgba(30, 41, 59, 0.65) 0%, transparent 72%),
-    radial-gradient(50% 45% at 62% 76%, rgba(59, 130, 246, 0.09) 0%, transparent 70%);
+    radial-gradient(60% 50% at 22% 28%, rgba(67, 201, 149, 0.12) 0%, transparent 70%),
+    radial-gradient(55% 45% at 78% 24%, rgba(25, 40, 32, 0.72) 0%, transparent 72%),
+    radial-gradient(50% 45% at 62% 76%, rgba(217, 168, 108, 0.05) 0%, transparent 70%);
 }
 
 @media (prefers-color-scheme: dark) {
   :root:not([data-theme="light"]) .ac-aurora-layer {
-    opacity: 0.6;
+    opacity: 0.58;
     background-image:
-      radial-gradient(60% 50% at 22% 28%, rgba(52, 211, 153, 0.14) 0%, transparent 70%),
-      radial-gradient(55% 45% at 78% 24%, rgba(30, 41, 59, 0.65) 0%, transparent 72%),
-      radial-gradient(50% 45% at 62% 76%, rgba(59, 130, 246, 0.09) 0%, transparent 70%);
+      radial-gradient(60% 50% at 22% 28%, rgba(67, 201, 149, 0.12) 0%, transparent 70%),
+      radial-gradient(55% 45% at 78% 24%, rgba(25, 40, 32, 0.72) 0%, transparent 72%),
+      radial-gradient(50% 45% at 62% 76%, rgba(217, 168, 108, 0.05) 0%, transparent 70%);
   }
 }
 
@@ -397,6 +397,17 @@
   .ac-pin-pill,
   .ac-multi-loader {
     background: var(--glass-fallback);
+  }
+}
+
+@media (hover: none), (pointer: coarse) {
+  .ac-3d-body,
+  .ac-3d-item {
+    transform: none !important;
+  }
+  .ac-glare-overlay,
+  .ac-glow-ring {
+    display: none !important;
   }
 }
 
